@@ -7,13 +7,15 @@ import java.util.Collection;
  */
 public class ChessGameImp implements ChessGame{
 
+    private TeamColor teamTurn = null;
+
     private ChessBoard gameBoard = new ChessBoardImp();
     /**
      * @return Which team's turn it is
      */
     @Override
     public TeamColor getTeamTurn() {
-        return null;
+        return teamTurn;
     }
 
     /**
@@ -22,7 +24,7 @@ public class ChessGameImp implements ChessGame{
      */
     @Override
     public void setTeamTurn(TeamColor team) {
-
+        teamTurn = team;
     }
 
     /**

@@ -1,6 +1,19 @@
 package chess;
 
 public class ChessBoardImp implements ChessBoard{
+    //make 2d array of ChessPositions! it will be fun!
+    private ChessPosition[][] positionsOnBoard;
+
+    public ChessBoardImp(){
+        positionsOnBoard = new ChessPositionImp[8][8];
+        //i is rows, j is columns
+        for (int i = 0; i < 8; i++){
+            for (int j = 0; j < 8; j++){
+                positionsOnBoard[i][j].setRow(i + 1);
+                positionsOnBoard[i][j].setColumn(j+1);
+            }
+        }
+    }
     /**
      * Adds a chess piece to the chessboard
      * @param position where to add the piece to
@@ -8,7 +21,12 @@ public class ChessBoardImp implements ChessBoard{
      */
     @Override
     public void addPiece(ChessPosition position, ChessPiece piece) {
-
+        if (position.getPieceOnSquare() == null){
+            position.setPieceOnSquare(piece);
+        }
+        else{
+            System.out.println("Cannot add; there is already a piece in that position.");
+        }
     }
 
     /**
@@ -18,7 +36,7 @@ public class ChessBoardImp implements ChessBoard{
      */
     @Override
     public ChessPiece getPiece(ChessPosition position) {
-        return null;
+        return position.getPieceOnSquare();
     }
 
     /**
@@ -27,6 +45,38 @@ public class ChessBoardImp implements ChessBoard{
      */
     @Override
     public void resetBoard() {
+        //not sure if it's better to make new pieces every time or not
+        //clear board
+        for (int i = 0; i < 8; i++){
+            for (int j = 0; j < 8; j++){
+                positionsOnBoard[i][j].setPieceOnSquare(null); // FIXME since we're resetting board, consider deleting old pieces. Could get cluttered if lots of resets happen
+            }
+        }
 
+        //white pieces
+        addPiece(positionsOnBoard[0][0],new ChessPieceImp(ChessPiece.PieceType.ROOK, ChessGame.TeamColor.WHITE));
+        addPiece(positionsOnBoard[0][7],new ChessPieceImp(ChessPiece.PieceType.ROOK, ChessGame.TeamColor.WHITE));
+        addPiece(positionsOnBoard[0][1],new ChessPieceImp(ChessPiece.PieceType.KNIGHT, ChessGame.TeamColor.WHITE));
+        addPiece(positionsOnBoard[0][6],new ChessPieceImp(ChessPiece.PieceType.KNIGHT, ChessGame.TeamColor.WHITE));
+        addPiece(positionsOnBoard[0][2],new ChessPieceImp(ChessPiece.PieceType.BISHOP, ChessGame.TeamColor.WHITE));
+        addPiece(positionsOnBoard[0][5],new ChessPieceImp(ChessPiece.PieceType.BISHOP, ChessGame.TeamColor.WHITE));
+        addPiece(positionsOnBoard[0][3],new ChessPieceImp(ChessPiece.PieceType.QUEEN, ChessGame.TeamColor.WHITE));
+        addPiece(positionsOnBoard[0][4],new ChessPieceImp(ChessPiece.PieceType.KING, ChessGame.TeamColor.WHITE));
+        for (int i = 0; i < 8; i++){
+            addPiece(positionsOnBoard[1][i],new ChessPieceImp(ChessPiece.PieceType.PAWN, ChessGame.TeamColor.WHITE));
+        }
+
+        //black pieces
+        addPiece(positionsOnBoard[7][0],new ChessPieceImp(ChessPiece.PieceType.ROOK, ChessGame.TeamColor.BLACK));
+        addPiece(positionsOnBoard[7][7],new ChessPieceImp(ChessPiece.PieceType.ROOK, ChessGame.TeamColor.BLACK));
+        addPiece(positionsOnBoard[7][1],new ChessPieceImp(ChessPiece.PieceType.KNIGHT, ChessGame.TeamColor.BLACK));
+        addPiece(positionsOnBoard[7][6],new ChessPieceImp(ChessPiece.PieceType.KNIGHT, ChessGame.TeamColor.BLACK));
+        addPiece(positionsOnBoard[7][2],new ChessPieceImp(ChessPiece.PieceType.BISHOP, ChessGame.TeamColor.BLACK));
+        addPiece(positionsOnBoard[7][5],new ChessPieceImp(ChessPiece.PieceType.BISHOP, ChessGame.TeamColor.BLACK));
+        addPiece(positionsOnBoard[7][3],new ChessPieceImp(ChessPiece.PieceType.QUEEN, ChessGame.TeamColor.BLACK));
+        addPiece(positionsOnBoard[7][4],new ChessPieceImp(ChessPiece.PieceType.KING, ChessGame.TeamColor.BLACK));
+        for (int i = 0; i < 8; i++){
+            addPiece(positionsOnBoard[1][i],new ChessPieceImp(ChessPiece.PieceType.PAWN, ChessGame.TeamColor.BLACK));
+        }
     }
 }

@@ -6,7 +6,13 @@ public class ChessPieceImp implements ChessPiece{
 
     private PieceType type = null;
     private ChessGame.TeamColor color = null;
+    private boolean hasMoved = false;
     //add a position variable?
+
+    public ChessPieceImp(PieceType typeInput, ChessGame.TeamColor colorInput){
+        type = typeInput;
+        color = colorInput;
+    }
 
     /**
      * @return Which team this chess piece belongs to

@@ -4,6 +4,11 @@ public class ChessMoveImp implements ChessMove{
 
     private ChessPosition startPosition = null;
     private ChessPosition endPosition = null;
+
+    public ChessMoveImp(ChessPosition start, ChessPosition end){
+        startPosition = start;
+        endPosition = end;
+    }
     /**
      * @return ChessPosition of starting location
      */
