@@ -4,7 +4,6 @@ public class ChessPositionImp implements ChessPosition{
 
     private int column = 0;
     private int row = 0;
-    //add ChessPiece object?
     private ChessPiece pieceOnSquare = null;
 
     public ChessPositionImp(int colInput, int rowInput) {
