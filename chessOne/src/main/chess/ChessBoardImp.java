@@ -9,8 +9,7 @@ public class ChessBoardImp implements ChessBoard{
         //i is rows, j is columns
         for (int i = 0; i < 8; i++){
             for (int j = 0; j < 8; j++){
-                positionsOnBoard[i][j].setRow(i + 1);
-                positionsOnBoard[i][j].setColumn(j+1);
+                positionsOnBoard[i][j] = new ChessPositionImp(j+1,i+1);
             }
         }
     }
@@ -21,8 +20,9 @@ public class ChessBoardImp implements ChessBoard{
      */
     @Override
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        if (position.getPieceOnSquare() == null){
-            position.setPieceOnSquare(piece);
+        ChessPosition boardPosition = positionsOnBoard[position.getRow() - 1][position.getColumn() - 1];
+        if (boardPosition.getPieceOnSquare() == null){
+            boardPosition.setPieceOnSquare(piece);
         }
         else{
             System.out.println("Cannot add; there is already a piece in that position.");
@@ -36,7 +36,7 @@ public class ChessBoardImp implements ChessBoard{
      */
     @Override
     public ChessPiece getPiece(ChessPosition position) {
-        return position.getPieceOnSquare();
+        return positionsOnBoard[position.getRow() - 1][position.getColumn() - 1].getPieceOnSquare();
     }
 
     /**
@@ -76,7 +76,9 @@ public class ChessBoardImp implements ChessBoard{
         addPiece(positionsOnBoard[7][3],new ChessPieceImp(ChessPiece.PieceType.QUEEN, ChessGame.TeamColor.BLACK));
         addPiece(positionsOnBoard[7][4],new ChessPieceImp(ChessPiece.PieceType.KING, ChessGame.TeamColor.BLACK));
         for (int i = 0; i < 8; i++){
-            addPiece(positionsOnBoard[1][i],new ChessPieceImp(ChessPiece.PieceType.PAWN, ChessGame.TeamColor.BLACK));
+            addPiece(positionsOnBoard[6][i],new ChessPieceImp(ChessPiece.PieceType.PAWN, ChessGame.TeamColor.BLACK));
         }
     }
+
+    //FIXME add toString function (call position toString as well)
 }

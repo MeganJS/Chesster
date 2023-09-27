@@ -46,4 +46,6 @@ public class ChessPositionImp implements ChessPosition{
     public void setPieceOnSquare(ChessPiece pieceOnSquare) {
         this.pieceOnSquare = pieceOnSquare;
     }
+
+    //FIXME add toString function
 }
