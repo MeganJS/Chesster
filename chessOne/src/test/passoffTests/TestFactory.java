@@ -12,7 +12,7 @@ public class TestFactory {
     //------------------------------------------------------------------------------------------------------------------
     public static ChessBoard getNewBoard(){
         // FIXME
-		return null;
+		return new ChessBoardImp();
     }
 
     public static ChessGame getNewGame(){
