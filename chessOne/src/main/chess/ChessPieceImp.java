@@ -30,6 +30,20 @@ public class ChessPieceImp implements ChessPiece{
         return type;
     }
 
+    public void setType(PieceType type) {
+        this.type = type;
+    }
+
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
+    }
+
+    public boolean isHasMoved() {
+        return hasMoved;
+    }
+
+
+
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in danger

@@ -4,6 +4,7 @@ public class ChessMoveImp implements ChessMove{
 
     private ChessPosition startPosition = null;
     private ChessPosition endPosition = null;
+    private boolean canPromote = false;
 
     public ChessMoveImp(ChessPosition start, ChessPosition end){
         startPosition = start;
@@ -32,5 +33,10 @@ public class ChessMoveImp implements ChessMove{
     @Override
     public ChessPiece.PieceType getPromotionPiece() {
         return null;
+    }
+
+    @Override
+    public void setCanPromote(boolean canPromote) {
+        this.canPromote = canPromote;
     }
 }

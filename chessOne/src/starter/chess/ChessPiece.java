@@ -7,6 +7,8 @@ import java.util.Collection;
  */
 public interface ChessPiece {
 
+    boolean isHasMoved();
+
     /**
      * The various different chess piece options
      */
