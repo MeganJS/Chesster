@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.Objects;
+
 public class ChessPositionImp implements ChessPosition{
 
     private int column = 0;
@@ -47,4 +49,36 @@ public class ChessPositionImp implements ChessPosition{
     }
 
     //FIXME add toString function
+
+    //hashcode
+    public int hashCode(){
+        return Objects.hash(row, column);
+    }
+
+    //equals
+    public boolean equals(Object o){
+        if (o.getClass() != this.getClass()){
+            return false;
+        }
+        if (o == this){
+            return true;
+        }
+        //and now we typecast and actually check!
+        ChessPositionImp oPosition = (ChessPositionImp) o;
+        if (oPosition.column != this.column){
+            return false;
+        }
+        if(oPosition.row != this.row){
+            return false;
+        }
+
+        //We should really keep this but we're leaving it out for now because it breaks the code
+        /*
+        if(!this.pieceOnSquare.equals(oPosition.pieceOnSquare)){
+            return false;
+        }
+
+         */
+        return true;
+    }
 }

@@ -6,7 +6,7 @@ public class ChessPieceImp implements ChessPiece{
 
     private PieceType type = null;
     private ChessGame.TeamColor color = null;
-    private boolean hasMoved = false;
+    private PieceRuleset moveRules;
     //add a position variable?
 
     public ChessPieceImp(PieceType typeInput, ChessGame.TeamColor colorInput){
@@ -34,16 +34,6 @@ public class ChessPieceImp implements ChessPiece{
         this.type = type;
     }
 
-    public void setHasMoved(boolean hasMoved) {
-        this.hasMoved = hasMoved;
-    }
-
-    public boolean isHasMoved() {
-        return hasMoved;
-    }
-
-
-
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in danger
@@ -51,6 +41,30 @@ public class ChessPieceImp implements ChessPiece{
      */
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        if(type == PieceType.PAWN){
+            moveRules = new PawnRuleset();
+            return moveRules.findValidMoves(myPosition, board);
+        }
+
         return null;
+    }
+
+
+    public boolean equals(Object o){
+        if (o.getClass() != this.getClass()){
+            return false;
+        }
+        if (o == this){
+            return true;
+        }
+        //typecast time
+        ChessPieceImp oPiece = (ChessPieceImp) o;
+        if (oPiece.color != this.color){
+            return false;
+        }
+        if(oPiece.type != this.type){
+            return false;
+        }
+        return true;
     }
 }

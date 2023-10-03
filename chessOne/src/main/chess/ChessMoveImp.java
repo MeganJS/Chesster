@@ -1,14 +1,18 @@
 package chess;
 
+import java.util.Objects;
+
 public class ChessMoveImp implements ChessMove{
 
     private ChessPosition startPosition = null;
     private ChessPosition endPosition = null;
-    private boolean canPromote = false;
+    private ChessPiece.PieceType promotionPiece = null;
 
-    public ChessMoveImp(ChessPosition start, ChessPosition end){
+
+    public ChessMoveImp(ChessPosition start, ChessPosition end, ChessPiece.PieceType promotion){
         startPosition = start;
         endPosition = end;
+        promotionPiece = promotion;
     }
     /**
      * @return ChessPosition of starting location
@@ -35,8 +39,31 @@ public class ChessMoveImp implements ChessMove{
         return null;
     }
 
-    @Override
-    public void setCanPromote(boolean canPromote) {
-        this.canPromote = canPromote;
+
+    //hashcode function
+    public int hashCode(){
+        return Objects.hash(startPosition,endPosition,promotionPiece);
+    }
+
+
+    public boolean equals(Object o){
+        if(o.getClass() != this.getClass()){
+            return false;
+        } //FIXME will this work with interfaces? if they come from the same interface but different classes...
+        if(o == this){
+            return true;
+        }
+        //casting time!
+        ChessMoveImp oMove = (ChessMoveImp) o;
+        if(!this.startPosition.equals(oMove.startPosition)){
+            return false;
+        }
+        if(!this.endPosition.equals(oMove.endPosition)){
+            return false;
+        }
+        if(oMove.promotionPiece != this.promotionPiece){
+            return false;
+        }
+        return true;
     }
 }

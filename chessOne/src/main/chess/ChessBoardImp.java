@@ -20,9 +20,11 @@ public class ChessBoardImp implements ChessBoard{
      */
     @Override
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        ChessPosition boardPosition = positionsOnBoard[position.getRow() - 1][position.getColumn() - 1];
+        ChessPosition boardPosition = findPosOnBoard(position);
         if (boardPosition.getPieceOnSquare() == null){
             boardPosition.setPieceOnSquare(piece);
+            //this is a line I'm adding to see if it will make the tests work
+            position.setPieceOnSquare(piece);
         }
         else{
             System.out.println("Cannot add; there is already a piece in that position.");
@@ -36,7 +38,11 @@ public class ChessBoardImp implements ChessBoard{
      */
     @Override
     public ChessPiece getPiece(ChessPosition position) {
-        return positionsOnBoard[position.getRow() - 1][position.getColumn() - 1].getPieceOnSquare();
+        return findPosOnBoard(position).getPieceOnSquare();
+    }
+
+    public ChessPosition findPosOnBoard(ChessPosition position){
+        return positionsOnBoard[position.getRow() - 1][position.getColumn() - 1];
     }
 
     /**

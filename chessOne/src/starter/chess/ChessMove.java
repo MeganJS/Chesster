@@ -20,5 +20,4 @@ public interface ChessMove {
      */
     ChessPiece.PieceType getPromotionPiece();
 
-    void setCanPromote(boolean canPromote);
 }

@@ -8,7 +8,6 @@ import java.util.Collection;
 public class ChessGameImp implements ChessGame{
 
     private TeamColor teamTurn = null;
-
     private ChessBoard gameBoard = new ChessBoardImp();
     /**
      * @return Which team's turn it is
@@ -34,7 +33,10 @@ public class ChessGameImp implements ChessGame{
      */
     @Override
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        return null;
+        ChessPiece piece = gameBoard.getPiece(startPosition);
+        Collection<ChessMove> moveSet = piece.pieceMoves(gameBoard, startPosition);
+        //TODO: check if each move puts the game in check. If it does, remove from validMoves
+        return moveSet;
     }
 
     /**

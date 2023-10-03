@@ -12,6 +12,7 @@ public class PawnRuleset implements PieceRuleset{
 
     @Override
     public Collection<ChessMove> findValidMoves(ChessPosition position, ChessBoard board) {
+        validMoves.clear();
         gameBoard = board;
         piecePosition = position;
         ChessPiece piece = gameBoard.getPiece(piecePosition);
@@ -21,20 +22,20 @@ public class PawnRuleset implements PieceRuleset{
             return null;
         }
         if(piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            moveWhite(piece.isHasMoved());
+            moveWhite();
         }
         else if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            moveBlack(piece.isHasMoved());
+            moveBlack();
         }
         return validMoves;
     }
 
-    private void moveWhite(boolean hasMoved){
+    private void moveWhite(){
         //check if piece at end of board
         if (piecePosition.getRow() < 8){
             //space right ahead
             ChessPosition newPos = new ChessPositionImp(piecePosition.getColumn(), piecePosition.getRow()+1);
-            canMove(newPos);
+            boolean unblocked = canMove(newPos);
             //diagonal spaces
             if (piecePosition.getColumn() > 1){
                 newPos.setRow(piecePosition.getRow()+1);
@@ -47,7 +48,7 @@ public class PawnRuleset implements PieceRuleset{
                 canCapture(newPos, ChessGame.TeamColor.BLACK);
             }
             //for a pawn moving for the first time
-            if(!hasMoved){
+            if(piecePosition.getRow() == 2 && unblocked){
                 newPos.setRow(piecePosition.getRow()+2);
                 newPos.setColumn(piecePosition.getColumn());
                 canMove(newPos);
@@ -56,12 +57,12 @@ public class PawnRuleset implements PieceRuleset{
 
     }
 
-    private void moveBlack(boolean hasMoved){
+    private void moveBlack(){
         //check if piece at end of board
         if (piecePosition.getRow() > 1){
             //space right ahead
             ChessPosition newPos = new ChessPositionImp(piecePosition.getColumn(), piecePosition.getRow()-1);
-            canMove(newPos);
+            boolean unblocked = canMove(newPos);
             //diagonal spaces
             if (piecePosition.getColumn() > 1){
                 newPos.setRow(piecePosition.getRow()-1);
@@ -74,7 +75,7 @@ public class PawnRuleset implements PieceRuleset{
                 canCapture(newPos, ChessGame.TeamColor.WHITE);
             }
             //for a pawn moving for the first time
-            if(!hasMoved){
+            if(piecePosition.getRow() == 7 && unblocked){
                 newPos.setRow(piecePosition.getRow()-2);
                 newPos.setColumn(piecePosition.getColumn());
                 canMove(newPos);
@@ -83,27 +84,41 @@ public class PawnRuleset implements PieceRuleset{
 
     }
 
-    private void canMove(ChessPosition newPos){
-        if(gameBoard.getPiece(newPos) == null){
-            ChessMove move = new ChessMoveImp(piecePosition, newPos);
+    private boolean canMove(ChessPosition newPos){
+        ChessPosition startPos = gameBoard.findPosOnBoard(newPos);
+        if(gameBoard.getPiece(startPos) == null){
             //checks if pawn can promote
-            if (newPos.getRow() == 8 || newPos.getRow() == 1){
-                move.setCanPromote(true);
+            if (startPos.getRow() == 8 || startPos.getRow() == 1){
+                promotionMoves(startPos);
             }
-            validMoves.add(move);
+            else{
+                validMoves.add(new ChessMoveImp(piecePosition, startPos, null));
+            }
+            return true;
+        }
+        else{
+            return false;
         }
     }
     private void canCapture(ChessPosition newPos, ChessGame.TeamColor enemyColor){
-        if(gameBoard.getPiece(newPos) != null){
-            if(gameBoard.getPiece(newPos).getTeamColor() == enemyColor) {
-                ChessMove move = new ChessMoveImp(piecePosition, newPos);
+        ChessPosition startPos = gameBoard.findPosOnBoard(newPos);
+        if(gameBoard.getPiece(startPos) != null){
+            if(gameBoard.getPiece(startPos).getTeamColor() == enemyColor) {
                 //checks if pawn can promote
-                if (newPos.getRow() == 8 || newPos.getRow() == 1){
-                    move.setCanPromote(true);
+                if (startPos.getRow() == 8 || startPos.getRow() == 1){
+                    promotionMoves(startPos);
                 }
-                validMoves.add(move);
+                else{
+                    validMoves.add(new ChessMoveImp(piecePosition, startPos, null));
+                }
             }
         }
+    }
+    private void promotionMoves(ChessPosition startPos){
+        validMoves.add(new ChessMoveImp(piecePosition, startPos, ChessPiece.PieceType.ROOK));
+        validMoves.add(new ChessMoveImp(piecePosition, startPos, ChessPiece.PieceType.KNIGHT));
+        validMoves.add(new ChessMoveImp(piecePosition, startPos, ChessPiece.PieceType.QUEEN));
+        validMoves.add(new ChessMoveImp(piecePosition, startPos, ChessPiece.PieceType.BISHOP));
     }
 
     @Override
