@@ -49,6 +49,10 @@ public class ChessPieceImp implements ChessPiece{
             moveRules = new KnightRuleset();
             return moveRules.findValidMoves(myPosition, board);
         }
+        else if(type == PieceType.BISHOP){
+            moveRules = new BishopRuleset();
+            return moveRules.findValidMoves(myPosition, board);
+        }
 
         return null;
     }
