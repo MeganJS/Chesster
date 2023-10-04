@@ -45,6 +45,10 @@ public class ChessPieceImp implements ChessPiece{
             moveRules = new PawnRuleset();
             return moveRules.findValidMoves(myPosition, board);
         }
+        else if(type == PieceType.KNIGHT){
+            moveRules = new KnightRuleset();
+            return moveRules.findValidMoves(myPosition, board);
+        }
 
         return null;
     }
