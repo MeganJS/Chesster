@@ -57,6 +57,10 @@ public class ChessPieceImp implements ChessPiece{
             moveRules = new RookRuleset();
             return moveRules.findValidMoves(myPosition, board);
         }
+        else if(type == PieceType.QUEEN){
+            moveRules = new QueenRuleset();
+            return moveRules.findValidMoves(myPosition, board);
+        }
 
         return null;
     }
