@@ -61,6 +61,10 @@ public class ChessPieceImp implements ChessPiece{
             moveRules = new QueenRuleset();
             return moveRules.findValidMoves(myPosition, board);
         }
+        else if(type == PieceType.KING){
+            moveRules = new KingRuleset();
+            return moveRules.findValidMoves(myPosition, board);
+        }
 
         return null;
     }
