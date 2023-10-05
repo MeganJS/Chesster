@@ -3,20 +3,20 @@ package chess;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class BishopRuleset implements PieceRuleset{
+public class RookRuleset implements PieceRuleset{
+
     private Collection<ChessMove> validMoves = new HashSet<>();
     private ChessBoard gameBoard;
     private ChessPosition piecePosition;
-
     @Override
     public Collection<ChessMove> findValidMoves(ChessPosition position, ChessBoard board) {
         validMoves.clear();
         gameBoard = board;
         piecePosition = position;
         ChessPiece piece = gameBoard.getPiece(piecePosition);
-        if(piece.getPieceType() != ChessPiece.PieceType.BISHOP){
+        if(piece.getPieceType() != ChessPiece.PieceType.ROOK){
             //TODO: throw an exception?
-            System.out.println("This is not a bishop.");
+            System.out.println("This is not a rook.");
             return null;
         }
         generateMoves(piece.getTeamColor());
@@ -29,60 +29,55 @@ public class BishopRuleset implements PieceRuleset{
         int rowInt = piecePosition.getRow();
         int colInt = piecePosition.getColumn();
         ChessPosition newPos = new ChessPositionImp(colInt, rowInt);
-        //up-right moves
+        //up moves
         while(notBlocked){
             rowInt += 1;
-            colInt += 1;
             //check if new position will be off board
-            if (rowInt > 8 || colInt > 8){
+            if (rowInt > 8){
                 break;
             }
             newPos.setRow(rowInt);
-            newPos.setColumn(colInt);
             notBlocked = canMove(newPos, color);
         }
-        //up-left moves
+        //left moves
         notBlocked = true;
         rowInt = piecePosition.getRow();
         colInt = piecePosition.getColumn();
+        newPos.setRow(rowInt);
         while(notBlocked){
-            rowInt += 1;
             colInt -= 1;
             //check if new position will be off board
-            if (rowInt > 8 || colInt < 1){
+            if (colInt < 1){
                 break;
             }
-            newPos.setRow(rowInt);
             newPos.setColumn(colInt);
             notBlocked = canMove(newPos, color);
         }
-        //down-left moves
+        //down moves
         notBlocked = true;
         rowInt = piecePosition.getRow();
         colInt = piecePosition.getColumn();
+        newPos.setColumn(colInt);
         while(notBlocked){
             rowInt -= 1;
-            colInt -= 1;
             //check if new position will be off board
-            if (rowInt < 1 || colInt < 1){
+            if (rowInt < 1){
                 break;
             }
             newPos.setRow(rowInt);
-            newPos.setColumn(colInt);
             notBlocked = canMove(newPos, color);
         }
-        //down-right moves
+        //right moves
         notBlocked = true;
         rowInt = piecePosition.getRow();
         colInt = piecePosition.getColumn();
+        newPos.setRow(rowInt);
         while(notBlocked){
-            rowInt -= 1;
             colInt += 1;
             //check if new position will be off board
-            if (rowInt < 1 || colInt > 8){
+            if (colInt > 8){
                 break;
             }
-            newPos.setRow(rowInt);
             newPos.setColumn(colInt);
             notBlocked = canMove(newPos, color);
         }
