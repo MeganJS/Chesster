@@ -62,6 +62,7 @@ public class ChessGameImp implements ChessGame{
     @Override
     public void makeMove(ChessMove move) throws InvalidMoveException {
         //throw exception if move not in validMoves for that piece (call game function for it)
+        //or if the piece's color doesn't match the current team's turn
         gameBoard.makeMove(move);
     }
 
@@ -73,6 +74,40 @@ public class ChessGameImp implements ChessGame{
      */
     @Override
     public boolean isInCheck(TeamColor teamColor) {
+        //iterate through pieces
+        ChessPosition curPosition = new ChessPositionImp(0,0);
+        ChessPosition kingPosition = new ChessPositionImp(0,0);
+        Collection<ChessMove> enemyMoves;
+        for (int i = 1; i <= 8; i++){
+            curPosition.setRow(i);
+            for (int j = 1; j <= 8; j++){
+                curPosition.setColumn(j);
+                if(gameBoard.getPiece(curPosition) != null){
+                    if (gameBoard.getPiece(curPosition).getPieceType() == ChessPiece.PieceType.KING){
+                        if(gameBoard.getPiece(curPosition).getTeamColor() == teamColor){
+                            kingPosition.setRow(i);
+                            kingPosition.setColumn(j);
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 1; i <= 8; i++){
+            curPosition.setRow(i);
+            for (int j = 1; j <= 8; j++){
+                curPosition.setColumn(j);
+                if (gameBoard.getPiece(curPosition) != null){
+                    if (gameBoard.getPiece(curPosition).getTeamColor() != teamColor){
+                        enemyMoves = gameBoard.getPiece(curPosition).pieceMoves(gameBoard, curPosition);
+                        for(ChessMove enemyMove : enemyMoves){
+                            if (enemyMove.getEndPosition().equals(kingPosition)){
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
