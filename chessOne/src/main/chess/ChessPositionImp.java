@@ -48,7 +48,6 @@ public class ChessPositionImp implements ChessPosition{
         this.pieceOnSquare = pieceOnSquare;
     }
 
-    //FIXME add toString function
 
     //hashcode
     public int hashCode(){
@@ -72,7 +71,7 @@ public class ChessPositionImp implements ChessPosition{
             return false;
         }
 
-        //We should really keep this but we're leaving it out for now because it breaks the code
+        //We should really keep this but we're leaving it out for now because it breaks the tests
         /*
         if(!this.pieceOnSquare.equals(oPosition.pieceOnSquare)){
             return false;

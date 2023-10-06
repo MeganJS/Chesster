@@ -30,7 +30,7 @@ public class ChessPieceImp implements ChessPiece{
         return type;
     }
 
-    public void setType(PieceType type) {
+    public void setPieceType(PieceType type) {
         this.type = type;
     }
 

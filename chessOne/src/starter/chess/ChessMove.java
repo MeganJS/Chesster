@@ -20,4 +20,9 @@ public interface ChessMove {
      */
     ChessPiece.PieceType getPromotionPiece();
 
+    void setStartPosition(ChessPosition startPosition);
+
+    void setEndPosition(ChessPosition endPosition);
+
+    void setPromotionPiece(ChessPiece.PieceType pieceType);
 }

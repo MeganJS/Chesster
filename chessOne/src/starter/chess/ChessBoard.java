@@ -26,4 +26,6 @@ public interface ChessBoard {
     void resetBoard();
 
     ChessPosition findPosOnBoard(ChessPosition newPos);
+
+    void makeMove(ChessMove move);
 }

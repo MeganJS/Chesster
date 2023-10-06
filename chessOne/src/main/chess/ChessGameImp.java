@@ -36,6 +36,21 @@ public class ChessGameImp implements ChessGame{
         ChessPiece piece = gameBoard.getPiece(startPosition);
         Collection<ChessMove> moveSet = piece.pieceMoves(gameBoard, startPosition);
         //TODO: check if each move puts the game in check. If it does, remove from validMoves
+        //I need to be able to completely undo the move
+        ChessMove reverseMove = new ChessMoveImp();
+        ChessPiece capturedPiece;
+        for(ChessMove move : moveSet){
+            reverseMove.setEndPosition(move.getStartPosition());
+            reverseMove.setStartPosition(move.getEndPosition());
+            reverseMove.setPromotionPiece(piece.getPieceType());
+            capturedPiece = gameBoard.getPiece(move.getEndPosition());
+            gameBoard.makeMove(move);
+            if (isInCheck(piece.getTeamColor())){
+                moveSet.remove(move);
+            }
+            gameBoard.makeMove(reverseMove);
+            gameBoard.addPiece(move.getEndPosition(),capturedPiece);
+        }
         return moveSet;
     }
 
@@ -46,7 +61,8 @@ public class ChessGameImp implements ChessGame{
      */
     @Override
     public void makeMove(ChessMove move) throws InvalidMoveException {
-
+        //throw exception if move not in validMoves for that piece (call game function for it)
+        gameBoard.makeMove(move);
     }
 
     /**
@@ -88,7 +104,7 @@ public class ChessGameImp implements ChessGame{
      */
     @Override
     public void setBoard(ChessBoard board) {
-        if (board.getClass() == gameBoard.getClass()){ //FIXME don't know if I need this
+        if (board.getClass() == gameBoard.getClass()){
             gameBoard = board;
         }
     }

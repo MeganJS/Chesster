@@ -8,6 +8,11 @@ public class ChessMoveImp implements ChessMove{
     private ChessPosition endPosition = null;
     private ChessPiece.PieceType promotionPiece = null;
 
+    public ChessMoveImp(){
+        startPosition = null;
+        endPosition = null;
+        promotionPiece = null;
+    }
 
     public ChessMoveImp(ChessPosition start, ChessPosition end, ChessPiece.PieceType promotion){
         startPosition = start;
@@ -36,7 +41,22 @@ public class ChessMoveImp implements ChessMove{
      */
     @Override
     public ChessPiece.PieceType getPromotionPiece() {
-        return null;
+        return promotionPiece;
+    }
+
+    @Override
+    public void setStartPosition(ChessPosition startPosition) {
+        this.startPosition = startPosition;
+    }
+
+    @Override
+    public void setEndPosition(ChessPosition endPosition) {
+        this.endPosition = endPosition;
+    }
+
+    @Override
+    public void setPromotionPiece(ChessPiece.PieceType pieceType) {
+        promotionPiece = pieceType;
     }
 
 

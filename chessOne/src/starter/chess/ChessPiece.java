@@ -7,6 +7,8 @@ import java.util.Collection;
  */
 public interface ChessPiece {
 
+    void setPieceType(PieceType promotionPiece);
+
     /**
      * The various different chess piece options
      */

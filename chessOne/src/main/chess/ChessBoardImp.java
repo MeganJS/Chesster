@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.Arrays;
+
 public class ChessBoardImp implements ChessBoard{
     //make 2d array of ChessPositions! it will be fun!
     private ChessPosition[][] positionsOnBoard;
@@ -13,6 +15,7 @@ public class ChessBoardImp implements ChessBoard{
             }
         }
     }
+
     /**
      * Adds a chess piece to the chessboard
      * @param position where to add the piece to
@@ -21,15 +24,21 @@ public class ChessBoardImp implements ChessBoard{
     @Override
     public void addPiece(ChessPosition position, ChessPiece piece) {
         ChessPosition boardPosition = findPosOnBoard(position);
-        if (boardPosition.getPieceOnSquare() == null){
-            boardPosition.setPieceOnSquare(piece);
-            //this is a line I'm adding to see if it will make the tests work
-            position.setPieceOnSquare(piece);
-        }
-        else{
-            System.out.println("Cannot add; there is already a piece in that position.");
+        boardPosition.setPieceOnSquare(piece);
+        //this is a line I'm adding to see if it will make the tests work
+        position.setPieceOnSquare(piece);
+
+    }
+
+    public void makeMove(ChessMove move){
+        ChessPiece piece = getPiece(move.getStartPosition());
+        addPiece(move.getEndPosition(),piece);
+        addPiece(move.getStartPosition(), null);
+        if (move.getPromotionPiece() != null){
+            piece.setPieceType(move.getPromotionPiece());
         }
     }
+
 
     /**
      * Gets a chess piece on the chessboard
