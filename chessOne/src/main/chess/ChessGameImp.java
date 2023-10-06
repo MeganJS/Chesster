@@ -166,7 +166,26 @@ public class ChessGameImp implements ChessGame{
      */
     @Override
     public boolean isInStalemate(TeamColor teamColor) {
-        return false;
+        if(isInCheck(teamColor)){
+            return false;
+        }
+        ChessPosition curPosition = new ChessPositionImp(0,0);
+        Collection<ChessMove> allyMoves;
+        for (int i = 1; i <= 8; i++){
+            curPosition.setRow(i);
+            for (int j = 1; j <= 8; j++){
+                curPosition.setColumn(j);
+                if(gameBoard.getPiece(curPosition) != null){
+                    if(gameBoard.getPiece(curPosition).getTeamColor() == teamColor){
+                        allyMoves = validMoves(curPosition);
+                        if(!allyMoves.isEmpty()){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
