@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class ChessMoveImp implements ChessMove{
 
-    private ChessPosition startPosition = null;
-    private ChessPosition endPosition = null;
-    private ChessPiece.PieceType promotionPiece = null;
+    private ChessPosition startPosition;
+    private ChessPosition endPosition;
+    private ChessPiece.PieceType promotionPiece;
 
     public ChessMoveImp(){
         startPosition = null;
@@ -69,7 +69,7 @@ public class ChessMoveImp implements ChessMove{
     public boolean equals(Object o){
         if(o.getClass() != this.getClass()){
             return false;
-        } //FIXME will this work with interfaces? if they come from the same interface but different classes...
+        }
         if(o == this){
             return true;
         }

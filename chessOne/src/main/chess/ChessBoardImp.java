@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.Arrays;
 
 public class ChessBoardImp implements ChessBoard{
     //make 2d array of ChessPositions! it will be fun!
@@ -25,9 +24,6 @@ public class ChessBoardImp implements ChessBoard{
     public void addPiece(ChessPosition position, ChessPiece piece) {
         ChessPosition boardPosition = findPosOnBoard(position);
         boardPosition.setPieceOnSquare(piece);
-        //this is a line I'm adding to see if it will make the tests work
-        position.setPieceOnSquare(piece);
-
     }
 
     public void makeMove(ChessMove move){
@@ -64,7 +60,7 @@ public class ChessBoardImp implements ChessBoard{
         //clear board
         for (int i = 0; i < 8; i++){
             for (int j = 0; j < 8; j++){
-                positionsOnBoard[i][j].setPieceOnSquare(null); // FIXME since we're resetting board, consider deleting old pieces. Could get cluttered if lots of resets happen
+                positionsOnBoard[i][j].setPieceOnSquare(null);
             }
         }
 
@@ -95,5 +91,4 @@ public class ChessBoardImp implements ChessBoard{
         }
     }
 
-    //FIXME add toString function (call position toString as well)
 }

@@ -76,7 +76,6 @@ public class ChessPositionImp implements ChessPosition{
         if(!this.pieceOnSquare.equals(oPosition.pieceOnSquare)){
             return false;
         }
-
          */
         return true;
     }

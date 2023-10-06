@@ -69,7 +69,7 @@ public class ChessPieceImp implements ChessPiece{
         return null;
     }
 
-
+    /*
     public boolean equals(Object o){
         if (o.getClass() != this.getClass()){
             return false;
@@ -87,4 +87,6 @@ public class ChessPieceImp implements ChessPiece{
         }
         return true;
     }
+
+     */
 }
