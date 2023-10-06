@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -35,7 +36,8 @@ public class ChessGameImp implements ChessGame{
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = gameBoard.getPiece(startPosition);
         Collection<ChessMove> moveSet = piece.pieceMoves(gameBoard, startPosition);
-        //TODO: check if each move puts the game in check. If it does, remove from validMoves
+        Collection<ChessMove> validMoveSet = new HashSet<>();
+
         //I need to be able to completely undo the move
         ChessMove reverseMove = new ChessMoveImp();
         ChessPiece capturedPiece;
@@ -45,13 +47,13 @@ public class ChessGameImp implements ChessGame{
             reverseMove.setPromotionPiece(piece.getPieceType());
             capturedPiece = gameBoard.getPiece(move.getEndPosition());
             gameBoard.makeMove(move);
-            if (isInCheck(piece.getTeamColor())){
-                moveSet.remove(move);
+            if (!isInCheck(piece.getTeamColor())){
+                validMoveSet.add(move);
             }
             gameBoard.makeMove(reverseMove);
             gameBoard.addPiece(move.getEndPosition(),capturedPiece);
         }
-        return moveSet;
+        return validMoveSet;
     }
 
     /**
@@ -63,7 +65,22 @@ public class ChessGameImp implements ChessGame{
     public void makeMove(ChessMove move) throws InvalidMoveException {
         //throw exception if move not in validMoves for that piece (call game function for it)
         //or if the piece's color doesn't match the current team's turn
+        if(this.teamTurn != null){
+            if(gameBoard.getPiece(move.getStartPosition()).getTeamColor() != this.teamTurn){
+                throw new InvalidMoveException("The piece is not the same color as the team turn.");
+            }
+        }
+        Collection<ChessMove> validMoveSet = validMoves(move.getStartPosition());
+        if (!validMoveSet.contains(move)){
+            throw new InvalidMoveException("This move is not in the valid moves for the piece.");
+        }
         gameBoard.makeMove(move);
+        if (teamTurn == TeamColor.WHITE){
+            setTeamTurn(TeamColor.BLACK);
+        }
+        else{
+            setTeamTurn(TeamColor.WHITE);
+        }
     }
 
     /**
