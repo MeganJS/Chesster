@@ -1,7 +1,9 @@
 package serverCode.services;
 
+import serverCode.models.User;
+
 public class LoginService {
-    public LoginResult login(LoginRequest request){
+    public User login(User userToLog) {
         return null;
     }
 }
