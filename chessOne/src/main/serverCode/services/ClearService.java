@@ -7,6 +7,6 @@ public class ClearService {
     /**
      * Clears all the data from memory/database.
      */
-    public void clearAllData() {
+    public static void clearAllData() {
     }
 }

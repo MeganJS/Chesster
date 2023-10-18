@@ -16,7 +16,7 @@ public class GameServices {
      * @param authToken of user making the request; needs to be verified
      * @return a collection of all game objects currently in database/memory
      */
-    public Collection<Game> listGames(AuthToken authToken) {
+    public static Collection<Game> listGames(AuthToken authToken) {
         return null;
     }
 
@@ -27,7 +27,7 @@ public class GameServices {
      * @param gameName  of game to be created
      * @return game object that is created
      */
-    public Game createGame(AuthToken authToken, String gameName) {
+    public static Game createGame(AuthToken authToken, String gameName) {
         return null;
     }
 
@@ -39,6 +39,6 @@ public class GameServices {
      * @param gameID      of game to be joined
      * @throws Exception if color is already taken
      */
-    public void joinGame(AuthToken authToken, String playerColor, int gameID) throws Exception {
+    public static void joinGame(AuthToken authToken, String playerColor, int gameID) throws Exception {
     }
 }

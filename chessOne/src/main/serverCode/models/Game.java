@@ -67,8 +67,12 @@ public class Game {
         return gameName;
     }
 
-    public ChessGame getGame() {//FIXME will I need a setter for game?
+    public ChessGame getGame() {
         return game;
+    }
+
+    public void setGame(ChessGame game) {
+        this.game = game;
     }
 
     public boolean equals(Object o) {
