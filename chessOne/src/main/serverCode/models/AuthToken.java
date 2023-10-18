@@ -13,6 +13,12 @@ public class AuthToken {
      */
     private String username;
 
+    /**
+     * constructs an AuthToken object
+     *
+     * @param authorization
+     * @param nameuser
+     */
     AuthToken(String authorization, String nameuser) {
         this.authToken = authorization;
         this.username = nameuser;
@@ -33,7 +39,7 @@ public class AuthToken {
     public void setUsername(String username) {
         this.username = username;
     }
-    
+
     public boolean equals(Object o) {
         return false;
     }

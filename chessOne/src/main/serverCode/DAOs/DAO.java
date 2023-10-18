@@ -81,7 +81,7 @@ public interface DAO {
      * @param username    The username of user to be added
      * @param playerColor The color of the team the player will be;
      *                    if null, user will be added as an observer
-     * @throws DataAccessException if game does not exist, or if username is not a real user
+     * @throws DataAccessException if game does not exist, if username is not a real user
      */
     void claimGameSpot(int gameID, String username, String playerColor) throws DataAccessException;
 

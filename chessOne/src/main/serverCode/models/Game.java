@@ -32,6 +32,12 @@ public class Game {
      */
     private ChessGame game = new ChessGameImp();
 
+    /**
+     * constructs a game object
+     *
+     * @param IDforGame
+     * @param nameGame
+     */
     Game(int IDforGame, String nameGame) {
         this.gameID = IDforGame;
         this.gameName = nameGame;

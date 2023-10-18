@@ -20,6 +20,13 @@ public class User {
      */
     private String email;
 
+    /**
+     * Constructs a user object
+     *
+     * @param nameuser
+     * @param wordpass
+     * @param emailAddress
+     */
     User(String nameuser, String wordpass, String emailAddress) {
         this.username = nameuser;
         this.password = wordpass;
