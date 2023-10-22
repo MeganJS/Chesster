@@ -41,6 +41,19 @@ public class AuthToken {
     }
 
     public boolean equals(Object o) {
-        return false;
+        if (o.getClass() != this.getClass()) {
+            return false;
+        }
+        if (o == this) {
+            return true;
+        }
+        AuthToken oAuth = (AuthToken) o;
+        if (!this.username.equals(oAuth.username)) {
+            return false;
+        }
+        if (!this.authToken.equals(oAuth.authToken)) {
+            return false;
+        }
+        return true;
     }
 }

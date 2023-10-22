@@ -63,4 +63,24 @@ public class myDAOTests {
         AuthToken newAuthToken = userAuthDAO.createAuthToken("froggos");
         assertEquals(newAuthToken, userAuthDAO.readAuthToken(newAuthToken.getAuthToken()));
     }
+
+    @Test
+    public void readFakeAuthToken() throws DataAccessException {
+        assertThrows(DataAccessException.class, () -> userAuthDAO.readAuthToken("ohno"));
+    }
+
+    @Test
+    public void deleteAuthToken() throws DataAccessException {
+        AuthToken newAuthToken = userAuthDAO.createAuthToken("froggos");
+        userAuthDAO.deleteAuthToken(newAuthToken);
+        assertThrows(DataAccessException.class, () -> userAuthDAO.readAuthToken(newAuthToken.getAuthToken()));
+    }
+
+    @Test
+    public void deleteAllUserAuth() throws DataAccessException {
+        userAuthDAO.createAuthToken("froggos");
+        userAuthDAO.createUser(new User("jerry", "secretsss", "frogs"));
+        userAuthDAO.createAuthToken("jerry");
+        assertTrue(userAuthDAO.clearAllUserAuthData());
+    }
 }

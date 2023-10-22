@@ -32,7 +32,7 @@ public class MemoryUserAuthDAO implements UserAuthDAO {
 
     @Override
     public void deleteAuthToken(AuthToken authToken) throws DataAccessException {
-
+        authTokens.remove(readAuthToken(authToken.getAuthToken()));
     }
 
     @Override
@@ -58,11 +58,14 @@ public class MemoryUserAuthDAO implements UserAuthDAO {
     }
 
     @Override
-    public void clearAllUserAuthData() throws DataAccessException {
-
+    public boolean clearAllUserAuthData() {
+        users.clear();
+        authTokens.clear();
+        if (users.isEmpty() && authTokens.isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    private String generateAuthString() {
-        return UUID.randomUUID().toString();
-    }
 }

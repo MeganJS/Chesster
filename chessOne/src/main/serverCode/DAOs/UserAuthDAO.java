@@ -60,7 +60,7 @@ public interface UserAuthDAO {
      *
      * @throws DataAccessException
      */
-    void clearAllUserAuthData() throws DataAccessException;
+    boolean clearAllUserAuthData() throws DataAccessException;
     //could add later: delete and update user, for changing password and deleting account
 
 }
