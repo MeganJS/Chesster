@@ -19,7 +19,7 @@ public class AuthToken {
      * @param authorization
      * @param nameuser
      */
-    AuthToken(String authorization, String nameuser) {
+    public AuthToken(String authorization, String nameuser) {
         this.authToken = authorization;
         this.username = nameuser;
     }

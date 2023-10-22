@@ -6,6 +6,7 @@ import serverCode.models.User;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.UUID;
 
 public class MemoryUserAuthDAO implements UserAuthDAO {
     Collection<User> users = new HashSet<>();
@@ -13,12 +14,20 @@ public class MemoryUserAuthDAO implements UserAuthDAO {
 
     @Override
     public AuthToken createAuthToken(String username) throws DataAccessException {
-        return null;
+        readUser(username);
+        AuthToken newAuthToken = new AuthToken(UUID.randomUUID().toString(), username);
+        authTokens.add(newAuthToken);
+        return newAuthToken;
     }
 
     @Override
-    public AuthToken readAuthToken(String authorizationString) throws DataAccessException {
-        return null;
+    public AuthToken readAuthToken(String authString) throws DataAccessException {
+        for (AuthToken token : authTokens) {
+            if (token.getAuthToken().equals(authString)) {
+                return token;
+            }
+        }
+        throw new DataAccessException("This authToken does not exist.");
     }
 
     @Override
@@ -28,8 +37,10 @@ public class MemoryUserAuthDAO implements UserAuthDAO {
 
     @Override
     public User createUser(User newUser) throws DataAccessException {
-        if (users.contains(newUser)) {
-            throw new DataAccessException("User already exists.");
+        for (User user : users) {
+            if (user.equals(newUser)) {
+                throw new DataAccessException("User already exists.");
+            }
         }
         User userToAdd = new User(newUser);
         users.add(userToAdd);
@@ -38,11 +49,20 @@ public class MemoryUserAuthDAO implements UserAuthDAO {
 
     @Override
     public User readUser(String username) throws DataAccessException {
-        return null;
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                return user;
+            }
+        }
+        throw new DataAccessException("User does not exist.");
     }
 
     @Override
     public void clearAllUserAuthData() throws DataAccessException {
 
+    }
+
+    private String generateAuthString() {
+        return UUID.randomUUID().toString();
     }
 }
