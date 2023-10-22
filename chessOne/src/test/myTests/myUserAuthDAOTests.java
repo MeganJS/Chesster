@@ -7,11 +7,9 @@ import serverCode.DAOs.MemoryUserAuthDAO;
 import serverCode.models.AuthToken;
 import serverCode.models.User;
 
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-public class myDAOTests {
+public class myUserAuthDAOTests {
 
     MemoryUserAuthDAO userAuthDAO = new MemoryUserAuthDAO();
 
