@@ -3,6 +3,9 @@ package serverCode.models;
 import chess.ChessGame;
 import chess.ChessGameImp;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 /**
  * This class represents a chess game for the database.
  */
@@ -11,17 +14,22 @@ public class Game {
      * gameID is a unique int identifier for this game
      * Cannot be null
      */
-    private int gameID; //FIXME where and how will this be generated?
+    private int gameID;
     /**
      * whiteUsername is the username of user who is the white player
      * Can be null
      */
-    private String whiteUsername;
+    private String whiteUsername = null;
     /**
      * blackUsername is the username of user who is the black player
      * Can be null
      */
-    private String blackUsername;
+    private String blackUsername = null;
+    /**
+     * observers is the collection of usernames of the users who are observing the game
+     * Can be empty
+     */
+    private Collection<String> observers = new HashSet<>();
     /**
      * gameName is a String provided by the user when the game is created.
      * Does not need to be unique. Default value is an empty string.
@@ -38,7 +46,7 @@ public class Game {
      * @param IDforGame
      * @param nameGame
      */
-    Game(int IDforGame, String nameGame) {
+    public Game(int IDforGame, String nameGame) {
         this.gameID = IDforGame;
         this.gameName = nameGame;
     }
@@ -59,6 +67,22 @@ public class Game {
         this.blackUsername = blackUsername;
     }
 
+    public Collection<String> getObservers() {
+        return observers;
+    }
+
+    public void setObservers(Collection<String> observers) {
+        this.observers = observers;
+    }
+
+    public void addObserver(String username) {
+        observers.add(username);
+    }
+
+    public void removeObserver(String username) {
+        observers.remove(username);
+    }
+
     public int getGameID() {
         return gameID;
     }
@@ -76,6 +100,44 @@ public class Game {
     }
 
     public boolean equals(Object o) {
-        return false;
+        if (o.getClass() != this.getClass()) {
+            return false;
+        }
+        if (this == o) {
+            return true;
+        }
+        Game oGame = (Game) o;
+        if (!oGame.gameName.equals(this.gameName)) {
+            return false;
+        }
+        if (oGame.gameID != this.gameID) {
+            return false;
+        }
+        if (oGame.whiteUsername == null && this.whiteUsername != null) {
+            return false;
+        }
+        if (oGame.whiteUsername != null && this.whiteUsername == null) {
+            return false;
+        }
+        if (oGame.whiteUsername != null && this.whiteUsername != null) {
+            if (!oGame.whiteUsername.equals(this.whiteUsername)) {
+                return false;
+            }
+        }
+        if (oGame.blackUsername == null && this.blackUsername != null) {
+            return false;
+        }
+        if (oGame.blackUsername != null && this.blackUsername == null) {
+            return false;
+        }
+        if (oGame.blackUsername != null && this.blackUsername != null) {
+            if (!oGame.blackUsername.equals(this.blackUsername)) {
+                return false;
+            }
+        }
+        if (!this.observers.equals(oGame.observers)) {
+            return false;
+        }
+        return true;
     }
 }

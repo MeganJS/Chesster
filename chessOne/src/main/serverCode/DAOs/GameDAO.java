@@ -1,5 +1,6 @@
 package serverCode.DAOs;
 
+import chess.ChessGame;
 import dataAccess.DataAccessException;
 import serverCode.models.Game;
 
@@ -20,6 +21,15 @@ public interface GameDAO {
     Game createGame(String gameName) throws DataAccessException;
 
     /**
+     * Finds a game in memory/database
+     *
+     * @param gameID of game to be found
+     * @return game object that is found
+     * @throws DataAccessException if gameID has no existing game
+     */
+    Game readGame(int gameID) throws DataAccessException;
+
+    /**
      * Finds game in memory/database and replaces it with a newGame
      *
      * @param gameID  of game to be updated
@@ -31,13 +41,13 @@ public interface GameDAO {
     /**
      * Updates a game to add a player/observer
      *
-     * @param gameID      The gameID of game to be updated
-     * @param username    The username of user to be added
-     * @param playerColor The color of the team the player will be;
-     *                    if null, user will be added as an observer
-     * @throws DataAccessException if game does not exist, if username is not a real user
+     * @param gameID   The gameID of game to be updated
+     * @param username The username of user to be added
+     * @param color    The color of the team the player will be;
+     *                 if null, user will be added as an observer
+     * @throws DataAccessException if game does not exist, if username is not a real user, if color already taken?
      */
-    void claimGameSpot(int gameID, String username, String playerColor) throws DataAccessException;
+    void claimGameSpot(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException;
 
     /**
      * Returns all the games currently in memory/database
