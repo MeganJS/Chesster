@@ -28,15 +28,7 @@ public interface GameDAO {
      * @throws DataAccessException if gameID has no existing game
      */
     Game readGame(int gameID) throws DataAccessException;
-
-    /**
-     * Finds game in memory/database and replaces it with a newGame
-     *
-     * @param gameID  of game to be updated
-     * @param newGame to replace current game of gameID
-     * @throws DataAccessException if gameID is not in memory/database
-     */
-    void replaceGame(int gameID, Game newGame) throws DataAccessException;
+    
 
     /**
      * Updates a game to add a player/observer

@@ -33,11 +33,6 @@ public class MemoryGameDAO implements GameDAO {
 
 
     @Override
-    public void replaceGame(int gameID, Game newGame) throws DataAccessException {
-
-    }
-
-    @Override
     public void claimGameSpot(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException {
         //Note: This does not check if user is real or authorized. Service will have to do that.
         Game gameInQuestion = readGame(gameID);
@@ -65,12 +60,12 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public Collection<Game> readAllGames() throws DataAccessException {
+    public Collection<Game> readAllGames() {
         return games;
     }
 
     @Override
-    public void clearAllGames() throws DataAccessException {
+    public void clearAllGames() {
         games.clear();
     }
 
