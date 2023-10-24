@@ -9,8 +9,8 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class MemoryUserAuthDAO implements UserAuthDAO {
-    Collection<User> users = new HashSet<>();
-    Collection<AuthToken> authTokens = new HashSet<>();
+    public static Collection<User> users = new HashSet<>();
+    public static Collection<AuthToken> authTokens = new HashSet<>();
 
     @Override
     public AuthToken createAuthToken(String username) throws DataAccessException {

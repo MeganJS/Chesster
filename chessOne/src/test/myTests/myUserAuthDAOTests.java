@@ -1,6 +1,7 @@
 package myTests;
 
 import dataAccess.DataAccessException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import serverCode.DAOs.MemoryUserAuthDAO;
@@ -11,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class myUserAuthDAOTests {
 
-    MemoryUserAuthDAO userAuthDAO = new MemoryUserAuthDAO();
+    static MemoryUserAuthDAO userAuthDAO = new MemoryUserAuthDAO();
 
-    @BeforeEach
-    public void setup() throws DataAccessException {
+    @BeforeAll
+    public static void setup() throws DataAccessException {
         User existingUser = new User("froggos", "soggorf", "pond");
         userAuthDAO.createUser(existingUser);
     }
@@ -77,7 +78,7 @@ public class myUserAuthDAOTests {
     @Test
     public void deleteAllUserAuth() throws DataAccessException {
         userAuthDAO.createAuthToken("froggos");
-        userAuthDAO.createUser(new User("jerry", "secretsss", "frogs"));
+        userAuthDAO.createUser(new User("Garry", "Blue", "macaroons"));
         userAuthDAO.createAuthToken("jerry");
         assertTrue(userAuthDAO.clearAllUserAuthData());
     }

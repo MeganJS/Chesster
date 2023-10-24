@@ -11,7 +11,7 @@ import static java.lang.Math.random;
 
 public class MemoryGameDAO implements GameDAO {
 
-    Collection<Game> games = new HashSet<>();
+    public static Collection<Game> games = new HashSet<>();
 
     @Override
     public Game createGame(String gameName) throws DataAccessException {

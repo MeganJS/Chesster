@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class myGameDAOTests {
     MemoryGameDAO gameDAO = new MemoryGameDAO();
-    MemoryUserAuthDAO userAuthDAO = new MemoryUserAuthDAO();
 
     @Test
     public void createGame() throws DataAccessException {
@@ -41,7 +40,6 @@ public class myGameDAOTests {
     @Test
     public void claimGameSpotWhite() throws DataAccessException {
         Game newGame = gameDAO.createGame("frogs");
-        userAuthDAO.createUser(new User("frienchd fries", "secretestSauce", "nunyabeezwax"));
         gameDAO.claimGameSpot(newGame.getGameID(), "frienchd fries", ChessGame.TeamColor.WHITE);
         Game sameGame = new Game(newGame.getGameID(), "frogs");
         sameGame.setWhiteUsername("frienchd fries");
@@ -51,7 +49,6 @@ public class myGameDAOTests {
     @Test
     public void claimGameSpotBlack() throws DataAccessException {
         Game newGame = gameDAO.createGame("frogs");
-        userAuthDAO.createUser(new User("frienchd fries", "secretestSauce", "nunyabeezwax"));
         gameDAO.claimGameSpot(newGame.getGameID(), "frienchd fries", ChessGame.TeamColor.BLACK);
         Game sameGame = new Game(newGame.getGameID(), "frogs");
         sameGame.setBlackUsername("frienchd fries");
@@ -61,7 +58,6 @@ public class myGameDAOTests {
     @Test
     public void claimGameSpotObserver() throws DataAccessException {
         Game newGame = gameDAO.createGame("frogs");
-        userAuthDAO.createUser(new User("frienchd fries", "secretestSauce", "nunyabeezwax"));
         gameDAO.claimGameSpot(newGame.getGameID(), "frienchd fries", null);
         Game sameGame = new Game(newGame.getGameID(), "frogs");
         sameGame.addObserver("frienchd fries");
@@ -71,8 +67,6 @@ public class myGameDAOTests {
     @Test
     public void claimTakenColorBlack() throws DataAccessException {
         Game newGame = gameDAO.createGame("frogs");
-        userAuthDAO.createUser(new User("frienchd fries", "secretestSauce", "nunyabeezwax"));
-        userAuthDAO.createUser(new User("froggos", "cute!", "plsStopAsking"));
         gameDAO.claimGameSpot(newGame.getGameID(), "frienchd fries", ChessGame.TeamColor.BLACK);
         assertThrows(DataAccessException.class, () -> gameDAO.claimGameSpot(newGame.getGameID(), "froggos", ChessGame.TeamColor.BLACK));
     }
@@ -80,8 +74,6 @@ public class myGameDAOTests {
     @Test
     public void claimTakenColorWhite() throws DataAccessException {
         Game newGame = gameDAO.createGame("frogs");
-        userAuthDAO.createUser(new User("frienchd fries", "secretestSauce", "nunyabeezwax"));
-        userAuthDAO.createUser(new User("froggos", "cute!", "plsStopAsking"));
         gameDAO.claimGameSpot(newGame.getGameID(), "frienchd fries", ChessGame.TeamColor.WHITE);
         assertThrows(DataAccessException.class, () -> gameDAO.claimGameSpot(newGame.getGameID(), "froggos", ChessGame.TeamColor.WHITE));
     }
