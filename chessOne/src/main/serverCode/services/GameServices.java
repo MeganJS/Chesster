@@ -1,5 +1,6 @@
 package serverCode.services;
 
+import chess.ChessGame;
 import dataAccess.DataAccessException;
 import serverCode.DAOs.MemoryGameDAO;
 import serverCode.DAOs.MemoryUserAuthDAO;
@@ -48,6 +49,34 @@ public class GameServices {
      * @param gameID      of game to be joined
      * @throws IOException if color is already taken
      */
-    public static void joinGame(AuthToken authToken, String playerColor, int gameID) throws IOException {
+    //FIXME should I let players join both sides of a game?
+    public static void joinGame(AuthToken authToken, String playerColor, int gameID) throws IOException, DataAccessException {
+        userAuthDAO.readAuthToken(authToken.getAuthToken());
+        Game gameToJoin = gameDAO.readGame(gameID);
+
+        if (playerColor == null) {
+            gameDAO.claimGameSpot(gameID, authToken.getUsername(), null);
+            return;
+        }
+
+        String lowerColor = playerColor.toLowerCase();
+        ChessGame.TeamColor teamColor;
+        if (lowerColor.equals("white")) {
+            teamColor = ChessGame.TeamColor.WHITE;
+            if (gameToJoin.getWhiteUsername() == null) {
+                gameDAO.claimGameSpot(gameID, authToken.getUsername(), teamColor);
+            } else {
+                throw new IOException("White is already taken.");
+            }
+        } else if (lowerColor.equals("black")) {
+            teamColor = ChessGame.TeamColor.BLACK;
+            if (gameToJoin.getBlackUsername() == null) {
+                gameDAO.claimGameSpot(gameID, authToken.getUsername(), teamColor);
+            } else {
+                throw new IOException("Black is already taken.");
+            }
+        } else {
+            throw new IOException("Bad request.");
+        }
     }
 }

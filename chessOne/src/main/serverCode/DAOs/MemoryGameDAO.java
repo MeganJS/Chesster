@@ -37,26 +37,12 @@ public class MemoryGameDAO implements GameDAO {
         //Note: This does not check if user is real or authorized. Service will have to do that.
         Game gameInQuestion = readGame(gameID);
         if (color == ChessGame.TeamColor.WHITE) {
-            if (gameInQuestion.getWhiteUsername() == null) {
-                gameInQuestion.setWhiteUsername(username);
-                return;
-            } else {
-                throw new DataAccessException("White team already taken.");
-            }
-        }
-        if (color == ChessGame.TeamColor.BLACK) {
-            if (gameInQuestion.getBlackUsername() == null) {
-                gameInQuestion.setBlackUsername(username);
-                return;
-            } else {
-                throw new DataAccessException("Black team already taken.");
-            }
-        }
-        if (color == null) {
+            gameInQuestion.setWhiteUsername(username);
+        } else if (color == ChessGame.TeamColor.BLACK) {
+            gameInQuestion.setBlackUsername(username);
+        } else if (color == null) {
             gameInQuestion.addObserver(username);
-            return;
         }
-        throw new DataAccessException("Bad request.");
     }
 
     @Override

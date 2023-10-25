@@ -2,15 +2,9 @@ package myTests;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import serverCode.DAOs.MemoryGameDAO;
-import serverCode.DAOs.MemoryUserAuthDAO;
 import serverCode.models.Game;
-import serverCode.models.User;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -65,17 +59,8 @@ public class myGameDAOTests {
     }
 
     @Test
-    public void claimTakenColorBlack() throws DataAccessException {
-        Game newGame = gameDAO.createGame("frogs");
-        gameDAO.claimGameSpot(newGame.getGameID(), "frienchd fries", ChessGame.TeamColor.BLACK);
-        assertThrows(DataAccessException.class, () -> gameDAO.claimGameSpot(newGame.getGameID(), "froggos", ChessGame.TeamColor.BLACK));
-    }
-
-    @Test
-    public void claimTakenColorWhite() throws DataAccessException {
-        Game newGame = gameDAO.createGame("frogs");
-        gameDAO.claimGameSpot(newGame.getGameID(), "frienchd fries", ChessGame.TeamColor.WHITE);
-        assertThrows(DataAccessException.class, () -> gameDAO.claimGameSpot(newGame.getGameID(), "froggos", ChessGame.TeamColor.WHITE));
+    public void claimFakeGameSpot() throws DataAccessException {
+        assertThrows(DataAccessException.class, () -> gameDAO.claimGameSpot(5817, "frienchd fires", ChessGame.TeamColor.BLACK));
     }
 
     @Test

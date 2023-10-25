@@ -68,7 +68,58 @@ public class myGameServiceTests {
     }
 
     @Test
-    public void joinGameWhite() throws DataAccessException {
+    public void joinGameWhite() throws DataAccessException, IOException {
+        AuthToken authToken = login(userAuthDAO.readUser("frogs"));
+        Game newGame = createGame(authToken, "frog's game");
+        joinGame(authToken, "white", newGame.getGameID());
+        assertEquals("frogs", newGame.getWhiteUsername());
+        gameDAO.clearAllGames();
+        logout(authToken);
+    }
+
+    @Test
+    public void joinGameBlack() throws DataAccessException, IOException {
+        AuthToken authToken = login(userAuthDAO.readUser("frogs"));
+        Game newGame = createGame(authToken, "frog's game");
+        joinGame(authToken, "blaCK", newGame.getGameID());
+        assertEquals("frogs", newGame.getBlackUsername());
+        gameDAO.clearAllGames();
+        logout(authToken);
+    }
+
+    @Test
+    public void joinGameObserver() throws DataAccessException, IOException {
+        AuthToken authToken = login(userAuthDAO.readUser("frogs"));
+        Game newGame = createGame(authToken, "frog's game");
+        joinGame(authToken, null, newGame.getGameID());
+        assertTrue(newGame.getObservers().contains("frogs"));
+        gameDAO.clearAllGames();
+        logout(authToken);
+    }
+
+    @Test
+    public void joinGameAlreadyTaken() throws DataAccessException, IOException {
+        AuthToken authToken1 = login(userAuthDAO.readUser("frogs"));
+        AuthToken authToken2 = login(userAuthDAO.readUser("ghostie"));
+        Game newGame = createGame(authToken1, "frog's game");
+        joinGame(authToken1, "White", newGame.getGameID());
+        assertThrows(IOException.class, () -> joinGame(authToken2, "White", newGame.getGameID()));
+        gameDAO.clearAllGames();
+        logout(authToken1);
+        logout(authToken2);
+    }
+
+    @Test
+    public void joinGameBadRequest() throws DataAccessException, IOException {
+        AuthToken authToken = login(userAuthDAO.readUser("frogs"));
+        Game newGame = createGame(authToken, "frog's game");
+        assertThrows(IOException.class, () -> joinGame(authToken, "mischief", newGame.getGameID()));
+        gameDAO.clearAllGames();
+        logout(authToken);
+    }
+
+    @Test
+    public void clearAllDataTest() {
         
     }
 }
