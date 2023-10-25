@@ -12,7 +12,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 import static serverCode.services.UserAuthServices.*;
 
-public class myServiceTests {
+public class myUserAuthServiceTests {
 
     static MemoryUserAuthDAO userAuthDAO = new MemoryUserAuthDAO();
 
@@ -76,4 +76,5 @@ public class myServiceTests {
     public void registerNoPassword() throws DataAccessException, IOException {
         assertThrows(IOException.class, () -> register(new User("hithere", "", "emails")));
     }
+
 }
