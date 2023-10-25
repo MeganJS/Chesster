@@ -43,7 +43,7 @@ public class MemoryUserAuthDAO implements UserAuthDAO {
     @Override
     public User createUser(User newUser) throws DataAccessException {
         for (User user : users) {
-            if (user.equals(newUser)) {
+            if (user.getUsername().equals(newUser.getUsername())) {
                 throw new DataAccessException("User already exists.");
             }
         }

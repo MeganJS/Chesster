@@ -56,10 +56,24 @@ public class myServiceTests {
 
     @Test
     public void registerAuthCreated() throws DataAccessException, IOException {
-        User newUser = new User("Garry", "Blue", "artschool");
+        User newUser = new User("Jerry", "Glue", "archschool");
         AuthToken authToken = register(newUser);
         assertNotNull(authToken);
         assertEquals(authToken, userAuthDAO.readAuthToken(authToken.getAuthToken()));
+    }
 
+    @Test
+    public void registerExistingUser() throws DataAccessException, IOException {
+        assertThrows(DataAccessException.class, () -> register(new User("frogs", "ohno", "emails")));
+    }
+
+    @Test
+    public void registerNoUsername() throws DataAccessException, IOException {
+        assertThrows(IOException.class, () -> register(new User("", "ohno", "emails")));
+    }
+
+    @Test
+    public void registerNoPassword() throws DataAccessException, IOException {
+        assertThrows(IOException.class, () -> register(new User("hithere", "", "emails")));
     }
 }
