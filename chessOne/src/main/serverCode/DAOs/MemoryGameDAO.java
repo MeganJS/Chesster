@@ -14,7 +14,7 @@ public class MemoryGameDAO implements GameDAO {
     public static Collection<Game> games = new HashSet<>();
 
     @Override
-    public Game createGame(String gameName) throws DataAccessException {
+    public Game createGame(String gameName) {
         int newGameID = generateGameID();
         Game newGame = new Game(newGameID, gameName);
         games.add(newGame);
@@ -34,7 +34,6 @@ public class MemoryGameDAO implements GameDAO {
 
     @Override
     public void claimGameSpot(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException {
-        //Note: This does not check if user is real or authorized. Service will have to do that.
         Game gameInQuestion = readGame(gameID);
         if (color == ChessGame.TeamColor.WHITE) {
             gameInQuestion.setWhiteUsername(username);
