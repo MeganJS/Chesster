@@ -2,6 +2,7 @@ package myTests;
 
 import dataAccess.DataAccessException;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import serverCode.DAOs.MemoryGameDAO;
 import serverCode.DAOs.MemoryUserAuthDAO;
@@ -14,6 +15,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static serverCode.services.ClearService.clearAllData;
 import static serverCode.services.GameServices.*;
 import static serverCode.services.UserAuthServices.*;
 
@@ -119,7 +121,21 @@ public class myGameServiceTests {
     }
 
     @Test
-    public void clearAllDataTest() {
-        
+    public void clearAllDataTest() throws DataAccessException, IOException {
+        AuthToken authToken1 = login(userAuthDAO.readUser("frogs"));
+        AuthToken authToken2 = login(userAuthDAO.readUser("Garry"));
+        AuthToken authToken3 = login(userAuthDAO.readUser("ghostie"));
+        createGame(authToken1, "frog's game");
+        createGame(authToken2, "Gallery");
+        createGame(authToken3, "robotsRcool");
+        clearAllData();
+        assertTrue(gameDAO.readAllGames().isEmpty());
+        assertThrows(DataAccessException.class, () -> userAuthDAO.readAuthToken(authToken3.getAuthToken()));
+        assertThrows(DataAccessException.class, () -> userAuthDAO.readUser("frogs"));
+
+        //putting things back the way they were
+        userAuthDAO.createUser(new User("frogs", "secretssss", "nope"));
+        userAuthDAO.createUser(new User("Garry", "Blue", "artschool"));
+        userAuthDAO.createUser(new User("ghostie", "ohno", "emails"));
     }
 }

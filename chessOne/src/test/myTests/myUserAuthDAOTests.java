@@ -77,9 +77,10 @@ public class myUserAuthDAOTests {
 
     @Test
     public void deleteAllUserAuth() throws DataAccessException {
-        userAuthDAO.createAuthToken("froggos");
+        AuthToken authToken = userAuthDAO.createAuthToken("froggos");
         userAuthDAO.createUser(new User("Garry", "Blue", "macaroons"));
-        userAuthDAO.createAuthToken("jerry");
-        assertTrue(userAuthDAO.clearAllUserAuthData());
+        userAuthDAO.clearAllUserAuthData();
+        assertThrows(DataAccessException.class, () -> userAuthDAO.readUser("Garry"));
+        assertThrows(DataAccessException.class, () -> userAuthDAO.readAuthToken(authToken.getAuthToken()));
     }
 }

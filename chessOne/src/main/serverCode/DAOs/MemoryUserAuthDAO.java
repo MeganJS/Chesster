@@ -63,14 +63,9 @@ public class MemoryUserAuthDAO implements UserAuthDAO {
     }
 
     @Override
-    public boolean clearAllUserAuthData() {
+    public void clearAllUserAuthData() {
         users.clear();
         authTokens.clear();
-        if (users.isEmpty() && authTokens.isEmpty()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
 }
