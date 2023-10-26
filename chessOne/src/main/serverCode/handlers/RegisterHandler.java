@@ -13,7 +13,7 @@ import java.util.Map;
 import static serverCode.services.UserAuthServices.register;
 
 public class RegisterHandler {
-    public static Object handleLogin(Request req, Response res) {
+    public static Object handleRegister(Request req, Response res) {
         var serializer = new Gson();
         var userMap = serializer.fromJson(req.body(), Map.class);
         var returnedUser = createUser(userMap);

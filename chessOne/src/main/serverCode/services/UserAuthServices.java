@@ -31,10 +31,10 @@ public class UserAuthServices {
     /**
      * Ends a user's session. Will call DAO method deleteAuthToken
      *
-     * @param authToken the authToken of the session to be logged out of
+     * @param authString the string of the authToken of the session to be logged out of
      */
-    public static void logout(AuthToken authToken) throws DataAccessException {
-        userAuthDAO.deleteAuthToken(authToken);
+    public static void logout(String authString) throws DataAccessException {
+        userAuthDAO.deleteAuthToken(userAuthDAO.readAuthToken(authString));
     }
 
     /**

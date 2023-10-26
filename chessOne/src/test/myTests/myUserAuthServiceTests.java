@@ -43,8 +43,8 @@ public class myUserAuthServiceTests {
     @Test
     public void logoutServiceTest() throws DataAccessException, IOException {
         AuthToken authToken = login(userAuthDAO.readUser("frogs"));
-        logout(authToken);
-        assertThrows(DataAccessException.class, () -> logout(authToken));
+        logout(authToken.getAuthToken());
+        assertThrows(DataAccessException.class, () -> logout(authToken.getAuthToken()));
     }
 
     @Test

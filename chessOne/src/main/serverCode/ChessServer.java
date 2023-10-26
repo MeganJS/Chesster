@@ -1,6 +1,7 @@
 package serverCode;
 
 import serverCode.handlers.LoginHandler;
+import serverCode.handlers.LogoutHandler;
 import serverCode.handlers.RegisterHandler;
 import spark.Spark;
 import spark.Request;
@@ -22,7 +23,8 @@ public class ChessServer {
 
     private void createRoutes() {
         Spark.post("/session", LoginHandler::handleLogin);
-        Spark.post("/user", RegisterHandler::handleLogin);
+        Spark.post("/user", RegisterHandler::handleRegister);
+        Spark.delete("/session", LogoutHandler::handleLogout);
 
     }
 

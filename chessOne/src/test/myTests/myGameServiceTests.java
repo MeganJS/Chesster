@@ -40,7 +40,7 @@ public class myGameServiceTests {
         AuthToken authToken = login(userAuthDAO.readUser("frogs"));
         assertEquals(games, listGames(authToken));
         gameDAO.clearAllGames();
-        logout(authToken);
+        logout(authToken.getAuthToken());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class myGameServiceTests {
         assertNotNull(newGame);
         assertEquals(newGame, gameDAO.readGame(newGame.getGameID()));
         gameDAO.clearAllGames();
-        logout(authToken);
+        logout(authToken.getAuthToken());
     }
 
     @Test
@@ -75,7 +75,7 @@ public class myGameServiceTests {
         joinGame(authToken, "white", newGame.getGameID());
         assertEquals("frogs", newGame.getWhiteUsername());
         gameDAO.clearAllGames();
-        logout(authToken);
+        logout(authToken.getAuthToken());
     }
 
     @Test
@@ -85,7 +85,7 @@ public class myGameServiceTests {
         joinGame(authToken, "blaCK", newGame.getGameID());
         assertEquals("frogs", newGame.getBlackUsername());
         gameDAO.clearAllGames();
-        logout(authToken);
+        logout(authToken.getAuthToken());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class myGameServiceTests {
         joinGame(authToken, null, newGame.getGameID());
         assertTrue(newGame.getObservers().contains("frogs"));
         gameDAO.clearAllGames();
-        logout(authToken);
+        logout(authToken.getAuthToken());
     }
 
     @Test
@@ -106,8 +106,8 @@ public class myGameServiceTests {
         joinGame(authToken1, "White", newGame.getGameID());
         assertThrows(IOException.class, () -> joinGame(authToken2, "White", newGame.getGameID()));
         gameDAO.clearAllGames();
-        logout(authToken1);
-        logout(authToken2);
+        logout(authToken1.getAuthToken());
+        logout(authToken2.getAuthToken());
     }
 
     @Test
@@ -116,7 +116,7 @@ public class myGameServiceTests {
         Game newGame = createGame(authToken, "frog's game");
         assertThrows(IOException.class, () -> joinGame(authToken, "mischief", newGame.getGameID()));
         gameDAO.clearAllGames();
-        logout(authToken);
+        logout(authToken.getAuthToken());
     }
 
     @Test

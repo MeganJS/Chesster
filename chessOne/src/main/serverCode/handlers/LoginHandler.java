@@ -27,7 +27,7 @@ public class LoginHandler {
         try {
             AuthToken authToken = login(userToLog);
             res.status(200);
-            res.body(serializer.toJson(userToLog));
+            res.body(serializer.toJson(authToken));
             return res.body();
         } catch (Exception ex) {
             res.status(401);
