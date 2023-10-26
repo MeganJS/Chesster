@@ -29,6 +29,7 @@ public class User {
      * @param wordpass
      * @param emailAddress
      */
+
     public User(String nameuser, String wordpass, String emailAddress) {
         this.username = nameuser;
         this.password = wordpass;
