@@ -15,6 +15,7 @@ import static serverCode.services.UserAuthServices.login;
 public class LoginHandler {
 
     public static Object handleLogin(Request req, Response res) {
+        res.type("application/json");
         var serializer = new Gson();
         var userMap = serializer.fromJson(req.body(), Map.class);
         var returnedUser = createUser(userMap);

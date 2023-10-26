@@ -13,6 +13,7 @@ import static serverCode.services.GameServices.createGame;
 
 public class CreateGameHandler {
     public static Object handleCreateGame(Request req, Response res) {
+        res.type("application/json");
         var serializer = new Gson();
         String authString = req.headers("authorization");
         var gameMap = serializer.fromJson(req.body(), Map.class);

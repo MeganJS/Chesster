@@ -14,6 +14,7 @@ import static serverCode.services.GameServices.listGames;
 
 public class ListGamesHandler {
     public static Object handleListGames(Request req, Response res) {
+        res.type("application/json");
         var serializer = new Gson();
         String authString = req.headers("authorization");
         try {

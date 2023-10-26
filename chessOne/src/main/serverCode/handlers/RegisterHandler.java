@@ -14,6 +14,7 @@ import static serverCode.services.UserAuthServices.register;
 
 public class RegisterHandler {
     public static Object handleRegister(Request req, Response res) {
+        res.type("application/json");
         var serializer = new Gson();
         var userMap = serializer.fromJson(req.body(), Map.class);
         var returnedUser = createUser(userMap);
