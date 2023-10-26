@@ -40,8 +40,7 @@ public class LoginHandler {
         try {
             String password = checkForString(userMap, "password");
             String username = checkForString(userMap, "username");
-            String email = checkForString(userMap, "email");
-            return new User(username, password, email);
+            return new User(username, password, null);
         } catch (IOException ex) {
             return new ErrorDescription("Error: unauthorized");
         }

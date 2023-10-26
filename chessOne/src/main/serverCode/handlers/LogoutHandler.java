@@ -12,7 +12,7 @@ public class LogoutHandler {
 
     public static Object handleLogout(Request req, Response res) {
         var serializer = new Gson();
-        String authString = req.headers("authorization"); //FIXME I have no clue if this makes a lick of sense
+        String authString = req.headers("authorization");
         try {
             logout(authString);
             res.status(200);
