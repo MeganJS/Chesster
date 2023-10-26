@@ -19,12 +19,12 @@ public class Game {
      * whiteUsername is the username of user who is the white player
      * Can be null
      */
-    private String whiteUsername = null;
+    private String whiteUsername = "";
     /**
      * blackUsername is the username of user who is the black player
      * Can be null
      */
-    private String blackUsername = null;
+    private String blackUsername = "";
     /**
      * observers is the collection of usernames of the users who are observing the game
      * Can be empty

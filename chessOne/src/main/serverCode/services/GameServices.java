@@ -24,8 +24,8 @@ public class GameServices {
      * @param authToken of user making the request; needs to be verified
      * @return a collection of all game objects currently in database/memory
      */
-    public static Collection<Game> listGames(AuthToken authToken) throws DataAccessException {
-        userAuthDAO.readAuthToken(authToken.getAuthToken());
+    public static Collection<Game> listGames(String authToken) throws DataAccessException {
+        userAuthDAO.readAuthToken(authToken);
         return gameDAO.readAllGames();
     }
 

@@ -38,7 +38,7 @@ public class myGameServiceTests {
         games.add(gameDAO.createGame("Gallery"));
         games.add(gameDAO.createGame("napstablook"));
         AuthToken authToken = login(userAuthDAO.readUser("frogs"));
-        assertEquals(games, listGames(authToken));
+        assertEquals(games, listGames(authToken.getAuthToken()));
         gameDAO.clearAllGames();
         logout(authToken.getAuthToken());
     }
@@ -49,7 +49,7 @@ public class myGameServiceTests {
         games.add(gameDAO.createGame("frog's game"));
         games.add(gameDAO.createGame("Gallery"));
         games.add(gameDAO.createGame("napstablook"));
-        assertThrows(DataAccessException.class, () -> listGames(new AuthToken("lies", "falsehoods")));
+        assertThrows(DataAccessException.class, () -> listGames(new AuthToken("lies", "falsehoods").getAuthToken()));
         gameDAO.clearAllGames();
     }
 
