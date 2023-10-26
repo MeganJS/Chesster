@@ -7,7 +7,6 @@ import spark.Request;
 import spark.Response;
 
 import java.io.IOException;
-import java.io.StringBufferInputStream;
 import java.util.Map;
 
 import static serverCode.services.GameServices.createGame;
@@ -19,7 +18,7 @@ public class CreateGameHandler {
         var gameMap = serializer.fromJson(req.body(), Map.class);
         try {
             String gameName = (String) gameMap.get("gameName");
-            if (gameName == null) {
+            if (gameName == null || gameName.isEmpty()) {
                 throw new IOException();
             }
             Game newGame = createGame(authString, gameName);
@@ -30,7 +29,7 @@ public class CreateGameHandler {
             return res.body();
         } catch (IOException ex1) {
             res.status(400);
-            res.body(serializer.toJson(new ErrorDescription("Error: bad game")));
+            res.body(serializer.toJson(new ErrorDescription("Error: bad request")));
             return res.body();
         } catch (DataAccessException ex2) {
             res.status(401);

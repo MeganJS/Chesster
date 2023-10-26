@@ -1,9 +1,6 @@
 package serverCode;
 
-import serverCode.handlers.ClearHandler;
-import serverCode.handlers.LoginHandler;
-import serverCode.handlers.LogoutHandler;
-import serverCode.handlers.RegisterHandler;
+import serverCode.handlers.*;
 import spark.Spark;
 import spark.Request;
 import spark.Response;
@@ -27,6 +24,8 @@ public class ChessServer {
         Spark.post("/user", RegisterHandler::handleRegister);
         Spark.delete("/session", LogoutHandler::handleLogout);
         Spark.delete("/db", ClearHandler::handleClear);
+        Spark.post("/game", CreateGameHandler::handleCreateGame);
+
 
     }
 
