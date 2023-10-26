@@ -36,8 +36,8 @@ public class GameServices {
      * @param gameName  of game to be created
      * @return game object that is created
      */
-    public static Game createGame(AuthToken authToken, String gameName) throws DataAccessException {
-        userAuthDAO.readAuthToken(authToken.getAuthToken());
+    public static Game createGame(String authToken, String gameName) throws DataAccessException {
+        userAuthDAO.readAuthToken(authToken);
         return gameDAO.createGame(gameName);
     }
 
