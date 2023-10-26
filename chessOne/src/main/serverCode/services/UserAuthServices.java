@@ -43,13 +43,7 @@ public class UserAuthServices {
      * @param userToRegister the model object representing the user who is registering
      * @return the model object representing the user once they have registered
      */
-    public static AuthToken register(User userToRegister) throws DataAccessException, IOException {
-        if (userToRegister.getPassword() == null || userToRegister.getPassword().isEmpty()) {
-            throw new IOException("Bad Request.");
-        }
-        if (userToRegister.getUsername() == null || userToRegister.getUsername().isEmpty()) {
-            throw new IOException("Bad Request.");
-        }
+    public static AuthToken register(User userToRegister) throws DataAccessException {
         User createdUser = userAuthDAO.createUser(userToRegister);
         return userAuthDAO.createAuthToken(createdUser.getUsername());
     }

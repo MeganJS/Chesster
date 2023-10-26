@@ -5,7 +5,6 @@ import serverCode.models.User;
 import spark.Request;
 import spark.Response;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class LoginHandler {

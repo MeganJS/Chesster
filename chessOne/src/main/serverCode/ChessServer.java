@@ -1,11 +1,11 @@
 package serverCode;
 
 import serverCode.handlers.LoginHandler;
+import serverCode.handlers.RegisterHandler;
 import spark.Spark;
 import spark.Request;
 import spark.Response;
 
-import static serverCode.handlers.LoginHandler.handleLogin;
 
 public class ChessServer {
     public static void main(String[] args) {
@@ -22,6 +22,7 @@ public class ChessServer {
 
     private void createRoutes() {
         Spark.post("/session", LoginHandler::handleLogin);
+        Spark.post("/user", RegisterHandler::handleLogin);
 
     }
 
