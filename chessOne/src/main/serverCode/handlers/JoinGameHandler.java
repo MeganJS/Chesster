@@ -22,10 +22,10 @@ public class JoinGameHandler {
             joinGame(authString, playerColor, gameID);
             res.status(200);
             res.body(serializer.toJson(new Object()));
-            return res.body();
         } catch (Exception ex) {
-            return (serializer.toJson(createError(res, ex)));
+            res.body(serializer.toJson(createError(res, ex)));
         }
+        return res.body();
     }
 
     private static ErrorDescription createError(Response res, Exception ex) {

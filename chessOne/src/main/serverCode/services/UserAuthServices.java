@@ -23,7 +23,7 @@ public class UserAuthServices {
     public static AuthToken login(User userToLog) throws DataAccessException, IOException {
         User userInMemory = userAuthDAO.readUser(userToLog.getUsername());
         if (!userToLog.getPassword().equals(userInMemory.getPassword())) {
-            throw new IOException("Unathorized");
+            throw new IOException("Error: unauthorized");
         }
         return userAuthDAO.createAuthToken(userToLog.getUsername());
     }

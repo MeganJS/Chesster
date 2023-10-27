@@ -2,6 +2,7 @@ package serverCode.services;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
+import org.eclipse.jetty.util.IO;
 import serverCode.DAOs.MemoryGameDAO;
 import serverCode.DAOs.MemoryUserAuthDAO;
 import serverCode.models.AuthToken;
@@ -49,7 +50,6 @@ public class GameServices {
      * @param gameID      of game to be joined
      * @throws IOException if color is already taken
      */
-    //FIXME should I let players join both sides of a game?
     public static void joinGame(String authToken, String playerColor, int gameID) throws IOException, DataAccessException {
         AuthToken userAuthToken = userAuthDAO.readAuthToken(authToken);
         Game gameToJoin = gameDAO.readGame(gameID);
@@ -60,23 +60,25 @@ public class GameServices {
         }
 
         String lowerColor = playerColor.toLowerCase();
-        ChessGame.TeamColor teamColor;
-        if (lowerColor.equals("white")) {
-            teamColor = ChessGame.TeamColor.WHITE;
+        gameDAO.claimGameSpot(gameID, userAuthToken.getUsername(), findColor(lowerColor, gameToJoin));
+
+    }
+
+    private static ChessGame.TeamColor findColor(String colorString, Game gameToJoin) throws IOException {
+        if (colorString.equals("white")) {
             if (gameToJoin.getWhiteUsername() == null) {
-                gameDAO.claimGameSpot(gameID, userAuthToken.getUsername(), teamColor);
+                return ChessGame.TeamColor.WHITE;
             } else {
                 throw new IOException("Error: already taken");
             }
-        } else if (lowerColor.equals("black")) {
-            teamColor = ChessGame.TeamColor.BLACK;
-            if (gameToJoin.getBlackUsername() == null) {
-                gameDAO.claimGameSpot(gameID, userAuthToken.getUsername(), teamColor);
-            } else {
-                throw new IOException("Error: already taken");
-            }
-        } else {
-            throw new IOException("Error: bad request");
         }
-    } //TODO use more decomposition
+        if (colorString.equals("black")) {
+            if (gameToJoin.getBlackUsername() == null) {
+                return ChessGame.TeamColor.BLACK;
+            } else {
+                throw new IOException("Error: already taken");
+            }
+        }
+        throw new IOException("Error: bad request");
+    }
 }

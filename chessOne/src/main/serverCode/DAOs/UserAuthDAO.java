@@ -4,7 +4,6 @@ import dataAccess.DataAccessException;
 import serverCode.models.AuthToken;
 import serverCode.models.User;
 
-import java.util.Collection;
 
 /**
  * Data Access Object interface for User and AuthToken model objects. Can be implemented for memory or SQL.

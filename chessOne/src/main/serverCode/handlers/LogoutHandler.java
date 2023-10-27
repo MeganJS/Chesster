@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
 
-import java.util.Map;
-
 import static serverCode.services.UserAuthServices.logout;
 
 public class LogoutHandler {
@@ -21,7 +19,6 @@ public class LogoutHandler {
         } catch (Exception ex) {
             res.status(401);
             res.body(serializer.toJson(new ErrorDescription("Error: unauthorized")));
-            return res.body();
         }
         return res.body();
     }

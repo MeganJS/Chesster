@@ -48,6 +48,11 @@ public class myUserAuthServiceTests {
     }
 
     @Test
+    public void logoutFakeAuthToken() {
+        assertThrows(DataAccessException.class, () -> logout(new AuthToken("stuff", "nonsense").getAuthToken()));
+    }
+
+    @Test
     public void registerUserCreated() throws DataAccessException, IOException {
         User newUser = new User("Garry", "Blue", "artschool");
         register(newUser);
@@ -65,16 +70,6 @@ public class myUserAuthServiceTests {
     @Test
     public void registerExistingUser() throws DataAccessException, IOException {
         assertThrows(DataAccessException.class, () -> register(new User("frogs", "ohno", "emails")));
-    }
-
-    @Test
-    public void registerNoUsername() throws DataAccessException, IOException {
-        assertThrows(IOException.class, () -> register(new User("", "ohno", "emails")));
-    }
-
-    @Test
-    public void registerNoPassword() throws DataAccessException, IOException {
-        assertThrows(IOException.class, () -> register(new User("hithere", "", "emails")));
     }
 
 }

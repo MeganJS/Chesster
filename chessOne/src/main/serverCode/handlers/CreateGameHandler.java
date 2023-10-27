@@ -18,24 +18,26 @@ public class CreateGameHandler {
         String authString = req.headers("authorization");
         var gameMap = serializer.fromJson(req.body(), Map.class);
         try {
-            String gameName = (String) gameMap.get("gameName");
-            if (gameName == null || gameName.isEmpty()) {
-                throw new IOException();
-            }
-            Game newGame = createGame(authString, gameName);
-            gameMap.clear();
-            gameMap.put("gameID", newGame.getGameID());
-            res.body(serializer.toJson(gameMap));
+            res.body(serializer.toJson(createNewGameMap(gameMap, authString)));
             res.status(200);
-            return res.body();
         } catch (IOException ex1) {
             res.status(400);
             res.body(serializer.toJson(new ErrorDescription("Error: bad request")));
-            return res.body();
         } catch (DataAccessException ex2) {
             res.status(401);
             res.body(serializer.toJson(new ErrorDescription("Error: unauthorized")));
-            return res.body();
         }
+        return res.body();
+    }
+
+    private static Map createNewGameMap(Map gameMap, String authString) throws IOException, DataAccessException {
+        String gameName = (String) gameMap.get("gameName");
+        if (gameName == null || gameName.isEmpty()) {
+            throw new IOException();
+        }
+        Game newGame = createGame(authString, gameName);
+        gameMap.clear();
+        gameMap.put("gameID", newGame.getGameID());
+        return gameMap;
     }
 }

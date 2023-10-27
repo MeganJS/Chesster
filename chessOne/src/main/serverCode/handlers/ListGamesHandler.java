@@ -21,12 +21,11 @@ public class ListGamesHandler {
             Collection<Game> games = listGames(authString);
             res.status(200);
             res.body(serializer.toJson(createResponse(games)));
-            return res.body();
         } catch (Exception ex) {
             res.status(401);
             res.body(serializer.toJson(new ErrorDescription("Error: unauthorized")));
-            return res.body();
         }
+        return res.body();
     }
 
     private static Map createResponse(Collection<Game> games) {
