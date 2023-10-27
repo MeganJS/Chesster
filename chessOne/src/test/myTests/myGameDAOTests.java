@@ -2,6 +2,7 @@ package myTests;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import serverCode.DAOs.MemoryGameDAO;
 import serverCode.models.Game;
@@ -12,7 +13,7 @@ import java.util.HashSet;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class myGameDAOTests {
-    MemoryGameDAO gameDAO = new MemoryGameDAO();
+    static MemoryGameDAO gameDAO = new MemoryGameDAO();
 
     @Test
     public void createGame() throws DataAccessException {
@@ -81,6 +82,11 @@ public class myGameDAOTests {
         testGameSet.add(gameDAO.createGame("ChessTime!!"));
         gameDAO.clearAllGames();
         assertTrue(gameDAO.readAllGames().isEmpty());
+    }
+
+    @AfterAll
+    public static void takeDown() {
+        gameDAO.clearAllGames();
     }
 
 }

@@ -1,6 +1,7 @@
 package myTests;
 
 import dataAccess.DataAccessException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import serverCode.DAOs.MemoryGameDAO;
@@ -136,5 +137,10 @@ public class myGameServiceTests {
         userAuthDAO.createUser(new User("frogs", "secretssss", "nope"));
         userAuthDAO.createUser(new User("Garry", "Blue", "artschool"));
         userAuthDAO.createUser(new User("ghostie", "ohno", "emails"));
+    }
+
+    @AfterAll
+    public static void takeDown() {
+        clearAllData();
     }
 }

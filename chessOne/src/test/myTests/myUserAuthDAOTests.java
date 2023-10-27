@@ -1,6 +1,7 @@
 package myTests;
 
 import dataAccess.DataAccessException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import serverCode.DAOs.MemoryUserAuthDAO;
@@ -81,5 +82,10 @@ public class myUserAuthDAOTests {
         userAuthDAO.clearAllUserAuthData();
         assertThrows(DataAccessException.class, () -> userAuthDAO.readUser("Garry"));
         assertThrows(DataAccessException.class, () -> userAuthDAO.readAuthToken(authToken.getAuthToken()));
+    }
+
+    @AfterAll
+    public static void takeDown() {
+        userAuthDAO.clearAllUserAuthData();
     }
 }

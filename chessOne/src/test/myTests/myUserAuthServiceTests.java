@@ -1,6 +1,7 @@
 package myTests;
 
 import dataAccess.DataAccessException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import serverCode.DAOs.MemoryUserAuthDAO;
@@ -10,6 +11,7 @@ import serverCode.models.User;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static serverCode.services.ClearService.clearAllData;
 import static serverCode.services.UserAuthServices.*;
 
 public class myUserAuthServiceTests {
@@ -70,6 +72,11 @@ public class myUserAuthServiceTests {
     @Test
     public void registerExistingUser() throws DataAccessException, IOException {
         assertThrows(DataAccessException.class, () -> register(new User("frogs", "ohno", "emails")));
+    }
+
+    @AfterAll
+    public static void takeDown() {
+        clearAllData();
     }
 
 }
