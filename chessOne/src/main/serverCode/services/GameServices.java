@@ -2,7 +2,6 @@ package serverCode.services;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
-import org.eclipse.jetty.util.IO;
 import serverCode.DAOs.MemoryGameDAO;
 import serverCode.DAOs.MemoryUserAuthDAO;
 import serverCode.models.AuthToken;

@@ -1,6 +1,5 @@
 package serverCode.models;
 
-import java.util.Objects;
 
 /**
  * This class models a User object for the database/memory.
@@ -42,7 +41,7 @@ public class User {
         this.email = new String(copy.email);
     }
 
-    public String getUsername() { //FIXME have getters return copies?
+    public String getUsername() {
         return username;
     }
 
@@ -54,18 +53,10 @@ public class User {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getEmail() {
         return email;
     }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
+    
     public boolean equals(Object o) {
         if (o.getClass() != this.getClass()) {
             return false;

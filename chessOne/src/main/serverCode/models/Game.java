@@ -71,16 +71,8 @@ public class Game {
         return observers;
     }
 
-    public void setObservers(Collection<String> observers) {
-        this.observers = observers;
-    }
-
     public void addObserver(String username) {
         observers.add(username);
-    }
-
-    public void removeObserver(String username) {
-        observers.remove(username);
     }
 
     public int getGameID() {
@@ -89,14 +81,6 @@ public class Game {
 
     public String getGameName() {
         return gameName;
-    }
-
-    public ChessGame getGame() {
-        return game;
-    }
-
-    public void setGame(ChessGame game) {
-        this.game = game;
     }
 
     public boolean equals(Object o) {
