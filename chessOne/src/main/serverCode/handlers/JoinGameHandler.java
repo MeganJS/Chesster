@@ -17,7 +17,8 @@ public class JoinGameHandler {
         var gameMap = serializer.fromJson(req.body(), Map.class);
         try {
             String playerColor = (String) gameMap.get("playerColor");
-            int gameID = (int) gameMap.get("gameID");
+            Double doubleGameID = (double) gameMap.get("gameID");
+            int gameID = doubleGameID.intValue();
             joinGame(authString, playerColor, gameID);
             res.status(200);
             res.body(serializer.toJson(new Object()));
@@ -31,9 +32,9 @@ public class JoinGameHandler {
         if (ex.getMessage().contains("bad")) {
             res.status(400);
         } else if (ex.getMessage().contains("taken")) {
-            res.status(401);
-        } else if (ex.getMessage().contains("unauthorized")) {
             res.status(403);
+        } else if (ex.getMessage().contains("unauthorized")) {
+            res.status(401);
         }
         return new ErrorDescription(ex.getMessage());
     }

@@ -15,11 +15,6 @@ public class MemoryUserAuthDAO implements UserAuthDAO {
     @Override
     public AuthToken createAuthToken(String username) throws DataAccessException {
         readUser(username);
-        for (AuthToken token : authTokens) {
-            if (token.getUsername().equals(username)) {
-                return token; //FIXME this covers case of user who is already logged in but I don't know if it is correct
-            }
-        }
         AuthToken newAuthToken = new AuthToken(UUID.randomUUID().toString(), username);
         authTokens.add(newAuthToken);
         return newAuthToken;
