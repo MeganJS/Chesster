@@ -32,7 +32,7 @@ public class MemoryUserAuthDAO implements UserAuthDAO {
                 return token;
             }
         }
-        throw new DataAccessException("This authToken does not exist.");
+        throw new DataAccessException("Error: unauthorized");
     }
 
     @Override

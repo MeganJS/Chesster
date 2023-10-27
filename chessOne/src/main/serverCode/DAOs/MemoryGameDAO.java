@@ -28,7 +28,7 @@ public class MemoryGameDAO implements GameDAO {
                 return game;
             }
         }
-        throw new DataAccessException("Game not found.");
+        throw new DataAccessException("Error: bad request");
     }
 
 

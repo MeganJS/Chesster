@@ -50,12 +50,12 @@ public class GameServices {
      * @throws IOException if color is already taken
      */
     //FIXME should I let players join both sides of a game?
-    public static void joinGame(AuthToken authToken, String playerColor, int gameID) throws IOException, DataAccessException {
-        userAuthDAO.readAuthToken(authToken.getAuthToken());
+    public static void joinGame(String authToken, String playerColor, int gameID) throws IOException, DataAccessException {
+        AuthToken userAuthToken = userAuthDAO.readAuthToken(authToken);
         Game gameToJoin = gameDAO.readGame(gameID);
 
         if (playerColor == null) {
-            gameDAO.claimGameSpot(gameID, authToken.getUsername(), null);
+            gameDAO.claimGameSpot(gameID, userAuthToken.getUsername(), null);
             return;
         }
 
@@ -64,19 +64,19 @@ public class GameServices {
         if (lowerColor.equals("white")) {
             teamColor = ChessGame.TeamColor.WHITE;
             if (gameToJoin.getWhiteUsername() == null) {
-                gameDAO.claimGameSpot(gameID, authToken.getUsername(), teamColor);
+                gameDAO.claimGameSpot(gameID, userAuthToken.getUsername(), teamColor);
             } else {
-                throw new IOException("White is already taken.");
+                throw new IOException("Error: already taken");
             }
         } else if (lowerColor.equals("black")) {
             teamColor = ChessGame.TeamColor.BLACK;
             if (gameToJoin.getBlackUsername() == null) {
-                gameDAO.claimGameSpot(gameID, authToken.getUsername(), teamColor);
+                gameDAO.claimGameSpot(gameID, userAuthToken.getUsername(), teamColor);
             } else {
-                throw new IOException("Black is already taken.");
+                throw new IOException("Error: already taken");
             }
         } else {
-            throw new IOException("Bad request.");
+            throw new IOException("Error: bad request");
         }
-    }
+    } //TODO use more decomposition
 }

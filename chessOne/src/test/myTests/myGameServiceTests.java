@@ -72,7 +72,7 @@ public class myGameServiceTests {
     public void joinGameWhite() throws DataAccessException, IOException {
         AuthToken authToken = login(userAuthDAO.readUser("frogs"));
         Game newGame = createGame(authToken.getAuthToken(), "frog's game");
-        joinGame(authToken, "white", newGame.getGameID());
+        joinGame(authToken.getAuthToken(), "white", newGame.getGameID());
         assertEquals("frogs", newGame.getWhiteUsername());
         gameDAO.clearAllGames();
         logout(authToken.getAuthToken());
@@ -82,7 +82,7 @@ public class myGameServiceTests {
     public void joinGameBlack() throws DataAccessException, IOException {
         AuthToken authToken = login(userAuthDAO.readUser("frogs"));
         Game newGame = createGame(authToken.getAuthToken(), "frog's game");
-        joinGame(authToken, "blaCK", newGame.getGameID());
+        joinGame(authToken.getAuthToken(), "blaCK", newGame.getGameID());
         assertEquals("frogs", newGame.getBlackUsername());
         gameDAO.clearAllGames();
         logout(authToken.getAuthToken());
@@ -92,7 +92,7 @@ public class myGameServiceTests {
     public void joinGameObserver() throws DataAccessException, IOException {
         AuthToken authToken = login(userAuthDAO.readUser("frogs"));
         Game newGame = createGame(authToken.getAuthToken(), "frog's game");
-        joinGame(authToken, null, newGame.getGameID());
+        joinGame(authToken.getAuthToken(), null, newGame.getGameID());
         assertTrue(newGame.getObservers().contains("frogs"));
         gameDAO.clearAllGames();
         logout(authToken.getAuthToken());
@@ -103,8 +103,8 @@ public class myGameServiceTests {
         AuthToken authToken1 = login(userAuthDAO.readUser("frogs"));
         AuthToken authToken2 = login(userAuthDAO.readUser("ghostie"));
         Game newGame = createGame(authToken1.getAuthToken(), "frog's game");
-        joinGame(authToken1, "White", newGame.getGameID());
-        assertThrows(IOException.class, () -> joinGame(authToken2, "White", newGame.getGameID()));
+        joinGame(authToken1.getAuthToken(), "White", newGame.getGameID());
+        assertThrows(IOException.class, () -> joinGame(authToken2.getAuthToken(), "White", newGame.getGameID()));
         gameDAO.clearAllGames();
         logout(authToken1.getAuthToken());
         logout(authToken2.getAuthToken());
@@ -114,7 +114,7 @@ public class myGameServiceTests {
     public void joinGameBadRequest() throws DataAccessException, IOException {
         AuthToken authToken = login(userAuthDAO.readUser("frogs"));
         Game newGame = createGame(authToken.getAuthToken(), "frog's game");
-        assertThrows(IOException.class, () -> joinGame(authToken, "mischief", newGame.getGameID()));
+        assertThrows(IOException.class, () -> joinGame(authToken.getAuthToken(), "mischief", newGame.getGameID()));
         gameDAO.clearAllGames();
         logout(authToken.getAuthToken());
     }
