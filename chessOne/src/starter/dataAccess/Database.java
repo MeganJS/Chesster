@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class Database {
 
     // FIXME: Change these fields, if necessary, to match your database configuration
-    public static final String DB_NAME = "chess";
+    public static final String DB_NAME = "chessdata";
     private static final String DB_USERNAME = "root";
     private static final String DB_PASSWORD = "frogsong";
 

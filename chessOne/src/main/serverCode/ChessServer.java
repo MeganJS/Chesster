@@ -1,19 +1,26 @@
 package serverCode;
 
+import dataAccess.DataAccessException;
+import dataAccess.Database;
 import serverCode.handlers.*;
 import spark.Spark;
 
+import java.sql.SQLException;
 
 public class ChessServer {
-    public static void main(String[] args) {
+
+    public static Database database = new Database();
+
+    public static void main(String[] args) throws SQLException, DataAccessException {
         new ChessServer().run();
     }
 
-    private void run() {
+    private void run() throws SQLException, DataAccessException {
         Spark.port(8080);
         Spark.externalStaticFileLocation("web");
 
         createRoutes();
+        databaseSetUp();
         Spark.init();
     }
 
@@ -28,4 +35,11 @@ public class ChessServer {
 
     }
 
+    private void databaseSetUp() throws DataAccessException, SQLException {
+        var conn = database.getConnection();
+        var createDB = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS chessdata");
+        createDB.executeUpdate();
+        conn.setCatalog("chessdata");
+        //TODO create tables; possibly call functions in DAO classes?
+    }
 }
