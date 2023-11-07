@@ -10,7 +10,7 @@ import serverCode.models.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class myUserAuthDAOTests {
+public class MemoryUserAuthDAOTests {
 
     static MemoryUserAuthDAO userAuthDAO = new MemoryUserAuthDAO();
 

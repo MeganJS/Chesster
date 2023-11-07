@@ -12,7 +12,7 @@ import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class myGameDAOTests {
+public class MemoryGameDAOTests {
     static MemoryGameDAO gameDAO = new MemoryGameDAO();
 
     @Test

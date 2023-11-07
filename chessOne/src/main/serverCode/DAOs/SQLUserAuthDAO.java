@@ -5,6 +5,10 @@ import dataAccess.Database;
 import serverCode.models.AuthToken;
 import serverCode.models.User;
 
+import java.sql.SQLException;
+
+import static serverCode.ChessServer.getDatabase;
+
 public class SQLUserAuthDAO implements UserAuthDAO {
 
     public static void databaseUserAuthSetUp(Database database) throws DataAccessException {
@@ -52,16 +56,65 @@ public class SQLUserAuthDAO implements UserAuthDAO {
 
     @Override
     public User createUser(User newUser) throws DataAccessException {
-        return null;
+        try {
+            var dataConnection = getDatabase().getConnection();
+            var searchStatement = "SELECT * FROM users WHERE username = ?";
+            var preparedSearch = dataConnection.prepareStatement(searchStatement);
+            preparedSearch.setString(1, newUser.getUsername());
+            var result = preparedSearch.executeQuery();
+            if (result.next()) {
+                throw new DataAccessException("Error: already taken");
+            }
+
+            var createStatement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+            var preparedCreate = dataConnection.prepareStatement(createStatement);
+            preparedCreate.setString(1, newUser.getUsername());
+            preparedCreate.setString(2, newUser.getPassword());
+            preparedCreate.setString(3, newUser.getEmail());
+            preparedCreate.executeUpdate();
+
+            getDatabase().closeConnection(dataConnection);
+            return readUser(newUser.getUsername());
+        } catch (SQLException ex) {
+            throw new DataAccessException("Error: database");
+        }
     }
 
     @Override
     public User readUser(String username) throws DataAccessException {
+        try {
+            var dataConnection = getDatabase().getConnection();
+            var searchStatement = "SELECT * FROM users WHERE username = ?";
+            var preparedSearch = dataConnection.prepareStatement(searchStatement);
+            preparedSearch.setString(1, username);
+            var result = preparedSearch.executeQuery();
+            while (result.next()) {
+                if (result.getString("username") == null) {
+                    throw new DataAccessException("User does not exist");
+                }
+                String name = result.getString("username");
+                String password = result.getString("password");
+                String email = result.getString("email");
+                getDatabase().closeConnection(dataConnection);
+                return new User(name, password, email);
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error: database");
+        }
         return null;
     }
 
     @Override
     public void clearAllUserAuthData() throws DataAccessException {
+        try {
+            var dataConnection = getDatabase().getConnection();
+            var clearUserStatement = "TRUNCATE TABLE users";
+            var preparedClearUser = dataConnection.prepareStatement(clearUserStatement);
+            preparedClearUser.executeUpdate();
 
+        } catch (SQLException e) {
+            throw new DataAccessException("Error: database");
+        }
     }
 }

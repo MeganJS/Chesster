@@ -36,6 +36,10 @@ public class ChessServer {
 
     }
 
+    public static Database getDatabase() {
+        return database;
+    }
+
     private void databaseSetUp() {
         try {
             var dataConnection = database.getConnection();
