@@ -58,48 +58,47 @@ public class SQLUserAuthDAOTests {
     }
 
 
-    /*
-        @Test
-        public void createFakeAuthToken() throws DataAccessException {
-            assertThrows(DataAccessException.class, () -> userAuthDAO.createAuthToken("ohno"));
-        }
-    
-     */
-/*
+    @Test
+    public void createFakeAuthToken() throws DataAccessException {
+        assertThrows(DataAccessException.class, () -> userAuthDAO.createAuthToken("ohno"));
+    }
+
+
     @Test
     public void readAuthToken() throws DataAccessException {
-        AuthToken newAuthToken = userAuthDAO.createAuthToken("froggos");
+        AuthToken newAuthToken = userAuthDAO.createAuthToken("Heyden");
         assertEquals(newAuthToken, userAuthDAO.readAuthToken(newAuthToken.getAuthToken()));
     }
 
- */
-/*
+
     @Test
     public void readFakeAuthToken() throws DataAccessException {
         assertThrows(DataAccessException.class, () -> userAuthDAO.readAuthToken("ohno"));
     }
 
- */
-/*
+
     @Test
     public void deleteAuthToken() throws DataAccessException {
-        AuthToken newAuthToken = userAuthDAO.createAuthToken("froggos");
+        AuthToken newAuthToken = userAuthDAO.createAuthToken("Heyden");
         userAuthDAO.deleteAuthToken(newAuthToken);
         assertThrows(DataAccessException.class, () -> userAuthDAO.readAuthToken(newAuthToken.getAuthToken()));
     }
 
- */
-/*
+    @Test
+    public void deleteFakeAuthToken() throws DataAccessException {
+        assertThrows(DataAccessException.class, () -> userAuthDAO.readAuthToken("ohno"));
+    }
+
     @Test
     public void deleteAllUserAuth() throws DataAccessException {
-        AuthToken authToken = userAuthDAO.createAuthToken("froggos");
+        AuthToken authToken = userAuthDAO.createAuthToken("Heyden");
         userAuthDAO.createUser(new User("Garry", "Blue", "macaroons"));
         userAuthDAO.clearAllUserAuthData();
         assertThrows(DataAccessException.class, () -> userAuthDAO.readUser("Garry"));
         assertThrows(DataAccessException.class, () -> userAuthDAO.readAuthToken(authToken.getAuthToken()));
     }
 
- */
+
     @AfterEach
     public void clearDatabase() throws DataAccessException {
         userAuthDAO.clearAllUserAuthData();

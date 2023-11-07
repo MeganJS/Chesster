@@ -84,7 +84,17 @@ public class SQLUserAuthDAO implements UserAuthDAO {
 
     @Override
     public void deleteAuthToken(AuthToken authToken) throws DataAccessException {
+        try {
+            readAuthToken(authToken.getAuthToken());
+            var dataConnection = getDatabase().getConnection();
+            var deleteStatement = "DELETE FROM authTokens WHERE authToken = ?";
+            var preparedDelete = dataConnection.prepareStatement(deleteStatement);
+            preparedDelete.setString(1, authToken.getAuthToken());
+            preparedDelete.executeUpdate();
 
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -143,6 +153,10 @@ public class SQLUserAuthDAO implements UserAuthDAO {
             var clearUserStatement = "TRUNCATE TABLE users";
             var preparedClearUser = dataConnection.prepareStatement(clearUserStatement);
             preparedClearUser.executeUpdate();
+
+            var clearAuthStatement = "TRUNCATE TABLE authTokens";
+            var preparedClearAuth = dataConnection.prepareStatement(clearAuthStatement);
+            preparedClearAuth.executeUpdate();
 
         } catch (SQLException e) {
             throw new DataAccessException("Error: database");
