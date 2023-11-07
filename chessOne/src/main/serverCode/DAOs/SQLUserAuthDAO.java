@@ -6,6 +6,7 @@ import serverCode.models.AuthToken;
 import serverCode.models.User;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 import static serverCode.ChessServer.getDatabase;
 
@@ -26,8 +27,8 @@ public class SQLUserAuthDAO implements UserAuthDAO {
             createUsersTable.executeUpdate();
             var createAuthStatement = """
                     CREATE TABLE IF NOT EXISTS authTokens (
-                        authToken VARCHAR(100) NOT NULL,
-                        username CHAR(36) NOT NULL,
+                        authToken VARCHAR(36) NOT NULL,
+                        username CHAR(100) NOT NULL,
                         PRIMARY KEY (authToken)
                     )""";
             var createAuthTable = dataConnection.prepareStatement(createAuthStatement);
@@ -41,12 +42,44 @@ public class SQLUserAuthDAO implements UserAuthDAO {
 
     @Override
     public AuthToken createAuthToken(String username) throws DataAccessException {
-        return null;
+        try {
+            readUser(username);
+            var dataConnection = getDatabase().getConnection();
+            var createStatement = "INSERT INTO authTokens (authToken, username) VALUES (?, ?)";
+            var preparedCreate = dataConnection.prepareStatement(createStatement);
+            String authString = UUID.randomUUID().toString();
+            preparedCreate.setString(1, authString);
+            preparedCreate.setString(2, username);
+            preparedCreate.executeUpdate();
+
+            getDatabase().closeConnection(dataConnection);
+            return readAuthToken(authString);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public AuthToken readAuthToken(String authorizationString) throws DataAccessException {
-        return null;
+        try {
+            var dataConnection = getDatabase().getConnection();
+            var searchStatement = "SELECT * FROM authTokens WHERE authToken = ?";
+            var preparedSearch = dataConnection.prepareStatement(searchStatement);
+            preparedSearch.setString(1, authorizationString);
+            var result = preparedSearch.executeQuery();
+            if (!result.isBeforeFirst()) {
+                throw new DataAccessException("Error: unauthorized");
+            }
+            result.next();
+            String authString = result.getString("authToken");
+            String username = result.getString("username");
+            getDatabase().closeConnection(dataConnection);
+            return new AuthToken(authString, username);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
@@ -88,21 +121,19 @@ public class SQLUserAuthDAO implements UserAuthDAO {
             var preparedSearch = dataConnection.prepareStatement(searchStatement);
             preparedSearch.setString(1, username);
             var result = preparedSearch.executeQuery();
-            while (result.next()) {
-                if (result.getString("username") == null) {
-                    throw new DataAccessException("User does not exist");
-                }
-                String name = result.getString("username");
-                String password = result.getString("password");
-                String email = result.getString("email");
-                getDatabase().closeConnection(dataConnection);
-                return new User(name, password, email);
+            if (!result.isBeforeFirst()) {
+                throw new DataAccessException("user does not exist");
             }
+            result.next();
+            String name = result.getString("username");
+            String password = result.getString("password");
+            String email = result.getString("email");
+            getDatabase().closeConnection(dataConnection);
+            return new User(name, password, email);
 
         } catch (SQLException e) {
             throw new DataAccessException("Error: database");
         }
-        return null;
     }
 
     @Override
