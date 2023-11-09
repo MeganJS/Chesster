@@ -83,6 +83,14 @@ public class Game {
         return gameName;
     }
 
+    public ChessGame getChessGame() {
+        return game;
+    }
+
+    public void setChessGame(ChessGame newGame) {
+        game = newGame;
+    }
+
     public boolean equals(Object o) {
         if (o.getClass() != this.getClass()) {
             return false;

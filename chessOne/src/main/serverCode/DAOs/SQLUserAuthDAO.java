@@ -157,6 +157,7 @@ public class SQLUserAuthDAO implements UserAuthDAO {
             var clearAuthStatement = "TRUNCATE TABLE authTokens";
             var preparedClearAuth = dataConnection.prepareStatement(clearAuthStatement);
             preparedClearAuth.executeUpdate();
+            getDatabase().closeConnection(dataConnection);
 
         } catch (SQLException e) {
             throw new DataAccessException("Error: database");
