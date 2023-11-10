@@ -21,7 +21,6 @@ public class SQLGameDAOTests {
         Game newGame = gameDAO.createGame("frogs");
         assertEquals(newGame.getGameName(), "frogs");
     }
-    //TODO: add sad test for createGame()
 
     @Test
     public void readGame() throws DataAccessException {
@@ -97,7 +96,7 @@ public class SQLGameDAOTests {
         assertTrue(gameDAO.readAllGames().isEmpty());
     }
 
-    
+
     @Test
     public void deleteAllGames() throws DataAccessException {
         Collection<Game> testGameSet = new HashSet<>();

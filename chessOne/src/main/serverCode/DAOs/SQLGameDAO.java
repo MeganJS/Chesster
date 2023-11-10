@@ -3,24 +3,18 @@ package serverCode.DAOs;
 import chess.*;
 import com.google.gson.*;
 import dataAccess.DataAccessException;
-import dataAccess.Database;
 import serverCode.models.Game;
 
-import java.io.Reader;
 import java.lang.reflect.Type;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashSet;
 
-import static com.mysql.cj.MysqlType.LONGTEXT;
+
 import static java.lang.Math.random;
-import static java.lang.Math.sqrt;
 import static serverCode.ChessServer.getDatabase;
 
 public class SQLGameDAO implements GameDAO {
-
 
     /*
     public static void databaseGameSetUp(Database database) throws DataAccessException {
@@ -29,7 +23,7 @@ public class SQLGameDAO implements GameDAO {
             dataConnection.setCatalog("chessdata");
             var createGameStatement = """
                     CREATE TABLE IF NOT EXISTS games (
-                        gameID INT NOT NULL AUTO_INCREMENT,
+                        gameID INT NOT NULL,
                         whiteUsername VARCHAR(100),
                         blackUsername VARCHAR(100),
                         observers TEXT,
@@ -50,14 +44,12 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public Game createGame(String gameName) throws DataAccessException {
-        //TODO check if listgames is empty, if so create a random number for the id
-        //or make gameID unique somehow
         try {
             var dataConnection = getDatabase().getConnection();
             dataConnection.setCatalog("chessdata");
             var createStatement = "INSERT INTO games (gameID, gameName, game) VALUES (?, ?, ?)";
             var preparedCreate = dataConnection.prepareStatement(createStatement);
-            int newGameID = (int) (random() * 10000);
+            int newGameID = generateGameID();
             Game newGame = new Game(newGameID, gameName);
             var chessGame = new Gson().toJson(newGame.getChessGame());
             preparedCreate.setInt(1, newGameID);
@@ -193,9 +185,18 @@ public class SQLGameDAO implements GameDAO {
             var preparedClearGame = dataConnection.prepareStatement(clearGameStatement);
             preparedClearGame.executeUpdate();
             getDatabase().closeConnection(dataConnection);
-
         } catch (SQLException e) {
             throw new DataAccessException("Error: database");
+        }
+    }
+
+    private int generateGameID() {
+        int newGameID = (int) (random() * 10000);
+        try {
+            readGame(newGameID);
+            return generateGameID();
+        } catch (DataAccessException ex) {
+            return newGameID;
         }
     }
 
