@@ -51,6 +51,15 @@ public class Game {
         this.gameName = nameGame;
     }
 
+    public Game(int IDforGame, String whiteUser, String blackUser, Collection<String> observingUsers, String nameGame, ChessGame chessGame) {
+        gameID = IDforGame;
+        whiteUsername = whiteUser;
+        blackUsername = blackUser;
+        observers = observingUsers;
+        gameName = nameGame;
+        game = chessGame;
+    }
+
     public String getWhiteUsername() {
         return whiteUsername;
     }
@@ -105,29 +114,25 @@ public class Game {
         if (oGame.gameID != this.gameID) {
             return false;
         }
-        if (oGame.whiteUsername == null && this.whiteUsername != null) {
-            return false;
-        }
-        if (oGame.whiteUsername != null && this.whiteUsername == null) {
-            return false;
-        }
         if (oGame.whiteUsername != null && this.whiteUsername != null) {
             if (!oGame.whiteUsername.equals(this.whiteUsername)) {
                 return false;
             }
-        }
-        if (oGame.blackUsername == null && this.blackUsername != null) {
-            return false;
-        }
-        if (oGame.blackUsername != null && this.blackUsername == null) {
+        } else if (oGame.whiteUsername != null || this.whiteUsername != null) {
             return false;
         }
         if (oGame.blackUsername != null && this.blackUsername != null) {
             if (!oGame.blackUsername.equals(this.blackUsername)) {
                 return false;
             }
+        } else if (oGame.blackUsername != null || this.blackUsername != null) {
+            return false;
         }
-        if (!this.observers.equals(oGame.observers)) {
+        if (oGame.observers != null && this.observers != null) {
+            if (!oGame.observers.equals(this.observers)) {
+                return false;
+            }
+        } else if (oGame.observers != null || this.observers != null) {
             return false;
         }
         return true;
