@@ -155,7 +155,7 @@ public class SQLUserAuthDAO implements UserAuthDAO {
     }
 
     @Override
-    public void clearAllUserAuthData() throws DataAccessException {
+    public void clearAllUserAuthData() {
         try {
             var dataConnection = getDatabase().getConnection();
             dataConnection.setCatalog("chessdata");
@@ -168,8 +168,8 @@ public class SQLUserAuthDAO implements UserAuthDAO {
             preparedClearAuth.executeUpdate();
             getDatabase().closeConnection(dataConnection);
 
-        } catch (SQLException e) {
-            throw new DataAccessException("Error: database");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }

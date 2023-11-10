@@ -177,7 +177,7 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public void clearAllGames() throws DataAccessException {
+    public void clearAllGames() {
         try {
             var dataConnection = getDatabase().getConnection();
             dataConnection.setCatalog("chessdata");
@@ -185,8 +185,8 @@ public class SQLGameDAO implements GameDAO {
             var preparedClearGame = dataConnection.prepareStatement(clearGameStatement);
             preparedClearGame.executeUpdate();
             getDatabase().closeConnection(dataConnection);
-        } catch (SQLException e) {
-            throw new DataAccessException("Error: database");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 

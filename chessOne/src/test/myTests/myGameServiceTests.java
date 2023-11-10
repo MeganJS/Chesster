@@ -2,10 +2,13 @@ package myTests;
 
 import dataAccess.DataAccessException;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import serverCode.DAOs.MemoryGameDAO;
 import serverCode.DAOs.MemoryUserAuthDAO;
+import serverCode.DAOs.SQLGameDAO;
+import serverCode.DAOs.SQLUserAuthDAO;
 import serverCode.models.AuthToken;
 import serverCode.models.Game;
 import serverCode.models.User;
@@ -21,8 +24,8 @@ import static serverCode.services.UserAuthServices.*;
 
 public class myGameServiceTests {
 
-    static MemoryUserAuthDAO userAuthDAO = new MemoryUserAuthDAO();
-    static MemoryGameDAO gameDAO = new MemoryGameDAO();
+    static SQLUserAuthDAO userAuthDAO = new SQLUserAuthDAO();
+    static SQLGameDAO gameDAO = new SQLGameDAO();
 
     @BeforeAll
     public static void setUp() throws DataAccessException {
@@ -74,7 +77,7 @@ public class myGameServiceTests {
         AuthToken authToken = login(userAuthDAO.readUser("frogs"));
         Game newGame = createGame(authToken.getAuthToken(), "frog's game");
         joinGame(authToken.getAuthToken(), "white", newGame.getGameID());
-        assertEquals("frogs", newGame.getWhiteUsername());
+        assertEquals("frogs", gameDAO.readGame(newGame.getGameID()).getWhiteUsername());
         gameDAO.clearAllGames();
         logout(authToken.getAuthToken());
     }
@@ -84,7 +87,7 @@ public class myGameServiceTests {
         AuthToken authToken = login(userAuthDAO.readUser("frogs"));
         Game newGame = createGame(authToken.getAuthToken(), "frog's game");
         joinGame(authToken.getAuthToken(), "blaCK", newGame.getGameID());
-        assertEquals("frogs", newGame.getBlackUsername());
+        assertEquals("frogs", gameDAO.readGame(newGame.getGameID()).getBlackUsername());
         gameDAO.clearAllGames();
         logout(authToken.getAuthToken());
     }
@@ -94,7 +97,7 @@ public class myGameServiceTests {
         AuthToken authToken = login(userAuthDAO.readUser("frogs"));
         Game newGame = createGame(authToken.getAuthToken(), "frog's game");
         joinGame(authToken.getAuthToken(), null, newGame.getGameID());
-        assertTrue(newGame.getObservers().contains("frogs"));
+        assertTrue(gameDAO.readGame(newGame.getGameID()).getObservers().contains("frogs"));
         gameDAO.clearAllGames();
         logout(authToken.getAuthToken());
     }

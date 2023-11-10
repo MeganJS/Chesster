@@ -4,6 +4,8 @@ import chess.ChessGame;
 import dataAccess.DataAccessException;
 import serverCode.DAOs.MemoryGameDAO;
 import serverCode.DAOs.MemoryUserAuthDAO;
+import serverCode.DAOs.SQLGameDAO;
+import serverCode.DAOs.SQLUserAuthDAO;
 import serverCode.models.AuthToken;
 import serverCode.models.Game;
 
@@ -15,8 +17,8 @@ import java.util.Collection;
  */
 public class GameServices {
 
-    static MemoryUserAuthDAO userAuthDAO = new MemoryUserAuthDAO();
-    static MemoryGameDAO gameDAO = new MemoryGameDAO();
+    static SQLUserAuthDAO userAuthDAO = new SQLUserAuthDAO();
+    static SQLGameDAO gameDAO = new SQLGameDAO();
 
     /**
      * Lists all current games. Will call DAO method readAllGames

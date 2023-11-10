@@ -2,6 +2,7 @@ package serverCode.services;
 
 import dataAccess.DataAccessException;
 import serverCode.DAOs.MemoryUserAuthDAO;
+import serverCode.DAOs.SQLUserAuthDAO;
 import serverCode.models.AuthToken;
 import serverCode.models.User;
 
@@ -12,7 +13,7 @@ import java.io.IOException;
  */
 public class UserAuthServices {
 
-    static MemoryUserAuthDAO userAuthDAO = new MemoryUserAuthDAO();
+    static SQLUserAuthDAO userAuthDAO = new SQLUserAuthDAO();
 
     /**
      * Creates a session for an existing user. Will use DAO methods like readUser anc createAuthToken.

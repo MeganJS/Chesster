@@ -2,14 +2,16 @@ package serverCode.services;
 
 import serverCode.DAOs.MemoryGameDAO;
 import serverCode.DAOs.MemoryUserAuthDAO;
+import serverCode.DAOs.SQLGameDAO;
+import serverCode.DAOs.SQLUserAuthDAO;
 
 /**
  * Service for clearing data from memory/database
  */
 public class ClearService {
 
-    static MemoryUserAuthDAO userAuthDAO = new MemoryUserAuthDAO();
-    static MemoryGameDAO gameDAO = new MemoryGameDAO();
+    static SQLUserAuthDAO userAuthDAO = new SQLUserAuthDAO();
+    static SQLGameDAO gameDAO = new SQLGameDAO();
 
     /**
      * Clears all the data from memory/database.
