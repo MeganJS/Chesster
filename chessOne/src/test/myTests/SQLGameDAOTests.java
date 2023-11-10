@@ -1,11 +1,10 @@
 package myTests;
 
 import chess.ChessGame;
+import chess.ChessGameImp;
 import dataAccess.DataAccessException;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import serverCode.DAOs.MemoryGameDAO;
 import serverCode.DAOs.SQLGameDAO;
 import serverCode.models.Game;
 
@@ -22,6 +21,7 @@ public class SQLGameDAOTests {
         Game newGame = gameDAO.createGame("frogs");
         assertEquals(newGame.getGameName(), "frogs");
     }
+    //TODO: add sad test for createGame()
 
     @Test
     public void readGame() throws DataAccessException {
@@ -34,51 +34,54 @@ public class SQLGameDAOTests {
         assertThrows(DataAccessException.class, () -> gameDAO.readGame(5));
     }
 
-    /*
+    @Test
+    public void updateGame() throws DataAccessException {
+        Game newGame = gameDAO.createGame("frogs");
+        newGame.getChessGame().setTeamTurn(ChessGame.TeamColor.BLACK);
+        System.out.println(newGame.getChessGame().getTeamTurn());
+        gameDAO.updateGame(newGame.getGameID(), newGame.getChessGame());
+        assertEquals(ChessGame.TeamColor.BLACK, gameDAO.readGame(newGame.getGameID()).getChessGame().getTeamTurn());
+    }
+
+    @Test
+    public void updateFakeGame() throws DataAccessException {
+        assertThrows(DataAccessException.class, () -> gameDAO.updateGame(5, new ChessGameImp()));
+    }
+
+
     @Test
     public void claimGameSpotWhite() throws DataAccessException {
         Game newGame = gameDAO.createGame("frogs");
         gameDAO.claimGameSpot(newGame.getGameID(), "frienchd fries", ChessGame.TeamColor.WHITE);
-        Game sameGame = new Game(newGame.getGameID(), "frogs");
-        sameGame.setWhiteUsername("frienchd fries");
-        assertEquals(sameGame, newGame);
+        newGame.setWhiteUsername("frienchd fries");
+        assertEquals(newGame, gameDAO.readGame(newGame.getGameID()));
     }
-    *
-     */
 
-    /*
+
     @Test
     public void claimGameSpotBlack() throws DataAccessException {
         Game newGame = gameDAO.createGame("frogs");
         gameDAO.claimGameSpot(newGame.getGameID(), "frienchd fries", ChessGame.TeamColor.BLACK);
-        Game sameGame = new Game(newGame.getGameID(), "frogs");
-        sameGame.setBlackUsername("frienchd fries");
-        assertEquals(sameGame, newGame);
+        newGame.setBlackUsername("frienchd fries");
+        assertEquals(newGame, gameDAO.readGame(newGame.getGameID()));
     }
 
-     */
 
-    /*
     @Test
     public void claimGameSpotObserver() throws DataAccessException {
         Game newGame = gameDAO.createGame("frogs");
         gameDAO.claimGameSpot(newGame.getGameID(), "frienchd fries", null);
-        Game sameGame = new Game(newGame.getGameID(), "frogs");
-        sameGame.addObserver("frienchd fries");
-        assertEquals(sameGame, newGame);
+        newGame.addObserver("frienchd fries");
+        assertEquals(newGame, gameDAO.readGame(newGame.getGameID()));
     }
 
-     */
 
-    /*
     @Test
     public void claimFakeGameSpot() throws DataAccessException {
         assertThrows(DataAccessException.class, () -> gameDAO.claimGameSpot(5817, "frienchd fires", ChessGame.TeamColor.BLACK));
     }
 
-     */
 
-    /*
     @Test
     public void readAllGames() throws DataAccessException {
         Collection<Game> testGameSet = new HashSet<>();
@@ -89,9 +92,12 @@ public class SQLGameDAOTests {
         assertEquals(testGameSet, gameDAO.readAllGames());
     }
 
-     */
+    @Test
+    public void readNoGames() throws DataAccessException {
+        assertTrue(gameDAO.readAllGames().isEmpty());
+    }
 
-    /*
+    
     @Test
     public void deleteAllGames() throws DataAccessException {
         Collection<Game> testGameSet = new HashSet<>();
@@ -102,7 +108,6 @@ public class SQLGameDAOTests {
         assertTrue(gameDAO.readAllGames().isEmpty());
     }
 
-     */
 
     @AfterEach
     public void takeDown() throws DataAccessException {

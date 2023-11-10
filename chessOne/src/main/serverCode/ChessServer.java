@@ -4,10 +4,6 @@ import dataAccess.Database;
 import serverCode.handlers.*;
 import spark.Spark;
 
-
-import static serverCode.DAOs.SQLGameDAO.databaseGameSetUp;
-import static serverCode.DAOs.SQLUserAuthDAO.databaseUserAuthSetUp;
-
 public class ChessServer {
 
     public static Database database = new Database();
@@ -21,7 +17,6 @@ public class ChessServer {
         Spark.externalStaticFileLocation("web");
 
         createRoutes();
-        databaseSetUp();
         Spark.init();
     }
 
@@ -40,6 +35,7 @@ public class ChessServer {
         return database;
     }
 
+    /*
     private void databaseSetUp() {
         try {
             var dataConnection = database.getConnection();
@@ -53,4 +49,5 @@ public class ChessServer {
             System.out.println(ex.getMessage());
         }
     }
+     */
 }

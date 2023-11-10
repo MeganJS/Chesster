@@ -12,6 +12,7 @@ import static serverCode.ChessServer.getDatabase;
 
 public class SQLUserAuthDAO implements UserAuthDAO {
 
+    /*
     public static void databaseUserAuthSetUp(Database database) throws DataAccessException {
         try {
             var dataConnection = database.getConnection();
@@ -40,11 +41,14 @@ public class SQLUserAuthDAO implements UserAuthDAO {
         }
     }
 
+     */
+
     @Override
     public AuthToken createAuthToken(String username) throws DataAccessException {
         try {
             readUser(username);
             var dataConnection = getDatabase().getConnection();
+            dataConnection.setCatalog("chessdata");
             var createStatement = "INSERT INTO authTokens (authToken, username) VALUES (?, ?)";
             var preparedCreate = dataConnection.prepareStatement(createStatement);
             String authString = UUID.randomUUID().toString();
@@ -63,6 +67,7 @@ public class SQLUserAuthDAO implements UserAuthDAO {
     public AuthToken readAuthToken(String authorizationString) throws DataAccessException {
         try {
             var dataConnection = getDatabase().getConnection();
+            dataConnection.setCatalog("chessdata");
             var searchStatement = "SELECT * FROM authTokens WHERE authToken = ?";
             var preparedSearch = dataConnection.prepareStatement(searchStatement);
             preparedSearch.setString(1, authorizationString);
@@ -87,6 +92,7 @@ public class SQLUserAuthDAO implements UserAuthDAO {
         try {
             readAuthToken(authToken.getAuthToken());
             var dataConnection = getDatabase().getConnection();
+            dataConnection.setCatalog("chessdata");
             var deleteStatement = "DELETE FROM authTokens WHERE authToken = ?";
             var preparedDelete = dataConnection.prepareStatement(deleteStatement);
             preparedDelete.setString(1, authToken.getAuthToken());
@@ -101,6 +107,7 @@ public class SQLUserAuthDAO implements UserAuthDAO {
     public User createUser(User newUser) throws DataAccessException {
         try {
             var dataConnection = getDatabase().getConnection();
+            dataConnection.setCatalog("chessdata");
             var searchStatement = "SELECT * FROM users WHERE username = ?";
             var preparedSearch = dataConnection.prepareStatement(searchStatement);
             preparedSearch.setString(1, newUser.getUsername());
@@ -127,6 +134,7 @@ public class SQLUserAuthDAO implements UserAuthDAO {
     public User readUser(String username) throws DataAccessException {
         try {
             var dataConnection = getDatabase().getConnection();
+            dataConnection.setCatalog("chessdata");
             var searchStatement = "SELECT * FROM users WHERE username = ?";
             var preparedSearch = dataConnection.prepareStatement(searchStatement);
             preparedSearch.setString(1, username);
@@ -150,6 +158,7 @@ public class SQLUserAuthDAO implements UserAuthDAO {
     public void clearAllUserAuthData() throws DataAccessException {
         try {
             var dataConnection = getDatabase().getConnection();
+            dataConnection.setCatalog("chessdata");
             var clearUserStatement = "TRUNCATE TABLE users";
             var preparedClearUser = dataConnection.prepareStatement(clearUserStatement);
             preparedClearUser.executeUpdate();

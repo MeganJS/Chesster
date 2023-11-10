@@ -8,28 +8,32 @@ import serverCode.models.Game;
 
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashSet;
 
 import static com.mysql.cj.MysqlType.LONGTEXT;
 import static java.lang.Math.random;
+import static java.lang.Math.sqrt;
 import static serverCode.ChessServer.getDatabase;
 
 public class SQLGameDAO implements GameDAO {
 
+
+    /*
     public static void databaseGameSetUp(Database database) throws DataAccessException {
         try {
             var dataConnection = database.getConnection();
             dataConnection.setCatalog("chessdata");
-            //FIXME move this to a script so it doesn't run every time?
             var createGameStatement = """
                     CREATE TABLE IF NOT EXISTS games (
                         gameID INT NOT NULL AUTO_INCREMENT,
                         whiteUsername VARCHAR(100),
                         blackUsername VARCHAR(100),
                         observers TEXT,
-                        gameName VARCHAR(100),
+                        gameName VARCHAR(100) NOT NULL,
                         game TEXT NOT NULL,
                         PRIMARY KEY (gameID)
                     )""";
@@ -42,11 +46,15 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
+     */
+
     @Override
     public Game createGame(String gameName) throws DataAccessException {
         //TODO check if listgames is empty, if so create a random number for the id
+        //or make gameID unique somehow
         try {
             var dataConnection = getDatabase().getConnection();
+            dataConnection.setCatalog("chessdata");
             var createStatement = "INSERT INTO games (gameID, gameName, game) VALUES (?, ?, ?)";
             var preparedCreate = dataConnection.prepareStatement(createStatement);
             int newGameID = (int) (random() * 10000);
@@ -68,6 +76,7 @@ public class SQLGameDAO implements GameDAO {
     public Game readGame(int gameID) throws DataAccessException {
         try {
             var dataConnection = getDatabase().getConnection();
+            dataConnection.setCatalog("chessdata");
             var searchStatement = "SELECT * FROM games WHERE gameID = ?";
             var preparedSearch = dataConnection.prepareStatement(searchStatement);
             preparedSearch.setInt(1, gameID);
@@ -78,7 +87,10 @@ public class SQLGameDAO implements GameDAO {
             result.next();
             String whiteUser = result.getString("whiteUsername");
             String blackUser = result.getString("blackUsername");
-            Collection<String> observers = new Gson().fromJson(result.getString("observers"), Collection.class);
+            HashSet<String> observers = new Gson().fromJson(result.getString("observers"), HashSet.class);
+            if (observers == null) {
+                observers = new HashSet<>();
+            }
             String gameName = result.getString("gameName");
             var jsonChess = result.getString("game");
             var builder = new GsonBuilder();
@@ -95,21 +107,88 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
-    //TODO add update game function
+    public void updateGame(int gameID, ChessGame newChessGame) throws DataAccessException {
+        try {
+            readGame(gameID);
+            var dataConnection = getDatabase().getConnection();
+            dataConnection.setCatalog("chessdata");
+            if (newChessGame == null) {
+                throw new DataAccessException("Error: bad request");
+            }
+            var jsonChessGame = new Gson().toJson(newChessGame);
+            var updateStatement = "UPDATE games SET game=? WHERE gameID = ?";
+            var preparedUpdate = dataConnection.prepareStatement(updateStatement);
+            preparedUpdate.setString(1, jsonChessGame);
+            preparedUpdate.setInt(2, gameID);
+            preparedUpdate.executeUpdate();
+            getDatabase().closeConnection(dataConnection);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void claimGameSpot(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException {
+        try {
+            var dataConnection = getDatabase().getConnection();
+            dataConnection.setCatalog("chessdata");
+            Game gameToClaim = readGame(gameID);
+            if (color == ChessGame.TeamColor.WHITE) {
+                gameToClaim.setWhiteUsername(username);
+                var updateStatement = "UPDATE games SET whiteUsername = ? WHERE gameID = ?";
+                var preparedUpdate = dataConnection.prepareStatement(updateStatement);
+                preparedUpdate.setString(1, username);
+                preparedUpdate.setInt(2, gameID);
+                preparedUpdate.executeUpdate();
+            } else if (color == ChessGame.TeamColor.BLACK) {
+                gameToClaim.setBlackUsername(username);
+                var updateStatement = "UPDATE games SET blackUsername = ? WHERE gameID = ?";
+                var preparedUpdate = dataConnection.prepareStatement(updateStatement);
+                preparedUpdate.setString(1, username);
+                preparedUpdate.setInt(2, gameID);
+                preparedUpdate.executeUpdate();
+            } else if (color == null) {
+                gameToClaim.addObserver(username);
+                var updateStatement = "UPDATE games SET observers = ? WHERE gameID = ?";
+                var preparedUpdate = dataConnection.prepareStatement(updateStatement);
+                preparedUpdate.setString(1, new Gson().toJson(gameToClaim.getObservers()));
+                preparedUpdate.setInt(2, gameID);
+                preparedUpdate.executeUpdate();
+            }
+            getDatabase().closeConnection(dataConnection);
 
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public Collection<Game> readAllGames() throws DataAccessException {
-        return null;
+        try {
+            Collection<Game> allGames = new HashSet<>();
+            var dataConnection = getDatabase().getConnection();
+            dataConnection.setCatalog("chessdata");
+            var searchStatement = "SELECT * FROM games";
+            var preparedSearch = dataConnection.prepareStatement(searchStatement);
+            var result = preparedSearch.executeQuery();
+            while (result.next()) {
+                int gameID = result.getInt("gameID");
+                allGames.add(readGame(gameID));
+            }
+            getDatabase().closeConnection(dataConnection);
+            return allGames;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void clearAllGames() throws DataAccessException {
         try {
             var dataConnection = getDatabase().getConnection();
+            dataConnection.setCatalog("chessdata");
             var clearGameStatement = "TRUNCATE TABLE games";
             var preparedClearGame = dataConnection.prepareStatement(clearGameStatement);
             preparedClearGame.executeUpdate();

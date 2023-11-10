@@ -55,7 +55,7 @@ public class Game {
         gameID = IDforGame;
         whiteUsername = whiteUser;
         blackUsername = blackUser;
-        observers = observingUsers;
+        observers = (HashSet<String>) observingUsers;
         gameName = nameGame;
         game = chessGame;
     }
@@ -100,6 +100,12 @@ public class Game {
         game = newGame;
     }
 
+    @Override
+    public int hashCode() {
+        return gameID + gameName.length();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o.getClass() != this.getClass()) {
             return false;
