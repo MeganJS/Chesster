@@ -23,6 +23,11 @@ public class SQLGameDAOTests {
     }
 
     @Test
+    public void createNullGame() throws DataAccessException {
+        assertThrows(DataAccessException.class, () -> gameDAO.createGame(null));
+    }
+
+    @Test
     public void readGame() throws DataAccessException {
         Game newGame = gameDAO.createGame("frogs");
         assertEquals(gameDAO.readGame(newGame.getGameID()), newGame);

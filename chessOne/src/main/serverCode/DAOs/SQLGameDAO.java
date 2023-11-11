@@ -45,6 +45,9 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public Game createGame(String gameName) throws DataAccessException {
         try {
+            if (gameName == null) {
+                throw new DataAccessException("Error: bad request");
+            }
             var dataConnection = getDatabase().getConnection();
             dataConnection.setCatalog("chessdata");
             var createStatement = "INSERT INTO games (gameID, gameName, game) VALUES (?, ?, ?)";
@@ -127,14 +130,12 @@ public class SQLGameDAO implements GameDAO {
             dataConnection.setCatalog("chessdata");
             Game gameToClaim = readGame(gameID);
             if (color == ChessGame.TeamColor.WHITE) {
-                gameToClaim.setWhiteUsername(username);
                 var updateStatement = "UPDATE games SET whiteUsername = ? WHERE gameID = ?";
                 var preparedUpdate = dataConnection.prepareStatement(updateStatement);
                 preparedUpdate.setString(1, username);
                 preparedUpdate.setInt(2, gameID);
                 preparedUpdate.executeUpdate();
             } else if (color == ChessGame.TeamColor.BLACK) {
-                gameToClaim.setBlackUsername(username);
                 var updateStatement = "UPDATE games SET blackUsername = ? WHERE gameID = ?";
                 var preparedUpdate = dataConnection.prepareStatement(updateStatement);
                 preparedUpdate.setString(1, username);
@@ -147,7 +148,10 @@ public class SQLGameDAO implements GameDAO {
                 preparedUpdate.setString(1, new Gson().toJson(gameToClaim.getObservers()));
                 preparedUpdate.setInt(2, gameID);
                 preparedUpdate.executeUpdate();
+            } else {
+                throw new DataAccessException("Error: bad request");
             }
+
             getDatabase().closeConnection(dataConnection);
 
         } catch (SQLException e) {
