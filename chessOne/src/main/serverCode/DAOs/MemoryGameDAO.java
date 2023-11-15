@@ -2,7 +2,7 @@ package serverCode.DAOs;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
-import serverCode.models.Game;
+import models.Game;
 
 import java.util.Collection;
 import java.util.HashSet;

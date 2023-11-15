@@ -6,7 +6,7 @@ import dataAccess.DataAccessException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import serverCode.DAOs.SQLGameDAO;
-import serverCode.models.Game;
+import models.Game;
 
 import java.util.Collection;
 import java.util.HashSet;

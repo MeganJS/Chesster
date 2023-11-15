@@ -2,16 +2,13 @@ package myTests;
 
 import dataAccess.DataAccessException;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import serverCode.DAOs.MemoryGameDAO;
-import serverCode.DAOs.MemoryUserAuthDAO;
 import serverCode.DAOs.SQLGameDAO;
 import serverCode.DAOs.SQLUserAuthDAO;
-import serverCode.models.AuthToken;
-import serverCode.models.Game;
-import serverCode.models.User;
+import models.AuthToken;
+import models.Game;
+import models.User;
 
 import java.io.IOException;
 import java.util.Collection;

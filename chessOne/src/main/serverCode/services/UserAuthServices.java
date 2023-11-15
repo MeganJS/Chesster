@@ -1,10 +1,9 @@
 package serverCode.services;
 
 import dataAccess.DataAccessException;
-import serverCode.DAOs.MemoryUserAuthDAO;
 import serverCode.DAOs.SQLUserAuthDAO;
-import serverCode.models.AuthToken;
-import serverCode.models.User;
+import models.AuthToken;
+import models.User;
 
 import java.io.IOException;
 

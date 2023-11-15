@@ -1,4 +1,4 @@
-package serverCode.models;
+package models;
 
 
 /**
@@ -56,7 +56,7 @@ public class User {
     public String getEmail() {
         return email;
     }
-    
+
     public boolean equals(Object o) {
         if (o.getClass() != this.getClass()) {
             return false;

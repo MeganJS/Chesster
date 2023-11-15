@@ -5,8 +5,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import serverCode.DAOs.MemoryUserAuthDAO;
-import serverCode.models.AuthToken;
-import serverCode.models.User;
+import models.AuthToken;
+import models.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -31,6 +31,9 @@ public class ChessServer {
 
     }
 
+    //TODO implement Bcrypt
+    //TODO this is a problem. I need to make it so the database can't be acquired this way; probably need to pass it in to the handlers.
+    //FIXME try making it static?
     public static Database getDatabase() {
         return database;
     }

@@ -1,8 +1,8 @@
 package serverCode.DAOs;
 
 import dataAccess.DataAccessException;
-import serverCode.models.AuthToken;
-import serverCode.models.User;
+import models.AuthToken;
+import models.User;
 
 
 /**

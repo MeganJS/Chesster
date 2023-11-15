@@ -1,4 +1,4 @@
-package serverCode.models;
+package models;
 
 import chess.ChessGame;
 import chess.ChessGameImp;
@@ -100,6 +100,8 @@ public class Game {
         game = newGame;
     }
 
+    //todo: make one-way!! This is very easy to guess
+    //make reliant on a chessGame hashcode?
     @Override
     public int hashCode() {
         return gameID + gameName.length();

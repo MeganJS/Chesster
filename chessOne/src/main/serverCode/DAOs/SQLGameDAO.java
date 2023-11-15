@@ -3,7 +3,7 @@ package serverCode.DAOs;
 import chess.*;
 import com.google.gson.*;
 import dataAccess.DataAccessException;
-import serverCode.models.Game;
+import models.Game;
 
 import java.lang.reflect.Type;
 import java.sql.SQLException;

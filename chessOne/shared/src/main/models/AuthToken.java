@@ -1,4 +1,4 @@
-package serverCode.models;
+package models;
 
 /**
  * This class represents an AuthToken for a session.

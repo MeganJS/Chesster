@@ -2,7 +2,7 @@ package serverCode.DAOs;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
-import serverCode.models.Game;
+import models.Game;
 
 import java.util.Collection;
 
@@ -28,7 +28,7 @@ public interface GameDAO {
      * @throws DataAccessException if gameID has no existing game
      */
     Game readGame(int gameID) throws DataAccessException;
-    
+
 
     /**
      * Updates a game to add a player/observer

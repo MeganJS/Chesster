@@ -1,9 +1,8 @@
 package serverCode.DAOs;
 
 import dataAccess.DataAccessException;
-import dataAccess.Database;
-import serverCode.models.AuthToken;
-import serverCode.models.User;
+import models.AuthToken;
+import models.User;
 
 import java.sql.SQLException;
 import java.util.UUID;

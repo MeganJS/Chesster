@@ -1,7 +1,7 @@
 package serverCode.handlers;
 
 import com.google.gson.Gson;
-import serverCode.models.Game;
+import models.Game;
 import spark.Request;
 import spark.Response;
 

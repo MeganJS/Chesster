@@ -1,11 +1,11 @@
 package serverCode.handlers;
 
 import dataAccess.DataAccessException;
-import serverCode.models.AuthToken;
+import models.AuthToken;
 import spark.Request;
 import spark.Response;
 import com.google.gson.Gson;
-import serverCode.models.User;
+import models.User;
 
 import java.io.IOException;
 import java.util.Map;
