@@ -2,6 +2,7 @@ package serverCode.services;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
+import dataAccess.Database;
 import serverCode.DAOs.SQLGameDAO;
 import serverCode.DAOs.SQLUserAuthDAO;
 import models.AuthToken;

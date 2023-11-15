@@ -99,9 +99,7 @@ public class Game {
     public void setChessGame(ChessGame newGame) {
         game = newGame;
     }
-
-    //todo: make one-way!! This is very easy to guess
-    //make reliant on a chessGame hashcode?
+    
     @Override
     public int hashCode() {
         return gameID + gameName.length();

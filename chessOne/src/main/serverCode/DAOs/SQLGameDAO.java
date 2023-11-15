@@ -3,6 +3,7 @@ package serverCode.DAOs;
 import chess.*;
 import com.google.gson.*;
 import dataAccess.DataAccessException;
+import dataAccess.Database;
 import models.Game;
 
 import java.lang.reflect.Type;
@@ -17,11 +18,7 @@ import static serverCode.ChessServer.getDatabase;
 public class SQLGameDAO implements GameDAO {
 
     /*
-    public static void databaseGameSetUp(Database database) throws DataAccessException {
-        try {
-            var dataConnection = database.getConnection();
-            dataConnection.setCatalog("chessdata");
-            var createGameStatement = """
+
                     CREATE TABLE IF NOT EXISTS games (
                         gameID INT NOT NULL,
                         whiteUsername VARCHAR(100),
@@ -30,17 +27,9 @@ public class SQLGameDAO implements GameDAO {
                         gameName VARCHAR(100) NOT NULL,
                         game TEXT NOT NULL,
                         PRIMARY KEY (gameID)
-                    )""";
-            var createGameTable = dataConnection.prepareStatement(createGameStatement);
-            createGameTable.executeUpdate();
-
-            database.closeConnection(dataConnection);
-        } catch (Exception ex) {
-            throw new DataAccessException("Couldn't set up Game Table.");
-        }
-    }
-
+                    )
      */
+    static Database database = new Database();
 
     @Override
     public Game createGame(String gameName) throws DataAccessException {
@@ -48,7 +37,7 @@ public class SQLGameDAO implements GameDAO {
             if (gameName == null) {
                 throw new DataAccessException("Error: bad request");
             }
-            var dataConnection = getDatabase().getConnection();
+            var dataConnection = database.getConnection();
             dataConnection.setCatalog("chessdata");
             var createStatement = "INSERT INTO games (gameID, gameName, game) VALUES (?, ?, ?)";
             var preparedCreate = dataConnection.prepareStatement(createStatement);
@@ -60,7 +49,7 @@ public class SQLGameDAO implements GameDAO {
             preparedCreate.setObject(3, chessGame);
             preparedCreate.executeUpdate();
 
-            getDatabase().closeConnection(dataConnection);
+            database.closeConnection(dataConnection);
             return readGame(newGameID);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -70,7 +59,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public Game readGame(int gameID) throws DataAccessException {
         try {
-            var dataConnection = getDatabase().getConnection();
+            var dataConnection = database.getConnection();
             dataConnection.setCatalog("chessdata");
             var searchStatement = "SELECT * FROM games WHERE gameID = ?";
             var preparedSearch = dataConnection.prepareStatement(searchStatement);
@@ -94,7 +83,7 @@ public class SQLGameDAO implements GameDAO {
             builder.registerTypeAdapter(ChessPosition.class, new ChessPositionAdapter());
             ChessGame chessGame = builder.create().fromJson(jsonChess, ChessGameImp.class);
 
-            getDatabase().closeConnection(dataConnection);
+            database.closeConnection(dataConnection);
             return new Game(gameID, whiteUser, blackUser, observers, gameName, chessGame);
 
         } catch (SQLException e) {
@@ -105,7 +94,7 @@ public class SQLGameDAO implements GameDAO {
     public void updateGame(int gameID, ChessGame newChessGame) throws DataAccessException {
         try {
             readGame(gameID);
-            var dataConnection = getDatabase().getConnection();
+            var dataConnection = database.getConnection();
             dataConnection.setCatalog("chessdata");
             if (newChessGame == null) {
                 throw new DataAccessException("Error: bad request");
@@ -116,7 +105,7 @@ public class SQLGameDAO implements GameDAO {
             preparedUpdate.setString(1, jsonChessGame);
             preparedUpdate.setInt(2, gameID);
             preparedUpdate.executeUpdate();
-            getDatabase().closeConnection(dataConnection);
+            database.closeConnection(dataConnection);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -126,7 +115,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public void claimGameSpot(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException {
         try {
-            var dataConnection = getDatabase().getConnection();
+            var dataConnection = database.getConnection();
             dataConnection.setCatalog("chessdata");
             Game gameToClaim = readGame(gameID);
             if (color == ChessGame.TeamColor.WHITE) {
@@ -152,7 +141,7 @@ public class SQLGameDAO implements GameDAO {
                 throw new DataAccessException("Error: bad request");
             }
 
-            getDatabase().closeConnection(dataConnection);
+            database.closeConnection(dataConnection);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -163,7 +152,7 @@ public class SQLGameDAO implements GameDAO {
     public Collection<Game> readAllGames() throws DataAccessException {
         try {
             Collection<Game> allGames = new HashSet<>();
-            var dataConnection = getDatabase().getConnection();
+            var dataConnection = database.getConnection();
             dataConnection.setCatalog("chessdata");
             var searchStatement = "SELECT * FROM games";
             var preparedSearch = dataConnection.prepareStatement(searchStatement);
@@ -172,7 +161,7 @@ public class SQLGameDAO implements GameDAO {
                 int gameID = result.getInt("gameID");
                 allGames.add(readGame(gameID));
             }
-            getDatabase().closeConnection(dataConnection);
+            database.closeConnection(dataConnection);
             return allGames;
 
         } catch (SQLException e) {
@@ -183,12 +172,12 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public void clearAllGames() {
         try {
-            var dataConnection = getDatabase().getConnection();
+            var dataConnection = database.getConnection();
             dataConnection.setCatalog("chessdata");
             var clearGameStatement = "TRUNCATE TABLE games";
             var preparedClearGame = dataConnection.prepareStatement(clearGameStatement);
             preparedClearGame.executeUpdate();
-            getDatabase().closeConnection(dataConnection);
+            database.closeConnection(dataConnection);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

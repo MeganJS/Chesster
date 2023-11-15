@@ -1,6 +1,7 @@
 package serverCode.services;
 
 import dataAccess.DataAccessException;
+import dataAccess.Database;
 import serverCode.DAOs.SQLUserAuthDAO;
 import models.AuthToken;
 import models.User;
