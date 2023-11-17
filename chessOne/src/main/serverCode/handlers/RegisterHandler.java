@@ -2,6 +2,7 @@ package serverCode.handlers;
 
 import dataAccess.DataAccessException;
 import models.AuthToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import spark.Request;
 import spark.Response;
 import com.google.gson.Gson;
@@ -14,6 +15,7 @@ import static serverCode.services.UserAuthServices.register;
 
 public class RegisterHandler {
     public static Object handleRegister(Request req, Response res) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         res.type("application/json");
         var serializer = new Gson();
         var userMap = serializer.fromJson(req.body(), Map.class);

@@ -2,6 +2,7 @@ package myTests;
 
 import dataAccess.DataAccessException;
 import org.junit.jupiter.api.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import serverCode.DAOs.SQLUserAuthDAO;
 import models.AuthToken;
 import models.User;
@@ -22,8 +23,12 @@ public class SQLUserAuthDAOTests {
 
     @Test
     public void createNewUser() throws DataAccessException {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         User newUser = new User("jerry", "secretsss", "frogs");
-        assertEquals(newUser, userAuthDAO.createUser(newUser));
+        User databaseUser = userAuthDAO.createUser(newUser);
+        assertEquals(newUser.getUsername(), databaseUser.getUsername());
+        assertTrue(encoder.matches("secretsss", databaseUser.getPassword()));
+        assertEquals(newUser.getEmail(), databaseUser.getEmail());
     }
 
     @Test
@@ -36,9 +41,13 @@ public class SQLUserAuthDAOTests {
 
     @Test
     public void readUser() throws DataAccessException {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         User existingUser = new User("froggos", "soggorf", "pond");
         userAuthDAO.createUser(existingUser);
-        assertEquals(existingUser, userAuthDAO.readUser("froggos"));
+        User databaseUser = userAuthDAO.readUser("froggos");
+        assertEquals(existingUser.getUsername(), databaseUser.getUsername());
+        assertTrue(encoder.matches("soggorf", databaseUser.getPassword()));
+        assertEquals(existingUser.getEmail(), databaseUser.getEmail());
     }
 
 

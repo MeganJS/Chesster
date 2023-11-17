@@ -4,6 +4,7 @@ import dataAccess.DataAccessException;
 import dataAccess.Database;
 import models.AuthToken;
 import models.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.SQLException;
 import java.util.UUID;
@@ -87,6 +88,7 @@ public class SQLUserAuthDAO implements UserAuthDAO {
     @Override
     public User createUser(User newUser) throws DataAccessException {
         try {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             var dataConnection = database.getConnection();
             dataConnection.setCatalog("chessdata");
             var searchStatement = "SELECT * FROM users WHERE username = ?";
@@ -100,7 +102,7 @@ public class SQLUserAuthDAO implements UserAuthDAO {
             var createStatement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
             var preparedCreate = dataConnection.prepareStatement(createStatement);
             preparedCreate.setString(1, newUser.getUsername());
-            preparedCreate.setString(2, newUser.getPassword());
+            preparedCreate.setString(2, encoder.encode(newUser.getPassword()));
             preparedCreate.setString(3, newUser.getEmail());
             preparedCreate.executeUpdate();
 

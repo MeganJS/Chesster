@@ -30,27 +30,5 @@ public class ChessServer {
         Spark.put("/game", JoinGameHandler::handleJoinGame);
 
     }
-
-    //TODO implement Bcrypt
-    //TODO this is a problem. I need to make it so the database can't be acquired this way; probably need to pass it in to the handlers.
-    //FIXME try making it static?
-    public static Database getDatabase() {
-        return database;
-    }
-
-    /*
-    private void databaseSetUp() {
-        try {
-            var dataConnection = database.getConnection();
-            var createDB = dataConnection.prepareStatement("CREATE DATABASE IF NOT EXISTS chessdata");
-            createDB.executeUpdate();
-            dataConnection.setCatalog("chessdata");
-            databaseGameSetUp(database);
-            databaseUserAuthSetUp(database);
-            database.closeConnection(dataConnection);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-    }
-     */
+    
 }

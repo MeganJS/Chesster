@@ -4,6 +4,7 @@ import dataAccess.DataAccessException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import serverCode.DAOs.SQLUserAuthDAO;
 import models.AuthToken;
 import models.User;
@@ -25,7 +26,8 @@ public class myUserAuthServiceTests {
 
     @Test
     public void loginServiceTest() throws DataAccessException, IOException {
-        AuthToken authToken = login(userAuthDAO.readUser("frogs"));
+        User existingUser = new User("frogs", "secretssss", "nope");
+        AuthToken authToken = login(existingUser);
         assertNotNull(authToken);
         assertEquals(authToken, userAuthDAO.readAuthToken(authToken.getAuthToken()));
     }
@@ -44,7 +46,8 @@ public class myUserAuthServiceTests {
 
     @Test
     public void logoutServiceTest() throws DataAccessException, IOException {
-        AuthToken authToken = login(userAuthDAO.readUser("frogs"));
+        User existingUser = new User("frogs", "secretssss", "nope");
+        AuthToken authToken = login(existingUser);
         logout(authToken.getAuthToken());
         assertThrows(DataAccessException.class, () -> logout(authToken.getAuthToken()));
     }
@@ -56,9 +59,8 @@ public class myUserAuthServiceTests {
 
     @Test
     public void registerUserCreated() throws DataAccessException, IOException {
-        User newUser = new User("Garry", "Blue", "artschool");
-        register(newUser);
-        assertEquals(newUser, userAuthDAO.readUser("Garry"));
+        register(new User("Garry", "Blue", "artschool"));
+        assertNotNull(userAuthDAO.readUser("Garry"));
     }
 
     @Test

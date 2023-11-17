@@ -1,7 +1,7 @@
 package serverCode.services;
 
 import dataAccess.DataAccessException;
-import dataAccess.Database;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import serverCode.DAOs.SQLUserAuthDAO;
 import models.AuthToken;
 import models.User;
@@ -22,8 +22,9 @@ public class UserAuthServices {
      * @return the authToken model object for the user's session
      */
     public static AuthToken login(User userToLog) throws DataAccessException, IOException {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         User userInMemory = userAuthDAO.readUser(userToLog.getUsername());
-        if (!userToLog.getPassword().equals(userInMemory.getPassword())) {
+        if (!encoder.matches(userToLog.getPassword(), userInMemory.getPassword())) {
             throw new IOException("Error: unauthorized");
         }
         return userAuthDAO.createAuthToken(userToLog.getUsername());

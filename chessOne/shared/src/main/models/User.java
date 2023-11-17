@@ -1,6 +1,8 @@
 package models;
 
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 /**
  * This class models a User object for the database/memory.
  */
@@ -57,6 +59,12 @@ public class User {
         return email;
     }
 
+    @Override
+    public int hashCode() {
+        return (username.length() * password.charAt(0)) + email.length();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o.getClass() != this.getClass()) {
             return false;

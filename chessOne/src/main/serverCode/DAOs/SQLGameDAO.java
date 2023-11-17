@@ -13,7 +13,7 @@ import java.util.HashSet;
 
 
 import static java.lang.Math.random;
-import static serverCode.ChessServer.getDatabase;
+
 
 public class SQLGameDAO implements GameDAO {
 

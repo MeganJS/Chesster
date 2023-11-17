@@ -38,7 +38,8 @@ public class myGameServiceTests {
         games.add(gameDAO.createGame("frog's game"));
         games.add(gameDAO.createGame("Gallery"));
         games.add(gameDAO.createGame("napstablook"));
-        AuthToken authToken = login(userAuthDAO.readUser("frogs"));
+
+        AuthToken authToken = login(new User("frogs", "secretssss", "nope"));
         assertEquals(games, listGames(authToken.getAuthToken()));
         gameDAO.clearAllGames();
         logout(authToken.getAuthToken());
@@ -56,7 +57,7 @@ public class myGameServiceTests {
 
     @Test
     public void createGameTest() throws DataAccessException, IOException {
-        AuthToken authToken = login(userAuthDAO.readUser("frogs"));
+        AuthToken authToken = login(new User("frogs", "secretssss", "nope"));
         Game newGame = createGame(authToken.getAuthToken(), "frog's game");
         assertNotNull(newGame);
         assertEquals(newGame, gameDAO.readGame(newGame.getGameID()));
@@ -71,7 +72,7 @@ public class myGameServiceTests {
 
     @Test
     public void joinGameWhite() throws DataAccessException, IOException {
-        AuthToken authToken = login(userAuthDAO.readUser("frogs"));
+        AuthToken authToken = login(new User("frogs", "secretssss", "nope"));
         Game newGame = createGame(authToken.getAuthToken(), "frog's game");
         joinGame(authToken.getAuthToken(), "white", newGame.getGameID());
         assertEquals("frogs", gameDAO.readGame(newGame.getGameID()).getWhiteUsername());
@@ -81,7 +82,7 @@ public class myGameServiceTests {
 
     @Test
     public void joinGameBlack() throws DataAccessException, IOException {
-        AuthToken authToken = login(userAuthDAO.readUser("frogs"));
+        AuthToken authToken = login(new User("frogs", "secretssss", "nope"));
         Game newGame = createGame(authToken.getAuthToken(), "frog's game");
         joinGame(authToken.getAuthToken(), "blaCK", newGame.getGameID());
         assertEquals("frogs", gameDAO.readGame(newGame.getGameID()).getBlackUsername());
@@ -91,7 +92,7 @@ public class myGameServiceTests {
 
     @Test
     public void joinGameObserver() throws DataAccessException, IOException {
-        AuthToken authToken = login(userAuthDAO.readUser("frogs"));
+        AuthToken authToken = login(new User("frogs", "secretssss", "nope"));
         Game newGame = createGame(authToken.getAuthToken(), "frog's game");
         joinGame(authToken.getAuthToken(), null, newGame.getGameID());
         assertTrue(gameDAO.readGame(newGame.getGameID()).getObservers().contains("frogs"));
@@ -101,8 +102,8 @@ public class myGameServiceTests {
 
     @Test
     public void joinGameAlreadyTaken() throws DataAccessException, IOException {
-        AuthToken authToken1 = login(userAuthDAO.readUser("frogs"));
-        AuthToken authToken2 = login(userAuthDAO.readUser("ghostie"));
+        AuthToken authToken1 = login(new User("frogs", "secretssss", "nope"));
+        AuthToken authToken2 = login(new User("ghostie", "ohno", "emails"));
         Game newGame = createGame(authToken1.getAuthToken(), "frog's game");
         joinGame(authToken1.getAuthToken(), "White", newGame.getGameID());
         assertThrows(IOException.class, () -> joinGame(authToken2.getAuthToken(), "White", newGame.getGameID()));
@@ -113,7 +114,7 @@ public class myGameServiceTests {
 
     @Test
     public void joinGameBadRequest() throws DataAccessException, IOException {
-        AuthToken authToken = login(userAuthDAO.readUser("frogs"));
+        AuthToken authToken = login(new User("frogs", "secretssss", "nope"));
         Game newGame = createGame(authToken.getAuthToken(), "frog's game");
         assertThrows(IOException.class, () -> joinGame(authToken.getAuthToken(), "mischief", newGame.getGameID()));
         gameDAO.clearAllGames();
@@ -122,9 +123,9 @@ public class myGameServiceTests {
 
     @Test
     public void clearAllDataTest() throws DataAccessException, IOException {
-        AuthToken authToken1 = login(userAuthDAO.readUser("frogs"));
-        AuthToken authToken2 = login(userAuthDAO.readUser("Garry"));
-        AuthToken authToken3 = login(userAuthDAO.readUser("ghostie"));
+        AuthToken authToken1 = login(new User("frogs", "secretssss", "nope"));
+        AuthToken authToken2 = login(new User("Garry", "Blue", "artschool"));
+        AuthToken authToken3 = login(new User("ghostie", "ohno", "emails"));
         createGame(authToken1.getAuthToken(), "frog's game");
         createGame(authToken2.getAuthToken(), "Gallery");
         createGame(authToken3.getAuthToken(), "robotsRcool");
