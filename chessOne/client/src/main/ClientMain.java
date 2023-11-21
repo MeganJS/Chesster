@@ -1,5 +1,9 @@
 public class ClientMain {
-    public void main() {
-        System.out.println("hi there!");
+    public static void main(String[] args) {
+        String serverURL = "http://localhost:8080/";
+        if (args.length == 1) {
+            serverURL = args[0];
+        }
+        new Repl(serverURL).run();
     }
 }
