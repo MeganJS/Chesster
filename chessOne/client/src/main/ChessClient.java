@@ -1,5 +1,18 @@
+import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.*;
+import java.util.Map;
+
 public class ChessClient {
     private boolean isSignedIn = false;
+    private String serverURL;
+
+    public ChessClient(String url) {
+        serverURL = url;
+    }
 
     public String checkInput(String input) {
         String[] words = input.toLowerCase().split(" ");
@@ -10,6 +23,9 @@ public class ChessClient {
             }
             if (command.equals("help")) {
                 return helpUser();
+            }
+            if (command.equals("register")) {
+                return registerUser(words);
             }
 
         } catch (Exception ex) {
@@ -34,6 +50,35 @@ public class ChessClient {
             helpOutput.append("register <USERNAME> <PASSWORD> <EMAIL> - register a new account to play chess\n");
         }
         return helpOutput.toString();
+    }
+
+    private String registerUser(String[] words) throws IOException, URISyntaxException {
+        StringBuilder newURL = new StringBuilder();
+        newURL.append(serverURL);
+        newURL.append("user");
+        URI uri = new URI(newURL.toString());
+        HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
+        http.setRequestMethod("POST");
+        http.setDoOutput(true);
+        http.addRequestProperty("Content-Type", "application/json");
+
+        try {
+            var body = Map.of("username", words[1], "password", words[2], "email", words[3]);
+            var jsonBody = new Gson().toJson(body);
+            var outputStream = http.getOutputStream();
+            outputStream.write(jsonBody.getBytes());
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
+        http.connect();
+        try {
+            InputStream inputStream = http.getInputStream();
+            InputStreamReader reader = new InputStreamReader(inputStream);
+            return new Gson().fromJson(reader, Map.class).toString();
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
+
     }
 
 

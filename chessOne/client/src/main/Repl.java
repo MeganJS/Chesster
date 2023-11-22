@@ -4,7 +4,7 @@ public class Repl {
     private ChessClient client;
 
     public Repl(String serverURL) {
-        client = new ChessClient();
+        client = new ChessClient(serverURL);
     }
 
     public void run() {
