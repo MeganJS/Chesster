@@ -9,6 +9,7 @@ import java.util.Map;
 public class ChessClient {
     private boolean isSignedIn = false;
     private String serverURL;
+    private ChessServerFacade serverFacade = new ChessServerFacade();
 
     public ChessClient(String url) {
         serverURL = url;
@@ -52,33 +53,32 @@ public class ChessClient {
         return helpOutput.toString();
     }
 
-    private String registerUser(String[] words) throws IOException, URISyntaxException {
-        StringBuilder newURL = new StringBuilder();
-        newURL.append(serverURL);
-        newURL.append("user");
-        URI uri = new URI(newURL.toString());
-        HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
-        http.setRequestMethod("POST");
-        http.setDoOutput(true);
-        http.addRequestProperty("Content-Type", "application/json");
-
+    private String registerUser(String[] words) {
         try {
+            StringBuilder newURL = new StringBuilder();
+            newURL.append(serverURL);
+            newURL.append("user");
             var body = Map.of("username", words[1], "password", words[2], "email", words[3]);
             var jsonBody = new Gson().toJson(body);
-            var outputStream = http.getOutputStream();
-            outputStream.write(jsonBody.getBytes());
-        } catch (Exception ex) {
-            return ex.getMessage();
-        }
-        http.connect();
-        try {
-            InputStream inputStream = http.getInputStream();
-            InputStreamReader reader = new InputStreamReader(inputStream);
-            return new Gson().fromJson(reader, Map.class).toString();
-        } catch (Exception ex) {
-            return ex.getMessage();
-        }
 
+            Map response = serverFacade.serverUserReg(newURL.toString(), jsonBody);
+            if ((int) response.get("statusCode") == 200) {
+                return words[1] + " successfully registered. Welcome to chess!\n";
+            } else if ((int) response.get("statusCode") == 400) {
+                return "Hmm, something wasn't quite right with the input. Try again!\n";
+            } else if ((int) response.get("statusCode") == 403) {
+                return "Sorry, that username belongs to someone else already.\n";
+            } else if ((int) response.get("statusCode") == 500) {
+                return "Looks like something went wrong serverside.\n Status Code: 500 \n Status Message: " +
+                        response.get("statusMessage").toString() + "\n";
+            } else {
+                return "We have a mystery on our hands.\n Status Code: " + response.get("statusCode").toString() +
+                        "\n Status Message: " + response.get("statusMessage").toString() + "\n";
+            }
+
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
     }
 
 
