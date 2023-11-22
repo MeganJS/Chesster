@@ -61,7 +61,7 @@ public class ChessClient {
             var body = Map.of("username", words[1], "password", words[2], "email", words[3]);
             var jsonBody = new Gson().toJson(body);
 
-            Map response = serverFacade.serverUserReg(newURL.toString(), jsonBody);
+            Map response = serverFacade.talkToServer(newURL.toString(), "POST", "", jsonBody);
             if ((int) response.get("statusCode") == 200) {
                 return words[1] + " successfully registered. Welcome to chess!\n";
             } else if ((int) response.get("statusCode") == 400) {
