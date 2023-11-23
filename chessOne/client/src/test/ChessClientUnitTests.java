@@ -61,6 +61,15 @@ public class ChessClientUnitTests {
     }
 
     @Test
+    public void makeGameLongName() {
+        chessClient.checkInput("register frog frog frog");
+        String result = chessClient.checkInput("new Well, we've been lucky devils both, and there's no need" +
+                " of pledge or oath to bind our lovely friendship fast; by firmer stuff, close bound enough.");
+        System.out.printf(result);
+        assertTrue(result.contains("successfully created"));
+    }
+
+    @Test
     public void makeNewGameUnauthorized() {
         assertEquals("Alas, you aren't authorized to make that request. Log in or register to start.\n", chessClient.checkInput("new gamesters"));
     }

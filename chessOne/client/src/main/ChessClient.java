@@ -143,7 +143,7 @@ public class ChessClient {
 
         Map response = serverFacade.talkToServer(newURL.toString(), "POST", userAuthToken, jsonBody);
         if ((int) response.get("statusCode") == 200) {
-            return gameName + " was successfully created. ID is " + Math.round((Double) response.get("gameID")) + ".\n";
+            return "'" + gameName + "' was successfully created. ID is " + Math.round((Double) response.get("gameID")) + ".\n";
         } else if ((int) response.get("statusCode") == 400) {
             return "The game needs a name to be created.\n";
         } else if ((int) response.get("statusCode") == 401) {
