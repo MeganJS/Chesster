@@ -32,7 +32,12 @@ public class ChessClient {
             if (command.equals("logout")) {
                 return logUserOut();
             }
-
+            if (command.equals("login")) {
+                return logUserIn(words);
+            }
+            if (command.equals("new")) {
+                return makeNewGame(words);
+            }
         } catch (Exception ex) {
             return ex.getMessage();
         }
@@ -109,5 +114,30 @@ public class ChessClient {
         }
     }
 
+    private String logUserIn(String[] words) {
+        StringBuilder newURL = new StringBuilder();
+        newURL.append(serverURL);
+        newURL.append("session");
+        var body = Map.of("username", words[1], "password", words[2]);
+        var jsonBody = new Gson().toJson(body);
 
+        Map response = serverFacade.talkToServer(newURL.toString(), "POST", "", jsonBody);
+        if ((int) response.get("statusCode") == 200) {
+            isSignedIn = true;
+            userAuthToken = response.get("authToken").toString();
+            return response.get("username") + " logged in. What would you like to do?\n";
+        } else if ((int) response.get("statusCode") == 401) {
+            return "Hmm, something wasn't quite right with the input. Try again!\n";
+        } else if ((int) response.get("statusCode") == 500) {
+            return "Looks like something went wrong serverside.\n Status Code: 500 \n Status Message: " +
+                    response.get("statusMessage").toString() + "\n";
+        } else {
+            return "We have a mystery on our hands.\n Status Code: " + response.get("statusCode").toString() +
+                    "\n Status Message: " + response.get("statusMessage").toString() + "\n";
+        }
+    }
+
+    private String makeNewGame(String[] words) {
+        return null;
+    }
 }
