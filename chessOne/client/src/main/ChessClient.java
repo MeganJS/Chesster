@@ -10,6 +10,7 @@ public class ChessClient {
     private boolean isSignedIn = false;
     private String serverURL;
     private ChessServerFacade serverFacade = new ChessServerFacade();
+    private String userAuthToken = null;
 
     public ChessClient(String url) {
         serverURL = url;
@@ -27,6 +28,9 @@ public class ChessClient {
             }
             if (command.equals("register")) {
                 return registerUser(words);
+            }
+            if (command.equals("logout")) {
+                return logUserOut();
             }
 
         } catch (Exception ex) {
@@ -63,6 +67,8 @@ public class ChessClient {
 
             Map response = serverFacade.talkToServer(newURL.toString(), "POST", "", jsonBody);
             if ((int) response.get("statusCode") == 200) {
+                isSignedIn = true;
+                userAuthToken = response.get("authToken").toString();
                 return words[1] + " successfully registered. Welcome to chess!\n";
             } else if ((int) response.get("statusCode") == 400) {
                 return "Hmm, something wasn't quite right with the input. Try again!\n";
@@ -78,6 +84,28 @@ public class ChessClient {
 
         } catch (Exception ex) {
             return ex.getMessage();
+        }
+    }
+
+
+    private String logUserOut() {
+        StringBuilder newURL = new StringBuilder();
+        newURL.append(serverURL);
+        newURL.append("session");
+
+        Map response = serverFacade.talkToServer(newURL.toString(), "DELETE", userAuthToken, "");
+        if ((int) response.get("statusCode") == 200) {
+            isSignedIn = false;
+            userAuthToken = null;
+            return "Logout successful. Thanks for playing!\n";
+        } else if ((int) response.get("statusCode") == 401) {
+            return "Alas, you aren't authorized to make that request. Log in or register to start.\n";
+        } else if ((int) response.get("statusCode") == 500) {
+            return "Looks like something went wrong serverside.\n Status Code: 500 \n Status Message: " +
+                    response.get("statusMessage").toString() + "\n";
+        } else {
+            return "We have a mystery on our hands.\n Status Code: " + response.get("statusCode").toString() +
+                    "\n Status Message: " + response.get("statusMessage").toString() + "\n";
         }
     }
 
