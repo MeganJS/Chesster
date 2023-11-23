@@ -19,7 +19,6 @@ public class ChessServerFacade {
             http.setRequestMethod(method);
 
             http.setDoOutput(true);
-            //TODO set header
             http.addRequestProperty("authorization", header);
             http.addRequestProperty("Content-Type", "application/json");
             var outputStream = http.getOutputStream();

@@ -3,7 +3,6 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ChessClientUnitTests {
-    //TODO: write tests for each method in ChessClient.java
     private final ChessClient chessClient = new ChessClient("http://localhost:8080/");
 
     @Test
@@ -57,7 +56,18 @@ public class ChessClientUnitTests {
 
     @Test
     public void makeNewGame() {
-        assertEquals("Hmm, something wasn't quite right with the input. Try again!\n", chessClient.checkInput("login fog fog"));
+        chessClient.checkInput("register frog frog frog");
+        assertTrue(chessClient.checkInput("new frog's game").contains("successfully created"));
+    }
+
+    @Test
+    public void makeNewGameUnauthorized() {
+        assertEquals("Alas, you aren't authorized to make that request. Log in or register to start.\n", chessClient.checkInput("new gamesters"));
+    }
+
+    @Test
+    public void makeGameNoName() {
+        assertEquals("The game needs a name to be created.\n", chessClient.checkInput("new"));
     }
 
     @AfterEach
