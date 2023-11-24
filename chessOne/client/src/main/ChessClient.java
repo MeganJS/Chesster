@@ -66,9 +66,13 @@ public class ChessClient {
     }
 
     private String registerUser(String[] words) {
+        //TODO add case if username/password not supplied
         StringBuilder newURL = new StringBuilder();
         newURL.append(serverURL);
         newURL.append("user");
+        if (words.length < 4) {
+            return "Hmm, something wasn't quite right there. Make sure to include a username, password, and email after the register command.\n";
+        }
         var body = Map.of("username", words[1], "password", words[2], "email", words[3]);
         var jsonBody = new Gson().toJson(body);
 

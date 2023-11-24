@@ -94,6 +94,12 @@ public class ChessClientUnitTests {
         assertTrue(result.contains("ghostchess") && result.contains("frog's game"));
     }
 
+    @Test
+    public void listGamesUnauthorized() {
+        assertEquals("Alas, you aren't authorized to make that request. Log in or register to start.\n", chessClient.checkInput("list"));
+    }
+
+
     @AfterEach
     public void clearDatabase() {
         ChessServerFacade serverFacade = new ChessServerFacade();
