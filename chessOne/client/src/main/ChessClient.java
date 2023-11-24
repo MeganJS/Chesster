@@ -38,6 +38,9 @@ public class ChessClient {
             if (command.equals("new")) {
                 return makeNewGame(words);
             }
+            if (command.equals("list")) {
+                return listGames();
+            }
         } catch (Exception ex) {
             return ex.getMessage();
         }
@@ -46,7 +49,7 @@ public class ChessClient {
 
     private String helpUser() {
         StringBuilder helpOutput = new StringBuilder();
-        helpOutput.append("I'm so glad you asked! Here are the actions available to you: \n");
+        helpOutput.append("I'm glad you asked! Here are the actions available to you: \n");
         helpOutput.append("help - see a list of available actions\n");
         helpOutput.append("quit - exit application\n");
         if (isSignedIn) {
@@ -171,5 +174,28 @@ public class ChessClient {
             gameName.setLength(100);
         }
         return gameName.toString();
+    }
+
+    private String listGames() {
+        StringBuilder newURL = new StringBuilder();
+        newURL.append(serverURL);
+        newURL.append("game");
+
+        Map response = serverFacade.talkToServer(newURL.toString(), "GET", userAuthToken, "");
+        if ((int) response.get("statusCode") == 200) {
+            StringBuilder result = new StringBuilder();
+            result.append("The current games are as follows:\n");
+            result.append(response.get("games").toString());
+            result.append("\n");
+            return result.toString();
+        } else if ((int) response.get("statusCode") == 401) {
+            return "Alas, you aren't authorized to make that request. Log in or register to start.\n";
+        } else if ((int) response.get("statusCode") == 500) {
+            return "Looks like something went wrong serverside.\n Status Code: 500 \n Status Message: " +
+                    response.get("statusMessage").toString() + "\n";
+        } else {
+            return "We've got a mystery on our hands.\n Status Code: " + response.get("statusCode").toString() +
+                    "\n Status Message: " + response.get("statusMessage").toString() + "\n";
+        }
     }
 }

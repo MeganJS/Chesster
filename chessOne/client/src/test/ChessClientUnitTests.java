@@ -79,6 +79,21 @@ public class ChessClientUnitTests {
         assertEquals("The game needs a name to be created.\n", chessClient.checkInput("new"));
     }
 
+    @Test
+    public void listNoGames() {
+        chessClient.checkInput("register frog frog frog");
+        assertEquals("The current games are as follows:\n[]\n", chessClient.checkInput("list"));
+    }
+
+    @Test
+    public void listTwoGames() {
+        chessClient.checkInput("register frog frog frog");
+        chessClient.checkInput("new frog's game");
+        chessClient.checkInput("new ghostchess");
+        String result = chessClient.checkInput("list");
+        assertTrue(result.contains("ghostchess") && result.contains("frog's game"));
+    }
+
     @AfterEach
     public void clearDatabase() {
         ChessServerFacade serverFacade = new ChessServerFacade();

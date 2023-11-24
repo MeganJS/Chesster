@@ -20,9 +20,11 @@ public class ChessServerFacade {
 
             http.setDoOutput(true);
             http.addRequestProperty("authorization", header);
-            http.addRequestProperty("Content-Type", "application/json");
-            var outputStream = http.getOutputStream();
-            outputStream.write(body.getBytes());
+            //http.addRequestProperty("Content-Type", "application/json");
+            if (!body.isEmpty()) {
+                var outputStream = http.getOutputStream();
+                outputStream.write(body.getBytes());
+            }
 
             http.connect();
 
