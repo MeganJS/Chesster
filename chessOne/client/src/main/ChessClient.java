@@ -202,43 +202,48 @@ public class ChessClient {
     //specifically for the URL and the error response codes
 
     private String addUserToGame(String[] words) {
-        String newURL = serverURL + "game";
-        if (words.length < 2) {
-            return "Hmm, something wasn't quite right. Make sure to include the game ID and color of choice after the command.\n";
-        }
-        var body = createJoinGameMap(words); //TODO add case if the color is put before ID
-        String gameID = toStrGameID(parseInt(words[1]));// TODO add try-catch block for invalid int
-        String playerColor;
-        if (words.length >= 3) {
-            playerColor = words[2].toLowerCase() + " team";
-        } else {
-            playerColor = "observer";
-        }
-        var jsonBody = new Gson().toJson(body);
-        Map response = serverFacade.talkToServer(newURL, "PUT", userAuthToken, jsonBody);
+        try {
+
+            String newURL = serverURL + "game";
+            if (words.length < 2) {
+                return "Hmm, something wasn't quite right. Make sure to include the game ID and color of choice after the command.\n";
+            }
+            var body = createJoinGameMap(words); //TODO add case if the color is put before ID
+            String gameID = toStrGameID(parseInt(words[1]));// TODO add try-catch block for invalid int
+            String playerColor;
+            if (words.length >= 3) {
+                playerColor = words[2].toLowerCase() + " team";
+            } else {
+                playerColor = "observer";
+            }
+            var jsonBody = new Gson().toJson(body);
+            Map response = serverFacade.talkToServer(newURL, "PUT", userAuthToken, jsonBody);
 
 
-        if ((int) response.get("statusCode") == 200) {
-            return "Successfully joined game " + gameID + " as " + playerColor + ".\n";
-        } else if ((int) response.get("statusCode") == 400) {
-            return "Hmm, something wasn't quite right with the input. Try again!\n";
-        } else if ((int) response.get("statusCode") == 401) {
-            return "Alas, you aren't authorized to make that request. Log in or register to start.\n";
-        } else if ((int) response.get("statusCode") == 403) {
-            return "Unfortunately, " + playerColor + " for game " + gameID + " has already been taken.\n";
-        } else if ((int) response.get("statusCode") == 500) {
-            return "Looks like something went wrong serverside.\n Status Code: 500 \n Status Message: " +
-                    response.get("statusMessage").toString() + "\n";
-        } else {
-            return "We've got a mystery on our hands.\n Status Code: " + response.get("statusCode").toString() +
-                    "\n Status Message: " + response.get("statusMessage").toString() + "\n";
+            if ((int) response.get("statusCode") == 200) {
+                return "Successfully joined game " + gameID + " as " + playerColor + ".\n";
+            } else if ((int) response.get("statusCode") == 400) {
+                return "Hmm, something wasn't quite right with the input. Try again!\n";
+            } else if ((int) response.get("statusCode") == 401) {
+                return "Alas, you aren't authorized to make that request. Log in or register to start.\n";
+            } else if ((int) response.get("statusCode") == 403) {
+                return "Unfortunately, " + playerColor + " for game " + gameID + " has already been taken.\n";
+            } else if ((int) response.get("statusCode") == 500) {
+                return "Looks like something went wrong serverside.\n Status Code: 500 \n Status Message: " +
+                        response.get("statusMessage").toString() + "\n";
+            } else {
+                return "We've got a mystery on our hands.\n Status Code: " + response.get("statusCode").toString() +
+                        "\n Status Message: " + response.get("statusMessage").toString() + "\n";
+            }
+        } catch (NumberFormatException ex) {
+            return "Something was off about the game ID. Try again, or use the 'help' command to review actions.\n";
         }
 
     }
 
     private Map createJoinGameMap(String[] words) {
-        var body = new HashMap(); //TODO add case if the color is put before ID
-        body.put("gameID", parseInt(words[1])); // TODO add try-catch block for invalid int
+        var body = new HashMap();
+        body.put("gameID", parseInt(words[1]));
         if (words.length >= 3) {
             body.put("playerColor", words[2]);
         } else {

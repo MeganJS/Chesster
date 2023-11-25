@@ -130,22 +130,38 @@ public class ChessClientUnitTests {
 
     }
 
-    //TODO add case for if color is entered before ID
 
+    @Test
+    public void joinGameSwitchedInputs() {
+        chessClient.checkInput("register frog frog frog");
+        String result = chessClient.checkInput("new frog's game");
+        String gameID = result.substring(46, 50);
+        assertEquals("Something was off about the game ID. Try again, or use the 'help' command to review actions.\n", chessClient.checkInput("join WHITE " + gameID));
+    }
 
     @Test
     public void joinGameInvalidGameID() {
+        chessClient.checkInput("register frog frog frog");
+        chessClient.checkInput("new frog's game");
+        assertEquals("Hmm, something wasn't quite right with the input. Try again!\n", chessClient.checkInput("join 5 WHITE"));
 
     }
 
     @Test
     public void joinGameSpotTaken() {
-
+        chessClient.checkInput("register frog frog frog");
+        String result = chessClient.checkInput("new frog's game");
+        String gameID = result.substring(46, 50);
+        chessClient.checkInput("join " + gameID + " WHITE");
+        assertEquals("Unfortunately, white team for game " + gameID + " has already been taken.\n", chessClient.checkInput("join " + gameID + " WHITE"));
     }
 
     @Test
     public void joinGameObserveCommand() {
-
+        chessClient.checkInput("register frog frog frog");
+        String result = chessClient.checkInput("new frog's game");
+        String gameID = result.substring(46, 50);
+        assertEquals("Successfully joined game " + gameID + " as observer.\n", chessClient.checkInput("join " + gameID));
     }
 
 
