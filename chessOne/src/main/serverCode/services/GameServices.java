@@ -54,13 +54,13 @@ public class GameServices {
         AuthToken userAuthToken = userAuthDAO.readAuthToken(authToken);
         Game gameToJoin = gameDAO.readGame(gameID);
 
-        if (playerColor == null) {
+        if (playerColor == null || playerColor.isEmpty()) {
             gameDAO.claimGameSpot(gameID, userAuthToken.getUsername(), null);
-            return;
+        } else {
+            String lowerColor = playerColor.toLowerCase();
+            gameDAO.claimGameSpot(gameID, userAuthToken.getUsername(), findColor(lowerColor, gameToJoin));
         }
 
-        String lowerColor = playerColor.toLowerCase();
-        gameDAO.claimGameSpot(gameID, userAuthToken.getUsername(), findColor(lowerColor, gameToJoin));
 
     }
 

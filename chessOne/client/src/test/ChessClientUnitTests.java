@@ -99,6 +99,55 @@ public class ChessClientUnitTests {
         assertEquals("Alas, you aren't authorized to make that request. Log in or register to start.\n", chessClient.checkInput("list"));
     }
 
+    @Test
+    public void joinGameBlack() {
+        chessClient.checkInput("register frog frog frog");
+        String result = chessClient.checkInput("new frog's game");
+        String gameID = result.substring(46, 50);
+        System.out.println(gameID);
+        assertEquals("Successfully joined game " + gameID + " as black team.\n", chessClient.checkInput("join " + gameID + " BLACK"));
+
+    }
+
+
+    @Test
+    public void joinGameWhite() {
+        chessClient.checkInput("register frog frog frog");
+        String result = chessClient.checkInput("new frog's game");
+        String gameID = result.substring(46, 50);
+        System.out.println(gameID);
+        assertEquals("Successfully joined game " + gameID + " as white team.\n", chessClient.checkInput("join " + gameID + " WHITE"));
+
+    }
+
+    @Test
+    public void joinGameObserver() {
+        chessClient.checkInput("register frog frog frog");
+        String result = chessClient.checkInput("new frog's game");
+        String gameID = result.substring(46, 50);
+        System.out.println(gameID);
+        assertEquals("Successfully joined game " + gameID + " as observer.\n", chessClient.checkInput("join " + gameID));
+
+    }
+
+    //TODO add case for if color is entered before ID
+
+
+    @Test
+    public void joinGameInvalidGameID() {
+
+    }
+
+    @Test
+    public void joinGameSpotTaken() {
+
+    }
+
+    @Test
+    public void joinGameObserveCommand() {
+
+    }
+
 
     @AfterEach
     public void clearDatabase() {
