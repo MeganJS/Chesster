@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -185,9 +187,12 @@ public class ChessClient {
         Map response = serverFacade.talkToServer(newURL, "GET", userAuthToken, "");
 
         if ((int) response.get("statusCode") == 200) {
-            return "The current games are as follows:\n" +
-                    response.get("games").toString() +
-                    "\n";
+            StringBuilder games = new StringBuilder();
+            games.append("The current games are as follows:\n");
+            games.append(printGameList(response.get("games")));
+            games.append("\n");
+            //printGameList(response.get("games"));
+            return games.toString();
         } else if ((int) response.get("statusCode") == 401) {
             return "Alas, you aren't authorized to make that request. Log in or register to start.\n";
         } else if ((int) response.get("statusCode") == 500) {
@@ -198,8 +203,6 @@ public class ChessClient {
                     "\n Status Message: " + response.get("statusMessage").toString() + "\n";
         }
     }
-    //TODO add helper functions to clean things up
-    //specifically for the URL and the error response codes
 
     private String addUserToGame(String[] words) {
         try {
@@ -208,11 +211,11 @@ public class ChessClient {
             if (words.length < 2) {
                 return "Hmm, something wasn't quite right. Make sure to include the game ID and color of choice after the command.\n";
             }
-            var body = createJoinGameMap(words); //TODO add case if the color is put before ID
-            String gameID = toStrGameID(parseInt(words[1]));// TODO add try-catch block for invalid int
+            var body = createJoinGameMap(words);
+            String gameID = toStrGameID(parseInt(words[1]));
             String playerColor;
             if (words.length >= 3) {
-                playerColor = words[2].toLowerCase() + " team";
+                playerColor = words[2].toLowerCase() + " player";
             } else {
                 playerColor = "observer";
             }
@@ -259,5 +262,37 @@ public class ChessClient {
         }
         return strGameID;
     }
+
+    private String printGameList(Object gameListObj) {
+        var gameList = (Collection) gameListObj;
+        StringBuilder gameListStr = new StringBuilder();
+        for (Object game : gameList) {
+            gameListStr.append(printGame(game));
+        }
+        return gameListStr.toString();
+    }
+
+    private String printGame(Object game) {
+        var json = new Gson();
+        var jsonGame = json.toJson(game);
+        var gameMap = new Gson().fromJson(jsonGame, Map.class);
+        StringBuilder gameStr = new StringBuilder();
+        gameStr.append("\u001b[38;5;0m\u001b[48;5;15m " + gameMap.get("gameName"));
+        gameStr.append(" \u001b[38;5;160m\u001b[48;5;12m GameID: " + toStrGameID((int) Math.round((Double) gameMap.get("gameID"))));
+        //System.out.printf("\u001b[38;5;0m\u001b[48;5;15m " + gameMap.get("gameName"));
+        //System.out.printf(" \u001b[38;5;160m\u001b[48;5;12m GameID: " + toStrGameID((int) Math.round((Double) gameMap.get("gameID"))));
+        if (gameMap.containsKey("blackUsername")) {
+            gameStr.append(" \u001b[38;5;15m\u001b[48;5;22m Black Player: " + gameMap.get("blackUsername"));
+            //System.out.printf(" \u001b[38;5;15m\u001b[48;5;22m Black Player: " + gameMap.get("blackUsername"));
+        }
+        if (gameMap.containsKey("whiteUsername")) {
+            gameStr.append(" \u001b[38;5;0m\u001b[48;5;46m White Player: " + gameMap.get("whiteUsername"));
+            //System.out.printf(" \u001b[38;5;0m\u001b[48;5;46m White Player: " + gameMap.get("whiteUsername"));
+        }
+        gameStr.append("\u001b[38;5;15m \u001b[48;5;0m\n");
+        //System.out.printf("\u001b[38;5;15m \u001b[48;5;0m\n");
+        return gameStr.toString();
+    }
+
 
 }

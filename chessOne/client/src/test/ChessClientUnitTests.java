@@ -82,7 +82,7 @@ public class ChessClientUnitTests {
     @Test
     public void listNoGames() {
         chessClient.checkInput("register frog frog frog");
-        assertEquals("The current games are as follows:\n[]\n", chessClient.checkInput("list"));
+        assertEquals("The current games are as follows:\n\n", chessClient.checkInput("list"));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class ChessClientUnitTests {
         String result = chessClient.checkInput("new frog's game");
         String gameID = result.substring(46, 50);
         System.out.println(gameID);
-        assertEquals("Successfully joined game " + gameID + " as black team.\n", chessClient.checkInput("join " + gameID + " BLACK"));
+        assertEquals("Successfully joined game " + gameID + " as black player.\n", chessClient.checkInput("join " + gameID + " BLACK"));
 
     }
 
@@ -116,7 +116,7 @@ public class ChessClientUnitTests {
         String result = chessClient.checkInput("new frog's game");
         String gameID = result.substring(46, 50);
         System.out.println(gameID);
-        assertEquals("Successfully joined game " + gameID + " as white team.\n", chessClient.checkInput("join " + gameID + " WHITE"));
+        assertEquals("Successfully joined game " + gameID + " as white player.\n", chessClient.checkInput("join " + gameID + " WHITE"));
 
     }
 
@@ -153,7 +153,7 @@ public class ChessClientUnitTests {
         String result = chessClient.checkInput("new frog's game");
         String gameID = result.substring(46, 50);
         chessClient.checkInput("join " + gameID + " WHITE");
-        assertEquals("Unfortunately, white team for game " + gameID + " has already been taken.\n", chessClient.checkInput("join " + gameID + " WHITE"));
+        assertEquals("Unfortunately, white player for game " + gameID + " has already been taken.\n", chessClient.checkInput("join " + gameID + " WHITE"));
     }
 
     @Test
