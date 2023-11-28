@@ -105,8 +105,7 @@ public class ChessClientUnitTests {
         String result = chessClient.checkInput("new frog's game");
         String gameID = result.substring(46, 50);
         System.out.println(gameID);
-        assertEquals("Successfully joined game " + gameID + " as black player.\n", chessClient.checkInput("join " + gameID + " BLACK"));
-
+        assertTrue(chessClient.checkInput("join " + gameID + " BLACK").contains("Successfully joined game " + gameID + " as black player.\n"));
     }
 
 
@@ -116,7 +115,7 @@ public class ChessClientUnitTests {
         String result = chessClient.checkInput("new frog's game");
         String gameID = result.substring(46, 50);
         System.out.println(gameID);
-        assertEquals("Successfully joined game " + gameID + " as white player.\n", chessClient.checkInput("join " + gameID + " WHITE"));
+        assertTrue(chessClient.checkInput("join " + gameID + " WHITE").contains("Successfully joined game " + gameID + " as white player.\n"));
 
     }
 
@@ -126,7 +125,7 @@ public class ChessClientUnitTests {
         String result = chessClient.checkInput("new frog's game");
         String gameID = result.substring(46, 50);
         System.out.println(gameID);
-        assertEquals("Successfully joined game " + gameID + " as observer.\n", chessClient.checkInput("join " + gameID));
+        assertTrue(chessClient.checkInput("join " + gameID).contains("Successfully joined game " + gameID + " as observer.\n"));
 
     }
 
@@ -161,7 +160,7 @@ public class ChessClientUnitTests {
         chessClient.checkInput("register frog frog frog");
         String result = chessClient.checkInput("new frog's game");
         String gameID = result.substring(46, 50);
-        assertEquals("Successfully joined game " + gameID + " as observer.\n", chessClient.checkInput("join " + gameID));
+        assertTrue(chessClient.checkInput("join " + gameID).contains("Successfully joined game " + gameID + " as observer.\n"));
     }
 
 

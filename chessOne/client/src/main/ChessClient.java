@@ -1,15 +1,11 @@
 import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.Integer.parseInt;
+import static ui.EscapeSequences.*;
 
 public class ChessClient {
     private boolean isSignedIn = false;
@@ -224,7 +220,7 @@ public class ChessClient {
 
 
             if ((int) response.get("statusCode") == 200) {
-                return "Successfully joined game " + gameID + " as " + playerColor + ".\n";
+                return "Successfully joined game " + gameID + " as " + playerColor + ".\n" + makeGameBoardStr();
             } else if ((int) response.get("statusCode") == 400) {
                 return "Hmm, something wasn't quite right with the input. Try again!\n";
             } else if ((int) response.get("statusCode") == 401) {
@@ -279,19 +275,117 @@ public class ChessClient {
         StringBuilder gameStr = new StringBuilder();
         gameStr.append("\u001b[38;5;0m\u001b[48;5;15m " + gameMap.get("gameName"));
         gameStr.append(" \u001b[38;5;160m\u001b[48;5;12m GameID: " + toStrGameID((int) Math.round((Double) gameMap.get("gameID"))));
-        //System.out.printf("\u001b[38;5;0m\u001b[48;5;15m " + gameMap.get("gameName"));
-        //System.out.printf(" \u001b[38;5;160m\u001b[48;5;12m GameID: " + toStrGameID((int) Math.round((Double) gameMap.get("gameID"))));
         if (gameMap.containsKey("blackUsername")) {
             gameStr.append(" \u001b[38;5;15m\u001b[48;5;22m Black Player: " + gameMap.get("blackUsername"));
-            //System.out.printf(" \u001b[38;5;15m\u001b[48;5;22m Black Player: " + gameMap.get("blackUsername"));
         }
         if (gameMap.containsKey("whiteUsername")) {
             gameStr.append(" \u001b[38;5;0m\u001b[48;5;46m White Player: " + gameMap.get("whiteUsername"));
-            //System.out.printf(" \u001b[38;5;0m\u001b[48;5;46m White Player: " + gameMap.get("whiteUsername"));
         }
         gameStr.append("\u001b[38;5;15m \u001b[48;5;0m\n");
-        //System.out.printf("\u001b[38;5;15m \u001b[48;5;0m\n");
         return gameStr.toString();
+    }
+
+    private String makeGameBoardStr() {
+        StringBuilder gameBoardStr = new StringBuilder();
+        gameBoardStr.append("Game Board with White on Top: \n");
+        boolean blackTop = false;
+        char[] lettersBlackTop = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+        char[] lettersWhiteTop = {'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'};
+
+        char[] piecesBlackTop = {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'};
+        char[] piecesWhiteTop = {'R', 'N', 'B', 'K', 'Q', 'B', 'N', 'R'};
+        char[] pawns = {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'};
+        char[] empty = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+        gameBoardStr.append(makeLettersStr(lettersWhiteTop));
+        for (int i = 1; i < 9; i++) {
+            if (i == 1 || i == 8) {
+                gameBoardStr.append(makeRowStr(i, piecesWhiteTop, blackTop));
+            } else if (i == 2 || i == 7) {
+                gameBoardStr.append(makeRowStr(i, pawns, blackTop));
+            } else {
+                gameBoardStr.append(makeRowStr(i, empty, blackTop));
+            }
+        }
+        gameBoardStr.append(makeLettersStr(lettersWhiteTop));
+        gameBoardStr.append("Game Board with Black on Top: \n");
+        gameBoardStr.append(makeLettersStr(lettersBlackTop));
+        blackTop = true;
+        for (int i = 8; i > 0; i--) {
+            if (i == 1 || i == 8) {
+                gameBoardStr.append(makeRowStr(i, piecesBlackTop, blackTop));
+            } else if (i == 2 || i == 7) {
+                gameBoardStr.append(makeRowStr(i, pawns, blackTop));
+            } else {
+                gameBoardStr.append(makeRowStr(i, empty, blackTop));
+            }
+        }
+        gameBoardStr.append(makeLettersStr(lettersBlackTop));
+
+        return gameBoardStr.toString();
+    }
+
+    private String makeLettersStr(char[] letters) {
+        StringBuilder letterStr = new StringBuilder();
+        letterStr.append(SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK + SET_BG_COLOR_LIGHT_GREY);
+        letterStr.append("   ");
+        for (char letter : letters) {
+            letterStr.append(" " + letter + " ");
+        }
+        letterStr.append("   ");
+        letterStr.append(SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE + RESET_TEXT_BOLD_FAINT + "\n");
+        return letterStr.toString();
+    }
+
+    private String makeRowStr(int i, char[] pieces, boolean blackTop) {
+        StringBuilder rowStr = new StringBuilder();
+        rowStr.append(SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK + SET_BG_COLOR_LIGHT_GREY);
+        rowStr.append(" " + i + " ");
+        if (i == 1 || i == 2) {
+            rowStr.append(SET_TEXT_COLOR_GREEN);
+        } else if (i == 8 || i == 7) {
+            rowStr.append("[38;5;22m");
+        }
+        if (blackTop) {
+            if (i % 2 == 1) {
+                rowStr.append(makeRowStartBlack(pieces));
+            } else {
+                rowStr.append(makeRowStartWhite(pieces));
+            }
+        } else {
+            if (i % 2 == 1) {
+                rowStr.append(makeRowStartWhite(pieces));
+            } else {
+                rowStr.append(makeRowStartBlack(pieces));
+            }
+        }
+        rowStr.append(SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK + SET_BG_COLOR_LIGHT_GREY);
+        rowStr.append(" " + i + " ");
+        rowStr.append(SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE + RESET_TEXT_BOLD_FAINT + "\n");
+        return rowStr.toString();
+    }
+
+    private String makeRowStartBlack(char[] pieces) {
+        StringBuilder rowStrBlack = new StringBuilder();
+        for (int i = 0; i < pieces.length; i++) {
+            if (i % 2 == 0) {
+                rowStrBlack.append(SET_BG_COLOR_BLACK + " " + pieces[i] + " ");
+            } else {
+                rowStrBlack.append(SET_BG_COLOR_WHITE + " " + pieces[i] + " ");
+            }
+        }
+        return rowStrBlack.toString();
+    }
+
+    private String makeRowStartWhite(char[] pieces) {
+        StringBuilder rowStrBlack = new StringBuilder();
+        for (int i = 0; i < pieces.length; i++) {
+            if (i % 2 == 0) {
+                rowStrBlack.append(SET_BG_COLOR_WHITE + " " + pieces[i] + " ");
+            } else {
+                rowStrBlack.append(SET_BG_COLOR_BLACK + " " + pieces[i] + " ");
+            }
+        }
+        return rowStrBlack.toString();
     }
 
 
