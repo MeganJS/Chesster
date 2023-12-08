@@ -255,6 +255,10 @@ public class ChessClient {
         String strGameID = Integer.toString(gameID);
         if (strGameID.length() == 3) {
             strGameID = "0" + gameID;
+        } else if (strGameID.length() == 2) {
+            strGameID = "00" + gameID;
+        } else if (strGameID.length() == 1) {
+            strGameID = "000" + gameID;
         }
         return strGameID;
     }
