@@ -1,5 +1,6 @@
-package webSocketMessages.serverMessages;
+package serverMessageClasses;
 
+import webSocketMessages.serverMessages.ServerMessage;
 
 public class ServerMessageNotify extends ServerMessage {
     public ServerMessageNotify() {

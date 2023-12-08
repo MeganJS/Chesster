@@ -1,4 +1,6 @@
-package webSocketMessages.serverMessages;
+package serverMessageClasses;
+
+import webSocketMessages.serverMessages.ServerMessage;
 
 public class ServerMessageLoad extends ServerMessage {
     public ServerMessageLoad() {

@@ -8,10 +8,10 @@ import static java.lang.Integer.parseInt;
 import static ui.EscapeSequences.*;
 
 public class ChessClient {
-    private boolean isSignedIn = false;
     private String serverURL;
     private ChessServerFacade serverFacade = new ChessServerFacade();
     private String userAuthToken = null;
+    private GameplayUI gameplayUI = null;
 
     public ChessClient(String url) {
         serverURL = url;
@@ -20,8 +20,12 @@ public class ChessClient {
     public String checkInput(String input) {
         String[] words = input.toLowerCase().split(" ");
         String command = words[0];
+        if (gameplayUI != null) {
+            return gameplayUI.gameplayCommand(command);
+        }
         try {
             if (command.equals("quit")) {
+                //TODO: add a check here that makes user leave the game if they quit
                 return command;
             }
             if (command.equals("help")) {
@@ -55,8 +59,8 @@ public class ChessClient {
         StringBuilder helpOutput = new StringBuilder();
         helpOutput.append("I'm glad you asked! Here are the actions available to you: \n");
         helpOutput.append("help - see a list of available actions\n");
-        helpOutput.append("quit - exit application\n");
-        if (isSignedIn) {
+        helpOutput.append("quit - exit application (if you are in a game, causes you to leave the game before exiting)\n");
+        if (userAuthToken != null) {
             helpOutput.append("logout - logout of your current session\n");
             helpOutput.append("new <NAME> - create a new game of the specified name\n");
             helpOutput.append("list - list all current games\n");
@@ -69,6 +73,7 @@ public class ChessClient {
         return helpOutput.toString();
     }
 
+
     private String registerUser(String[] words) {
         String newURL = serverURL + "user";
         if (words.length < 4) {
@@ -79,7 +84,7 @@ public class ChessClient {
         Map response = serverFacade.talkToServer(newURL, "POST", "", jsonBody);
 
         if ((int) response.get("statusCode") == 200) {
-            isSignedIn = true;
+
             userAuthToken = response.get("authToken").toString();
             return words[1] + " successfully registered. Welcome to chess!\n";
         } else if ((int) response.get("statusCode") == 400) {
@@ -102,7 +107,7 @@ public class ChessClient {
         Map response = serverFacade.talkToServer(newURL, "DELETE", userAuthToken, "");
 
         if ((int) response.get("statusCode") == 200) {
-            isSignedIn = false;
+
             userAuthToken = null;
             return "Logout successful. Thanks for playing!\n";
         } else if ((int) response.get("statusCode") == 401) {
@@ -126,7 +131,7 @@ public class ChessClient {
         Map response = serverFacade.talkToServer(newURL, "POST", "", jsonBody);
 
         if ((int) response.get("statusCode") == 200) {
-            isSignedIn = true;
+
             userAuthToken = response.get("authToken").toString();
             return response.get("username") + " logged in. What would you like to do?\n";
         } else if ((int) response.get("statusCode") == 401) {
@@ -391,6 +396,5 @@ public class ChessClient {
         }
         return rowStrBlack.toString();
     }
-
 
 }
