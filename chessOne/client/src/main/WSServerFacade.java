@@ -3,7 +3,9 @@ import org.eclipse.jetty.server.Server;
 import serverMessageClasses.ServerMessageError;
 import serverMessageClasses.ServerMessageLoad;
 import serverMessageClasses.ServerMessageNotify;
+import userCommandClasses.JoinPlayerCommand;
 import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.management.Notification;
 import javax.websocket.*;
@@ -53,12 +55,24 @@ public class WSServerFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    public void joinPlayer() {
-
+    public void joinPlayer(String authToken) {
+        try {
+            UserGameCommand command = new JoinPlayerCommand(authToken);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+            System.out.println(new Gson().toJson(command));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-    public void joinObserver() {
-
+    public void joinObserver(String authToken) {
+        try {
+            UserGameCommand command = new JoinPlayerCommand(authToken);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+            System.out.println(new Gson().toJson(command));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 

@@ -45,9 +45,9 @@ public class GameplayUI {
 
     public void joinGameMessage() {
         if (isPlayer) {
-            wsServerFacade.joinPlayer();
+            wsServerFacade.joinPlayer(userAuthToken);
         } else if (isObserver) {
-            wsServerFacade.joinObserver();
+            wsServerFacade.joinObserver(userAuthToken);
         }
     }
 
