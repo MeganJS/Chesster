@@ -31,7 +31,6 @@ public class ChessServer {
         Spark.post("/game", CreateGameHandler::handleCreateGame);
         Spark.get("/game", ListGamesHandler::handleListGames);
         Spark.put("/game", JoinGameHandler::handleJoinGame);
-
     }
 
 }
