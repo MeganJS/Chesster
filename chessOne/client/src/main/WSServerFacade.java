@@ -53,5 +53,13 @@ public class WSServerFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
+    public void joinPlayer() {
+
+    }
+
+    public void joinObserver() {
+
+    }
+
 
 }

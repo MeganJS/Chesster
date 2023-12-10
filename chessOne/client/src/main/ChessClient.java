@@ -207,7 +207,6 @@ public class ChessClient {
 
     private String addUserToGame(String[] words) {
         try {
-
             String newURL = serverURL + "game";
             if (words.length < 2) {
                 return "Hmm, something wasn't quite right. Make sure to include the game ID and color of choice after the command.\n";
@@ -225,6 +224,8 @@ public class ChessClient {
 
 
             if ((int) response.get("statusCode") == 200) {
+                gameplayUI = new GameplayUI(serverURL, userAuthToken, gameID, playerColor);
+                gameplayUI.joinGameMessage();
                 return "Successfully joined game " + gameID + " as " + playerColor + ".\n" + makeGameBoardStr();
             } else if ((int) response.get("statusCode") == 400) {
                 return "Hmm, something wasn't quite right with the input. Try again!\n";
@@ -242,8 +243,8 @@ public class ChessClient {
         } catch (NumberFormatException ex) {
             return "Something was off about the game ID. Try again, or use the 'help' command to review actions.\n";
         }
-
     }
+
 
     private Map createJoinGameMap(String[] words) {
         var body = new HashMap();
@@ -396,5 +397,6 @@ public class ChessClient {
         }
         return rowStrBlack.toString();
     }
+
 
 }

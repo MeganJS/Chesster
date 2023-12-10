@@ -1,15 +1,22 @@
 public class GameplayUI {
 
     private String serverURL;
-    private WSServerFacade serverFacade = new WSServerFacade(serverURL);
+    private WSServerFacade wsServerFacade;
     private String userAuthToken;
-    boolean isPlayer = false;
-    boolean isObserver = false;
-    int gameID;
+    private boolean isPlayer = false;
+    private boolean isObserver = false;
+    private String strGameID;
 
-    public GameplayUI(String serverURL, String userAuthToken) {
+    public GameplayUI(String serverURL, String userAuthToken, String gameID, String playerColor) {
         this.serverURL = serverURL;
         this.userAuthToken = userAuthToken;
+        this.strGameID = gameID;
+        wsServerFacade = new WSServerFacade(serverURL);
+        if (playerColor.contains("player")) {
+            isPlayer = true;
+        } else if (playerColor.contains("observer")) {
+            isObserver = true;
+        }
     }
 
     public String gameplayCommand(String command) {
@@ -36,6 +43,14 @@ public class GameplayUI {
         return "Sorry, that's not a valid action.";
     }
 
+    public void joinGameMessage() {
+        if (isPlayer) {
+            wsServerFacade.joinPlayer();
+        } else if (isObserver) {
+            wsServerFacade.joinObserver();
+        }
+    }
+
     private String helpInGame() {
         StringBuilder helpOutput = new StringBuilder();
         helpOutput.append("I'm glad you asked! Here are the actions available to you: \n");
@@ -50,5 +65,15 @@ public class GameplayUI {
         }
         return helpOutput.toString();
     }
+
+    private String quitInGame() {
+        leaveGame();
+        return "quit";
+    }
+
+    private String leaveGame() {
+        return null;
+    }
+
 
 }
