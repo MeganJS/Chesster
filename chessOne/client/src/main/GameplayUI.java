@@ -69,7 +69,7 @@ public class GameplayUI {
     }
 
     private String quitInGame() {
-        leaveGame();
+        System.out.println(leaveGame());
         return "quit";
     }
 
@@ -79,9 +79,12 @@ public class GameplayUI {
      * @return confirmation message that you left the game
      */
     private String leaveGame() {
-        wsServerFacade.leaveGame(new LeaveCommand(authToken, playerColor));
-
-        return "You have successfully left game " + strGameID + ". \n";
+        String retStr = wsServerFacade.leaveGame(new LeaveCommand(authToken, playerColor));
+        if (retStr.equals("success")) {
+            return "You have successfully left game " + strGameID + ". \n";
+        } else {
+            return retStr;
+        }
     }
 
 

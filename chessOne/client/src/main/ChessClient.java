@@ -23,6 +23,10 @@ public class ChessClient {
         if (gameplayUI != null) {
             if (command.equals("quit") || command.equals("leave")) {
                 String retStr = gameplayUI.gameplayCommand(command);
+                if (retStr.contains("quit") || retStr.contains("successfully left")) {
+                    gameplayUI = null;
+                }
+                return retStr;
             }
             return gameplayUI.gameplayCommand(command);
         }

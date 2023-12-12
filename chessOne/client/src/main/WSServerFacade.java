@@ -80,12 +80,13 @@ public class WSServerFacade extends Endpoint {
         }
     }
 
-    public void leaveGame(UserGameCommand command) {
+    public String leaveGame(UserGameCommand command) {
         try {
             session.getBasicRemote().sendText(new Gson().toJson(command));
             session.close();
+            return "success";
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            return e.getMessage();
         }
     }
 

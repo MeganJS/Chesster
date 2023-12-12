@@ -8,7 +8,7 @@ public class Repl {
     }
 
     public void run() {
-        System.out.println("You've reached Chesster, the chess application of your dreams[citation needed]. Congratulations!");
+        System.out.println("You've reached Chesster, the chess application of your dreams [citation needed]. Congratulations!");
         System.out.println("Type \"help\" to view available actions.");
 
         Scanner scanner = new Scanner(System.in);
