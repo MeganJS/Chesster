@@ -15,8 +15,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class WSServerFacade extends Endpoint {
-    private Session session;
-    private ClientMessageHandler cmHandler = new ClientMessageHandler();
+    private static Session session;
+    //private ClientMessageHandler cmHandler = new ClientMessageHandler();
 
     public WSServerFacade(String urlString) {
         try {
@@ -25,9 +25,9 @@ public class WSServerFacade extends Endpoint {
             //add notification handler
 
             WebSocketContainer wsContainer = ContainerProvider.getWebSocketContainer();
-            this.session = wsContainer.connectToServer(this, wsURI);
+            session = wsContainer.connectToServer(this, wsURI);
 
-            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+            session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
                     Gson json = new Gson();
@@ -43,13 +43,13 @@ public class WSServerFacade extends Endpoint {
                             builder.registerTypeAdapter(ChessGame.class, new ChessGameAdapter());
                             ServerMessageLoad loadMessage = builder.create().fromJson(message, ServerMessageLoad.class);
                             */
-                            cmHandler.loadGameBoard(json.fromJson(message, ServerMessageLoad.class));
+                            loadGameBoard(json.fromJson(message, ServerMessageLoad.class));
                             break;
                         case ERROR:
-                            cmHandler.handleError(json.fromJson(message, ServerMessageError.class));
+                            handleError(json.fromJson(message, ServerMessageError.class));
                             break;
                         case NOTIFICATION:
-                            cmHandler.notify(json.fromJson(message, ServerMessageNotify.class));
+                            notifyUser(json.fromJson(message, ServerMessageNotify.class));
                     }
                 }
             });
@@ -66,7 +66,7 @@ public class WSServerFacade extends Endpoint {
 
     public void joinPlayer(UserGameCommand command) {
         try {
-            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+            session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -74,12 +74,31 @@ public class WSServerFacade extends Endpoint {
 
     public void joinObserver(UserGameCommand command) {
         try {
-            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+            session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
+
+    private void loadGameBoard(ServerMessageLoad message) {
+        System.out.println(message.getMessageText());
+    }
+
+    private void notifyUser(ServerMessageNotify message) {
+        System.out.println(message.getMessageText());
+    }
+
+    private void handleError(ServerMessageError message) {
+        System.out.println(message.getMessageText());
+    }
+
+
+
+
+
+
+    /*
     static class ChessPieceAdapter implements JsonDeserializer<ChessPiece> {
         @Override
         public ChessPiece deserialize(JsonElement jsonEl, Type type, JsonDeserializationContext jdc) throws JsonParseException {
@@ -107,5 +126,7 @@ public class WSServerFacade extends Endpoint {
             return jdc.deserialize(jsonEl, ChessGameImp.class);
         }
     }
+
+     */
 
 }
