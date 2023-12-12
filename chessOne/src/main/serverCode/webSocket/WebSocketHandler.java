@@ -27,26 +27,31 @@ public class WebSocketHandler {
     static SQLGameDAO gameDAO = new SQLGameDAO();
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) {
-        UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
-        if (command.getCommandType() == UserGameCommand.CommandType.JOIN_OBSERVER) {
-            //call the join function
-        } else if (command.getCommandType() == UserGameCommand.CommandType.JOIN_PLAYER) {
-            //call the join function
-        } else {
-            var conn = connMan.getConnection(command.getAuthString());
-            if (conn != null) {
-                switch (command.getCommandType()) {
-                    case LEAVE:
-                        //call the leave function
-                    case MAKE_MOVE:
-                        //call the make move function
-                    case RESIGN:
-                        //call the resign function
-                }
+    public void onMessage(Session session, String message) throws IOException {
+        try {
+            UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
+            if (command.getCommandType() == UserGameCommand.CommandType.JOIN_OBSERVER) {
+                handleJoinGame(session, command);
+            } else if (command.getCommandType() == UserGameCommand.CommandType.JOIN_PLAYER) {
+                handleJoinGame(session, command);
             } else {
-                //send an error that the user does not have a current connection
+                var conn = connMan.getConnection(command.getAuthString());
+                if (conn != null) {
+                    switch (command.getCommandType()) {
+                        case LEAVE:
+                            //call the leave function
+                        case MAKE_MOVE:
+                            //call the make move function
+                        case RESIGN:
+                            //call the resign function
+                    }
+                } else {
+                    //send an error that the user does not have a current connection
+                }
             }
+        } catch (IOException e) {
+            ServerMessageError error = new ServerMessageError(e.getMessage());
+            session.getBasicRemote().sendText(new Gson().toJson(error));
         }
     }
 
@@ -59,7 +64,6 @@ public class WebSocketHandler {
      *  find the game they're part of and send the notification to all other connections in that game
      */
     private void handleJoinGame(Session session, UserGameCommand command) throws IOException {
-        ServerMessage returnMessage;
         Gson json = new Gson();
         int gameID;
         String playerColor;
@@ -83,7 +87,7 @@ public class WebSocketHandler {
             ServerMessageNotify notify = new ServerMessageNotify(username + " has joined " + chessModel.getGameName() + " as " + playerColor + ".\n");
             connMan.broadcast(gameID, userAuthToken.getAuthToken(), notify);
 
-        } catch (DataAccessException | IOException e) {
+        } catch (DataAccessException | IOException | IllegalAccessException e) {
             ServerMessageError error = new ServerMessageError(e.getMessage());
             session.getBasicRemote().sendText(json.toJson(error));
         }

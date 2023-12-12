@@ -8,9 +8,11 @@ import java.util.HashMap;
 public class ConnectionManager {
     HashMap<String, Connection> connections = new HashMap<>();
 
-    public void addConnection(String authToken, Connection connection) {
+    public void addConnection(String authToken, Connection connection) throws IllegalAccessException {
+        if (connections.containsKey(authToken) && connections.get(authToken).session.isOpen()) {
+            throw new IllegalAccessException("User already has an open session. No connection will be added.");
+        }
         connections.put(authToken, connection);
-        //TODO: add cases for if user already is in connections
     }
 
     public Connection getConnection(String authToken) {
