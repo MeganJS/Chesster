@@ -21,11 +21,32 @@ public class ChessClient {
         String[] words = input.toLowerCase().split(" ");
         String command = words[0];
         if (gameplayUI != null) {
+            if (command.equals("quit") || command.equals("leave")) {
+                String retStr = gameplayUI.gameplayCommand(command);
+            }
             return gameplayUI.gameplayCommand(command);
         }
         try {
+            switch (command) {
+                case "quit":
+                    return command;
+                case "help":
+                    return helpUser();
+                case "register":
+                    return registerUser(words);
+                case "logout":
+                    return logUserOut();
+                case "login":
+                    logUserIn(words);
+                case "new":
+                    return makeNewGame(words);
+                case "list":
+                    return listGames();
+                case "join", "observe":
+                    return addUserToGame(words);
+            }
+            /*
             if (command.equals("quit")) {
-                //TODO: add a check here that makes user leave the game if they quit
                 return command;
             }
             if (command.equals("help")) {
@@ -49,6 +70,8 @@ public class ChessClient {
             if (command.equals("join") || command.equals("observe")) {
                 return addUserToGame(words);
             }
+
+             */
         } catch (Exception ex) {
             return ex.getMessage();
         }

@@ -148,6 +148,12 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
+/*
+    public void removePlayer(int gameID, String username, ChessGame.TeamColor color) {
+    }
+
+ */
+
     @Override
     public Collection<Game> readAllGames() throws DataAccessException {
         try {

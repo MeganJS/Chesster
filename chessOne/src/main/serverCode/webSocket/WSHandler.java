@@ -40,7 +40,7 @@ public class WSHandler {
                 if (conn != null) {
                     switch (command.getCommandType()) {
                         case LEAVE:
-                            //call the leave function
+                            handleLeave(session, command);
                         case MAKE_MOVE:
                             //call the make move function
                         case RESIGN:
@@ -72,17 +72,19 @@ public class WSHandler {
         try {
             UserGameCommand command = json.fromJson(message, UserGameCommand.class);
             authString = command.getAuthString();
+            playerColor = command.getPlayerColor();
             AuthToken userAuthToken = userAuthDAO.readAuthToken(authString);
             //adding connection
+            gameID = findGameID(command.getCommandType(), message);
+            /*
             if (command.getCommandType() == UserGameCommand.CommandType.JOIN_OBSERVER) {
                 JoinObserverCommand observerCmd = json.fromJson(message, JoinObserverCommand.class);
                 gameID = observerCmd.getGameID();
-                playerColor = observerCmd.getPlayerColor();
             } else {
                 JoinPlayerCommand playerCmd = json.fromJson(message, JoinPlayerCommand.class);
                 gameID = playerCmd.getGameID();
-                playerColor = playerCmd.getPlayerColor();
             }
+             */
             connMan.addConnection(authString, new Connection(authString, session, gameID));
             loadGame(session, gameID);
 
@@ -94,6 +96,17 @@ public class WSHandler {
         } catch (DataAccessException | IOException | IllegalAccessException e) {
             ServerMessageError error = new ServerMessageError(e.getMessage());
             session.getRemote().sendString(json.toJson(error));
+        }
+    }
+
+    private int findGameID(UserGameCommand.CommandType type, String message) {
+        Gson json = new Gson();
+        if (type == UserGameCommand.CommandType.JOIN_OBSERVER) {
+            JoinObserverCommand observerCmd = json.fromJson(message, JoinObserverCommand.class);
+            return observerCmd.getGameID();
+        } else {
+            JoinPlayerCommand playerCmd = json.fromJson(message, JoinPlayerCommand.class);
+            return playerCmd.getGameID();
         }
     }
 
@@ -127,8 +140,35 @@ public class WSHandler {
      *  notify other users
      *  remove connection from connections
      */
-    private void handleLeave() {
+    private void handleLeave(Session session, UserGameCommand command) throws IOException {
+        Gson json = new Gson();
+        try {
+            String authString = command.getAuthString();
+            AuthToken userAuthToken = userAuthDAO.readAuthToken(authString);
+            int gameID = connMan.getConnection(authString).gameID;
+            //TODO test this!!
+            gameDAO.claimGameSpot(gameID, null, findTeamColor(command.getPlayerColor()));
 
+            Game chessModel = gameDAO.readGame(gameID);
+            String username = userAuthToken.getUsername();
+            ServerMessageNotify notify = new ServerMessageNotify(username + " has left the game " + chessModel.getGameName() + ".\n");
+            connMan.broadcast(gameID, userAuthToken.getAuthToken(), notify);
+            connMan.removeConnection(authString);
+        } catch (Exception e) {
+            ServerMessageError error = new ServerMessageError(e.getMessage());
+            session.getRemote().sendString(json.toJson(error));
+        }
+    }
+
+    private ChessGame.TeamColor findTeamColor(String playerColor) throws Exception {
+        if (playerColor.contains("black")) {
+            return ChessGame.TeamColor.BLACK;
+        } else if (playerColor.contains("white")) {
+            return ChessGame.TeamColor.WHITE;
+        } else if (playerColor.contains("observer")) {
+            return null;
+        }
+        throw new Exception("Player color unrecognized.");
     }
 
     /***

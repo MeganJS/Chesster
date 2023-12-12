@@ -80,6 +80,7 @@ public class GameplayUI {
      */
     private String leaveGame() {
         wsServerFacade.leaveGame(new LeaveCommand(authToken, playerColor));
+
         return "You have successfully left game " + strGameID + ". \n";
     }
 
