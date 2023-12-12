@@ -2,9 +2,10 @@ package serverCode.webSocket;
 
 import com.google.gson.Gson;
 import models.AuthToken;
+import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ServerMessage;
 
-import javax.websocket.Session;
+
 import java.io.IOException;
 
 public class Connection {
@@ -27,6 +28,6 @@ public class Connection {
     }
 
     public void send(ServerMessage message) throws IOException {
-        this.session.getBasicRemote().sendText(new Gson().toJson(message));
+        this.session.getRemote().sendString(new Gson().toJson(message));
     }
 }

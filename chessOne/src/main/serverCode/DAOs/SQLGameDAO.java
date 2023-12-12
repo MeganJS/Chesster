@@ -194,7 +194,6 @@ public class SQLGameDAO implements GameDAO {
     }
 
     static class ChessPieceAdapter implements JsonDeserializer<ChessPiece> {
-
         @Override
         public ChessPiece deserialize(JsonElement jsonEl, Type type, JsonDeserializationContext jdc) throws JsonParseException {
             return jdc.deserialize(jsonEl, ChessPieceImp.class);
@@ -202,7 +201,6 @@ public class SQLGameDAO implements GameDAO {
     }
 
     static class ChessBoardAdapter implements JsonDeserializer<ChessBoard> {
-
         @Override
         public ChessBoard deserialize(JsonElement jsonEl, Type type, JsonDeserializationContext jdc) throws JsonParseException {
             return jdc.deserialize(jsonEl, ChessBoardImp.class);
@@ -210,7 +208,6 @@ public class SQLGameDAO implements GameDAO {
     }
 
     static class ChessPositionAdapter implements JsonDeserializer<ChessPosition> {
-
         @Override
         public ChessPosition deserialize(JsonElement jsonEl, Type type, JsonDeserializationContext jdc) throws JsonParseException {
             return jdc.deserialize(jsonEl, ChessPositionImp.class);

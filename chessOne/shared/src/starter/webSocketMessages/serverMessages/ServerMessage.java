@@ -32,6 +32,10 @@ public class ServerMessage {
         this.messageText = text;
     }
 
+    public String getMessageText() {
+        return messageText;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

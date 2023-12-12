@@ -226,7 +226,7 @@ public class ChessClient {
             if ((int) response.get("statusCode") == 200) {
                 gameplayUI = new GameplayUI(serverURL, userAuthToken, gameID, playerColor);
                 gameplayUI.joinGameMessage();
-                return "Successfully joined game " + gameID + " as " + playerColor + ".\n" + makeGameBoardStr();
+                return "Successfully joined game " + gameID + " as " + playerColor + ".\n";
             } else if ((int) response.get("statusCode") == 400) {
                 return "Hmm, something wasn't quite right with the input. Try again!\n";
             } else if ((int) response.get("statusCode") == 401) {

@@ -5,8 +5,10 @@ import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import models.AuthToken;
 import models.Game;
+import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.springframework.security.core.userdetails.User;
 import serverCode.DAOs.SQLGameDAO;
 import serverCode.DAOs.SQLUserAuthDAO;
 import serverMessageClasses.ServerMessageError;
@@ -14,14 +16,13 @@ import serverMessageClasses.ServerMessageLoad;
 import serverMessageClasses.ServerMessageNotify;
 import userCommandClasses.JoinObserverCommand;
 import userCommandClasses.JoinPlayerCommand;
-import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.UserGameCommand;
 
-import javax.websocket.Session;
+
 import java.io.IOException;
 
 @WebSocket
-public class WebSocketHandler {
+public class WSHandler {
     private ConnectionManager connMan = new ConnectionManager();
     static SQLUserAuthDAO userAuthDAO = new SQLUserAuthDAO();
     static SQLGameDAO gameDAO = new SQLGameDAO();
@@ -31,9 +32,9 @@ public class WebSocketHandler {
         try {
             UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
             if (command.getCommandType() == UserGameCommand.CommandType.JOIN_OBSERVER) {
-                handleJoinGame(session, command);
+                handleJoinGame(session, message);
             } else if (command.getCommandType() == UserGameCommand.CommandType.JOIN_PLAYER) {
-                handleJoinGame(session, command);
+                handleJoinGame(session, message);
             } else {
                 var conn = connMan.getConnection(command.getAuthString());
                 if (conn != null) {
@@ -51,7 +52,7 @@ public class WebSocketHandler {
             }
         } catch (IOException e) {
             ServerMessageError error = new ServerMessageError(e.getMessage());
-            session.getBasicRemote().sendText(new Gson().toJson(error));
+            session.getRemote().sendString(new Gson().toJson(error));
         }
     }
 
@@ -63,23 +64,26 @@ public class WebSocketHandler {
      *  send them a LOAD message
      *  find the game they're part of and send the notification to all other connections in that game
      */
-    private void handleJoinGame(Session session, UserGameCommand command) throws IOException {
+    private void handleJoinGame(Session session, String message) throws IOException {
         Gson json = new Gson();
         int gameID;
         String playerColor;
+        String authString;
         try {
-            AuthToken userAuthToken = userAuthDAO.readAuthToken(command.getAuthString());
+            UserGameCommand command = json.fromJson(message, UserGameCommand.class);
+            authString = command.getAuthString();
+            AuthToken userAuthToken = userAuthDAO.readAuthToken(authString);
             //adding connection
             if (command.getCommandType() == UserGameCommand.CommandType.JOIN_OBSERVER) {
-                JoinObserverCommand observerCommand = (JoinObserverCommand) command;
-                gameID = observerCommand.getGameID();
-                playerColor = observerCommand.getPlayerColor();
+                JoinObserverCommand observerCmd = json.fromJson(message, JoinObserverCommand.class);
+                gameID = observerCmd.getGameID();
+                playerColor = observerCmd.getPlayerColor();
             } else {
-                JoinPlayerCommand playerCommand = (JoinPlayerCommand) command;
-                gameID = playerCommand.getGameID();
-                playerColor = playerCommand.getPlayerColor();
+                JoinPlayerCommand playerCmd = json.fromJson(message, JoinPlayerCommand.class);
+                gameID = playerCmd.getGameID();
+                playerColor = playerCmd.getPlayerColor();
             }
-            connMan.addConnection(command.getAuthString(), new Connection(command.getAuthString(), session, gameID));
+            connMan.addConnection(authString, new Connection(authString, session, gameID));
             loadGame(session, gameID);
 
             Game chessModel = gameDAO.readGame(gameID);
@@ -89,7 +93,7 @@ public class WebSocketHandler {
 
         } catch (DataAccessException | IOException | IllegalAccessException e) {
             ServerMessageError error = new ServerMessageError(e.getMessage());
-            session.getBasicRemote().sendText(json.toJson(error));
+            session.getRemote().sendString(json.toJson(error));
         }
     }
 
@@ -98,11 +102,11 @@ public class WebSocketHandler {
         try {
             Game chessModel = gameDAO.readGame(gameID);
             ChessGame chessGame = chessModel.getChessGame();
-            ServerMessageLoad loadGame = new ServerMessageLoad(chessGame);
-            session.getBasicRemote().sendText(json.toJson(loadGame));
+            ServerMessageLoad loadGame = new ServerMessageLoad(json.toJson(chessGame));
+            session.getRemote().sendString(json.toJson(loadGame));
         } catch (IOException | DataAccessException e) {
             ServerMessageError error = new ServerMessageError(e.getMessage());
-            session.getBasicRemote().sendText(json.toJson(error));
+            session.getRemote().sendString(json.toJson(error));
         }
     }
 
