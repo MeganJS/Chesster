@@ -1,5 +1,6 @@
 import userCommandClasses.JoinObserverCommand;
 import userCommandClasses.JoinPlayerCommand;
+import userCommandClasses.LeaveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import static java.lang.Integer.parseInt;
@@ -10,7 +11,6 @@ public class GameplayUI {
     private WSServerFacade wsServerFacade;
     private String authToken;
     private String playerColor = "";
-    private boolean isObserver = false;
     private String strGameID;
 
     public GameplayUI(String serverURL, String userAuthToken, String gameID, String playerColor) {
@@ -27,7 +27,7 @@ public class GameplayUI {
                 case "help":
                     return helpInGame();
                 case "quit":
-                    return null;
+                    return quitInGame();
                 case "move":
                     return null;
                 case "highlight":
@@ -35,7 +35,7 @@ public class GameplayUI {
                 case "redraw":
                     return null;
                 case "leave":
-                    return null;
+                    return leaveGame();
                 case "resign":
                     return null;
             }
@@ -73,8 +73,14 @@ public class GameplayUI {
         return "quit";
     }
 
+    /**
+     * sends LEAVE command to server
+     *
+     * @return confirmation message that you left the game
+     */
     private String leaveGame() {
-        return null;
+        wsServerFacade.leaveGame(new LeaveCommand(authToken, playerColor));
+        return "You have successfully left game " + strGameID + ". \n";
     }
 
 

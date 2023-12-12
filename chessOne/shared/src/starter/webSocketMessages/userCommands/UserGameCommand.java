@@ -7,9 +7,17 @@ import java.util.Objects;
  */
 public class UserGameCommand {
 
+    String playerColor;
+
     public UserGameCommand(String authToken) {
         this.authToken = authToken;
     }
+
+    public UserGameCommand(String authToken, String playerColor) {
+        this.authToken = authToken;
+        this.playerColor = playerColor;
+    }
+
 
     public enum CommandType {
         JOIN_PLAYER,
@@ -27,7 +35,14 @@ public class UserGameCommand {
         return authToken;
     }
 
-    public CommandType getCommandType() { return this.commandType; }
+    public CommandType getCommandType() {
+        return this.commandType;
+    }
+
+    public String getPlayerColor() {
+        return playerColor;
+    }
+
 
     @Override
     public boolean equals(Object o) {
