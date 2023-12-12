@@ -7,18 +7,30 @@ import java.util.Objects;
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
+    String messageText;
 
-    public enum ServerMessageType{
+    public enum ServerMessageType {
         LOAD_GAME,
         ERROR,
         NOTIFICATION
     }
 
-    public ServerMessage(ServerMessageType type){
+    public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;
     }
 
-    public ServerMessageType getServerMessageType() { return this.serverMessageType;}
+    public ServerMessage(ServerMessageType type, String text) {
+        this.serverMessageType = type;
+        this.messageText = text;
+    }
+
+    public ServerMessageType getServerMessageType() {
+        return this.serverMessageType;
+    }
+
+    public void setMessageText(String text) {
+        this.messageText = text;
+    }
 
     @Override
     public boolean equals(Object o) {

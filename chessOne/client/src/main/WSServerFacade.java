@@ -55,9 +55,8 @@ public class WSServerFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    public void joinPlayer(String authToken) {
+    public void joinPlayer(UserGameCommand command) {
         try {
-            UserGameCommand command = new JoinPlayerCommand(authToken);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
             System.out.println(new Gson().toJson(command));
         } catch (Exception e) {
@@ -65,9 +64,8 @@ public class WSServerFacade extends Endpoint {
         }
     }
 
-    public void joinObserver(String authToken) {
+    public void joinObserver(UserGameCommand command) {
         try {
-            UserGameCommand command = new JoinPlayerCommand(authToken);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
             System.out.println(new Gson().toJson(command));
         } catch (Exception e) {

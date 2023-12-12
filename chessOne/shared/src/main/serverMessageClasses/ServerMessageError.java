@@ -7,4 +7,9 @@ public class ServerMessageError extends ServerMessage {
         super(ServerMessageType.ERROR);
     }
 
+    public ServerMessageError(String text) {
+        super(ServerMessageType.ERROR, text);
+    }
+
+
 }

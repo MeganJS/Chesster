@@ -1,22 +1,24 @@
+import userCommandClasses.JoinObserverCommand;
+import userCommandClasses.JoinPlayerCommand;
+import webSocketMessages.userCommands.UserGameCommand;
+
+import static java.lang.Integer.parseInt;
+
 public class GameplayUI {
 
     private String serverURL;
     private WSServerFacade wsServerFacade;
-    private String userAuthToken;
-    private boolean isPlayer = false;
+    private String authToken;
+    private String playerColor = "";
     private boolean isObserver = false;
     private String strGameID;
 
     public GameplayUI(String serverURL, String userAuthToken, String gameID, String playerColor) {
         this.serverURL = serverURL;
-        this.userAuthToken = userAuthToken;
+        this.authToken = userAuthToken;
         this.strGameID = gameID;
         wsServerFacade = new WSServerFacade(serverURL);
-        if (playerColor.contains("player")) {
-            isPlayer = true;
-        } else if (playerColor.contains("observer")) {
-            isObserver = true;
-        }
+        this.playerColor = playerColor;
     }
 
     public String gameplayCommand(String command) {
@@ -44,10 +46,10 @@ public class GameplayUI {
     }
 
     public void joinGameMessage() {
-        if (isPlayer) {
-            wsServerFacade.joinPlayer(userAuthToken);
-        } else if (isObserver) {
-            wsServerFacade.joinObserver(userAuthToken);
+        if (playerColor.contains("player")) {
+            wsServerFacade.joinPlayer(new JoinPlayerCommand(authToken, parseInt(strGameID), playerColor));
+        } else if (playerColor.contains("observer")) {
+            wsServerFacade.joinObserver(new JoinObserverCommand(authToken, parseInt(strGameID), playerColor));
         }
     }
 
@@ -59,7 +61,7 @@ public class GameplayUI {
         helpOutput.append("highlight <position> - highlights all legal moves of the piece at that position\n");
         helpOutput.append("redraw - redraws the chessboard\n");
         helpOutput.append("leave - stop playing or observing this game. Someone else may take your place\n");
-        if (isPlayer) {
+        if (playerColor.contains("player")) {
             helpOutput.append("move (<start position>,<end position>) - make the specified move on the chessboard\n");
             helpOutput.append("resign - forfeit the game\n");
         }
