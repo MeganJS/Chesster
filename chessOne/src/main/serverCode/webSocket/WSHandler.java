@@ -1,6 +1,7 @@
 package serverCode.webSocket;
 
 import chess.ChessGame;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import models.AuthToken;
@@ -16,6 +17,7 @@ import serverMessageClasses.ServerMessageLoad;
 import serverMessageClasses.ServerMessageNotify;
 import userCommandClasses.JoinObserverCommand;
 import userCommandClasses.JoinPlayerCommand;
+import userCommandClasses.MakeMoveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
 
 
@@ -42,7 +44,7 @@ public class WSHandler {
                         case LEAVE:
                             handleLeave(session, command);
                         case MAKE_MOVE:
-                            //call the make move function
+                            handleMakeMove(session, message);
                         case RESIGN:
                             //call the resign function
                     }
@@ -76,7 +78,7 @@ public class WSHandler {
             AuthToken userAuthToken = userAuthDAO.readAuthToken(authString);
             gameID = command.getGameID();
             connMan.addConnection(authString, new Connection(authString, session, gameID));
-            loadGame(session, gameID);
+            loadGameOnJoin(session, gameID);
 
             Game chessModel = gameDAO.readGame(gameID);
             String username = userAuthToken.getUsername();
@@ -100,7 +102,7 @@ public class WSHandler {
         }
     }
 
-    private void loadGame(Session session, int gameID) throws IOException {
+    private void loadGameOnJoin(Session session, int gameID) throws IOException {
         Gson json = new Gson();
         try {
             Game chessModel = gameDAO.readGame(gameID);
@@ -113,6 +115,19 @@ public class WSHandler {
         }
     }
 
+    private void loadGameAll(int gameID) throws IOException {
+        Gson json = new Gson();
+        try {
+            Game chessModel = gameDAO.readGame(gameID);
+            ChessGame chessGame = chessModel.getChessGame();
+            ServerMessageLoad loadGame = new ServerMessageLoad(json.toJson(chessGame));
+            connMan.broadcast(gameID, "", loadGame);
+        } catch (IOException | DataAccessException e) {
+            ServerMessageError error = new ServerMessageError(e.getMessage());
+            connMan.broadcast(gameID, "", error);
+        }
+    }
+
     /***
      * this will:
      *  make the move on the board
@@ -120,7 +135,26 @@ public class WSHandler {
      *  sends a NOTIFY message to all in game clients
      *  if move results in Stalemate or Checkmate, ends the game
      */
-    private void handleMakeMove() {
+    private void handleMakeMove(Session session, String message) throws IOException {
+        Gson json = new Gson();
+        try {
+            MakeMoveCommand moveCommand = json.fromJson(message, MakeMoveCommand.class);
+            AuthToken userAuthToken = userAuthDAO.readAuthToken(moveCommand.getAuthString());
+
+            ChessGame chessGame = gameDAO.readGame(moveCommand.getGameID()).getChessGame();
+            chessGame.makeMove(moveCommand.getMove());
+            gameDAO.updateGame(moveCommand.getGameID(), chessGame);
+            //load game
+            loadGameAll(moveCommand.getGameID());
+            //notify
+            String username = userAuthToken.getUsername();
+            ServerMessageNotify notify = new ServerMessageNotify(username + " made move " + moveCommand.getMove() + ".\n");
+            connMan.broadcast(moveCommand.getGameID(), userAuthToken.getAuthToken(), notify);
+
+        } catch (DataAccessException | InvalidMoveException e) {
+            ServerMessageError error = new ServerMessageError(e.getMessage());
+            session.getRemote().sendString(json.toJson(error));
+        }
 
     }
 
@@ -149,7 +183,7 @@ public class WSHandler {
             session.getRemote().sendString(json.toJson(error));
         }
     }
-    
+
 
     /***
      * this will:

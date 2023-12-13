@@ -117,7 +117,12 @@ public class GameplayUI {
                 promotionPiece = words[3];
             }
             ChessMove move = createChessMove(start, end, promotionPiece);
-            return wsServerFacade.sendMakeMove(new MakeMoveCommand(authToken, teamColor, gameID, move));
+            String retStr = wsServerFacade.sendMakeMove(new MakeMoveCommand(authToken, teamColor, gameID, move));
+            if (retStr.equals("success")) {
+                return "You made move " + start + " " + end + ". \n";
+            } else {
+                return retStr;
+            }
         } catch (Exception e) {
             return e.getMessage();
         }
