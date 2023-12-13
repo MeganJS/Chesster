@@ -11,6 +11,7 @@ public class ChessGameImp implements ChessGame {
     private TeamColor teamTurn = null;
     private ChessBoard gameBoard = new ChessBoardImp();
 
+
     /**
      * @return Which team's turn it is
      */

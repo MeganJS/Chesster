@@ -49,6 +49,8 @@ public class Game {
     public Game(int IDforGame, String nameGame) {
         this.gameID = IDforGame;
         this.gameName = nameGame;
+        this.game.setTeamTurn(ChessGame.TeamColor.WHITE);
+        this.game.getBoard().resetBoard();
     }
 
     public Game(int IDforGame, String whiteUser, String blackUser, Collection<String> observingUsers, String nameGame, ChessGame chessGame) {
@@ -99,7 +101,7 @@ public class Game {
     public void setChessGame(ChessGame newGame) {
         game = newGame;
     }
-    
+
     @Override
     public int hashCode() {
         return gameID + gameName.length();

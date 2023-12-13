@@ -41,7 +41,7 @@ public class ChessClient {
                 case "logout":
                     return logUserOut();
                 case "login":
-                    logUserIn(words);
+                    return logUserIn(words);
                 case "new":
                     return makeNewGame(words);
                 case "list":

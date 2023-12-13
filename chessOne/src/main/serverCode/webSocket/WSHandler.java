@@ -1,12 +1,14 @@
 package serverCode.webSocket;
 
-import chess.ChessGame;
-import chess.InvalidMoveException;
+import chess.*;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 import dataAccess.DataAccessException;
 import models.AuthToken;
 import models.Game;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.springframework.security.core.userdetails.User;
@@ -136,9 +138,12 @@ public class WSHandler {
      *  if move results in Stalemate or Checkmate, ends the game
      */
     private void handleMakeMove(Session session, String message) throws IOException {
-        Gson json = new Gson();
         try {
-            MakeMoveCommand moveCommand = json.fromJson(message, MakeMoveCommand.class);
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.registerTypeAdapter(ChessPiece.class, (JsonDeserializer<ChessPiece>) (el, type, ctx) -> ctx.deserialize(el, ChessPieceImp.class));
+            gsonBuilder.registerTypeAdapter(ChessPosition.class, (JsonDeserializer<ChessPosition>) (el, type, ctx) -> ctx.deserialize(el, ChessPositionImp.class));
+            gsonBuilder.registerTypeAdapter(ChessMove.class, (JsonDeserializer<ChessMove>) (el, type, ctx) -> ctx.deserialize(el, ChessMoveImp.class));
+            MakeMoveCommand moveCommand = gsonBuilder.create().fromJson(message, MakeMoveCommand.class);
             AuthToken userAuthToken = userAuthDAO.readAuthToken(moveCommand.getAuthString());
 
             ChessGame chessGame = gameDAO.readGame(moveCommand.getGameID()).getChessGame();
@@ -153,7 +158,7 @@ public class WSHandler {
 
         } catch (DataAccessException | InvalidMoveException e) {
             ServerMessageError error = new ServerMessageError(e.getMessage());
-            session.getRemote().sendString(json.toJson(error));
+            session.getRemote().sendString(new Gson().toJson(error));
         }
 
     }

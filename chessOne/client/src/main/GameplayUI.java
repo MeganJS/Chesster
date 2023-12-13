@@ -142,10 +142,10 @@ public class GameplayUI {
     }
 
     private ChessMove createChessMove(String start, String end, String promotion) throws Exception {
-        //the ASCII for the char 'a' is 141
-        int startCol = start.charAt(0) - 140;
+        //the ASCII for the char 'a' is 97
+        int startCol = start.charAt(0) - 96;
         int startRow = start.charAt(1) - '0';
-        int endCol = end.charAt(0) - 140;
+        int endCol = end.charAt(0) - 96;
         int endRow = end.charAt(1) - '0';
         ChessPiece.PieceType promotionType = null;
         if (promotion != null) {
