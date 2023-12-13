@@ -5,22 +5,20 @@ import webSocketMessages.serverMessages.ServerMessage;
 
 public class ServerMessageLoad extends ServerMessage {
 
+    String game;
+
     public ServerMessageLoad() {
         super(ServerMessageType.LOAD_GAME);
     }
 
     public ServerMessageLoad(String gameStr) {
-        super(ServerMessageType.LOAD_GAME, gameStr);
+        super(ServerMessageType.LOAD_GAME);
+        game = gameStr;
     }
 
-/*
-    public ChessGame getChessGame() {
-        return chessGame;
+    public String getChessGame() {
+        return game;
     }
 
-    public void setChessGame(ChessGame chessGame) {
-        this.chessGame = chessGame;
-    }
 
- */
 }

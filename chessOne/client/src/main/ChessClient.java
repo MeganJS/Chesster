@@ -22,13 +22,13 @@ public class ChessClient {
         String command = words[0];
         if (gameplayUI != null) {
             if (command.equals("quit") || command.equals("leave")) {
-                String retStr = gameplayUI.gameplayCommand(command);
+                String retStr = gameplayUI.gameplayCommand(command, words);
                 if (retStr.contains("quit") || retStr.contains("successfully left")) {
                     gameplayUI = null;
                 }
                 return retStr;
             }
-            return gameplayUI.gameplayCommand(command);
+            return gameplayUI.gameplayCommand(command, words);
         }
         try {
             switch (command) {

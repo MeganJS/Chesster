@@ -5,6 +5,7 @@ import com.google.gson.stream.JsonReader;
 import serverMessageClasses.ServerMessageError;
 import serverMessageClasses.ServerMessageLoad;
 import serverMessageClasses.ServerMessageNotify;
+import userCommandClasses.MakeMoveCommand;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.UserGameCommand;
 
@@ -91,8 +92,18 @@ public class WSServerFacade extends Endpoint {
     }
 
 
+    public String sendMakeMove(MakeMoveCommand moveCommand) {
+        try {
+            session.getBasicRemote().sendText(new Gson().toJson(moveCommand));
+            return "success";
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+
+
     private void loadGameBoard(ServerMessageLoad message) {
-        System.out.println(message.getMessageText());
+        System.out.println(message.getChessGame());
     }
 
     private void notifyUser(ServerMessageNotify message) {

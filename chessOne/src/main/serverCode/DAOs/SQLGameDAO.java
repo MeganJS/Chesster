@@ -112,6 +112,7 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
+    //TODO clean this up
     @Override
     public void claimGameSpot(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException {
         try {

@@ -67,30 +67,20 @@ public class WSHandler {
     private void handleJoinGame(Session session, String message) throws IOException {
         Gson json = new Gson();
         int gameID;
-        String playerColor;
+        ChessGame.TeamColor playerColor;
         String authString;
         try {
             UserGameCommand command = json.fromJson(message, UserGameCommand.class);
             authString = command.getAuthString();
             playerColor = command.getPlayerColor();
             AuthToken userAuthToken = userAuthDAO.readAuthToken(authString);
-            //adding connection
-            gameID = findGameID(command.getCommandType(), message);
-            /*
-            if (command.getCommandType() == UserGameCommand.CommandType.JOIN_OBSERVER) {
-                JoinObserverCommand observerCmd = json.fromJson(message, JoinObserverCommand.class);
-                gameID = observerCmd.getGameID();
-            } else {
-                JoinPlayerCommand playerCmd = json.fromJson(message, JoinPlayerCommand.class);
-                gameID = playerCmd.getGameID();
-            }
-             */
+            gameID = command.getGameID();
             connMan.addConnection(authString, new Connection(authString, session, gameID));
             loadGame(session, gameID);
 
             Game chessModel = gameDAO.readGame(gameID);
             String username = userAuthToken.getUsername();
-            ServerMessageNotify notify = new ServerMessageNotify(username + " has joined " + chessModel.getGameName() + " as " + playerColor + ".\n");
+            ServerMessageNotify notify = new ServerMessageNotify(username + " has joined " + chessModel.getGameName() + " as " + createColorMessage(playerColor) + ".\n");
             connMan.broadcast(gameID, userAuthToken.getAuthToken(), notify);
 
         } catch (DataAccessException | IOException | IllegalAccessException e) {
@@ -99,14 +89,14 @@ public class WSHandler {
         }
     }
 
-    private int findGameID(UserGameCommand.CommandType type, String message) {
-        Gson json = new Gson();
-        if (type == UserGameCommand.CommandType.JOIN_OBSERVER) {
-            JoinObserverCommand observerCmd = json.fromJson(message, JoinObserverCommand.class);
-            return observerCmd.getGameID();
+
+    private String createColorMessage(ChessGame.TeamColor playerColor) {
+        if (playerColor == ChessGame.TeamColor.WHITE) {
+            return "white player";
+        } else if (playerColor == ChessGame.TeamColor.BLACK) {
+            return "black player";
         } else {
-            JoinPlayerCommand playerCmd = json.fromJson(message, JoinPlayerCommand.class);
-            return playerCmd.getGameID();
+            return "observer";
         }
     }
 
@@ -147,7 +137,7 @@ public class WSHandler {
             AuthToken userAuthToken = userAuthDAO.readAuthToken(authString);
             int gameID = connMan.getConnection(authString).gameID;
             //TODO test this!!
-            gameDAO.claimGameSpot(gameID, null, findTeamColor(command.getPlayerColor()));
+            gameDAO.claimGameSpot(gameID, null, command.getPlayerColor());
 
             Game chessModel = gameDAO.readGame(gameID);
             String username = userAuthToken.getUsername();
@@ -159,17 +149,7 @@ public class WSHandler {
             session.getRemote().sendString(json.toJson(error));
         }
     }
-
-    private ChessGame.TeamColor findTeamColor(String playerColor) throws Exception {
-        if (playerColor.contains("black")) {
-            return ChessGame.TeamColor.BLACK;
-        } else if (playerColor.contains("white")) {
-            return ChessGame.TeamColor.WHITE;
-        } else if (playerColor.contains("observer")) {
-            return null;
-        }
-        throw new Exception("Player color unrecognized.");
-    }
+    
 
     /***
      * this will:

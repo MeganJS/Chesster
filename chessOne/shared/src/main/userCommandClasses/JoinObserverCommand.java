@@ -1,18 +1,13 @@
 package userCommandClasses;
 
+import chess.ChessGame;
 import webSocketMessages.userCommands.UserGameCommand;
 
 public class JoinObserverCommand extends UserGameCommand {
-    int gameID;
 
-    public JoinObserverCommand(String authToken, int gameID, String color) {
-        super(authToken, color);
+    public JoinObserverCommand(String authToken, ChessGame.TeamColor color, int gameID) {
+        super(authToken, color, gameID);
         this.commandType = CommandType.JOIN_OBSERVER;
-        this.gameID = gameID;
-    }
-
-    public int getGameID() {
-        return gameID;
     }
 
 }
