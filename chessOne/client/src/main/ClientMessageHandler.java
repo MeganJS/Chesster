@@ -14,15 +14,13 @@ import static ui.EscapeSequences.*;
 public class ClientMessageHandler {
     ChessGame.TeamColor playerColor;
 
-    //TODO replace println with printf
     public ClientMessageHandler(ChessGame.TeamColor playerColor) {
         this.playerColor = playerColor;
     }
 
     public void loadGameBoard(ServerMessageLoad message) {
-        //System.out.println(message.getChessGame());
         ChessGame chessGame = createChessGson().fromJson(message.getChessGame(), ChessGameImp.class);
-        System.out.printf(makeGameBoardStr(chessGame));
+        System.out.println(makeGameBoardStr(chessGame));
     }
 
     public void notifyUser(ServerMessageNotify message) {
@@ -46,13 +44,6 @@ public class ClientMessageHandler {
         char[] lettersBlackTop = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
         char[] lettersWhiteTop = {'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'};
 
-        /*
-        char[] piecesBlackTop = {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'};
-        char[] piecesWhiteTop = {'R', 'N', 'B', 'K', 'Q', 'B', 'N', 'R'};
-        char[] pawns = {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'};
-        char[] empty = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
-
-         */
 
         //0-8, 8-16, 16-24, 24-32, 32-40, 40-48, 48-56, 56-64
         if (blackTop) {
@@ -68,17 +59,6 @@ public class ClientMessageHandler {
             }
             gameBoardStr.append(makeLettersStr(lettersWhiteTop));
         }
-        /*
-        for (int i = 1; i < 9; i++) {
-            if (i == 1 || i == 8) {
-                gameBoardStr.append(makeRowStr(i, piecesWhiteTop, blackTop));
-            } else if (i == 2 || i == 7) {
-                gameBoardStr.append(makeRowStr(i, pawns, blackTop));
-            } else {
-                gameBoardStr.append(makeRowStr(i, empty, blackTop));
-            }
-        }
-         */
 
         return gameBoardStr.toString();
     }
@@ -163,13 +143,7 @@ public class ClientMessageHandler {
         StringBuilder rowStr = new StringBuilder();
         rowStr.append(SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK + SET_BG_COLOR_LIGHT_GREY);
         rowStr.append(" " + i + " ");
-        /*
-        if (i == 1 || i == 2) {
-            rowStr.append(SET_TEXT_COLOR_GREEN);
-        } else if (i == 8 || i == 7) {
-            rowStr.append("[38;5;22m");
-        }
-         */
+
         if (blackTop) {
             if (i % 2 == 1) {
                 rowStr.append(makeRowStartBlack(pieces));
