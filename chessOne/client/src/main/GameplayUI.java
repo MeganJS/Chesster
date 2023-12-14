@@ -18,7 +18,6 @@ public class GameplayUI {
         this.serverURL = serverURL;
         this.authToken = userAuthToken;
         this.gameID = parseInt(strGameID);
-        wsServerFacade = new WSServerFacade(serverURL);
         if (playerColor.contains("black")) {
             teamColor = ChessGame.TeamColor.BLACK;
         } else if (playerColor.contains("white")) {
@@ -26,6 +25,7 @@ public class GameplayUI {
         } else if (playerColor.contains("observer")) {
             teamColor = null;
         }
+        wsServerFacade = new WSServerFacade(serverURL, new ClientMessageHandler(teamColor));
     }
 
     public String gameplayCommand(String command, String[] words) {

@@ -322,6 +322,7 @@ public class ChessClient {
         return gameStr.toString();
     }
 
+    /*
     private String makeGameBoardStr() {
         StringBuilder gameBoardStr = new StringBuilder();
         gameBoardStr.append("Game Board with White on Top: \n");
@@ -424,6 +425,8 @@ public class ChessClient {
         }
         return rowStrBlack.toString();
     }
+
+     */
 
 
 }

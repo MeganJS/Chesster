@@ -8,17 +8,13 @@ import dataAccess.DataAccessException;
 import models.AuthToken;
 import models.Game;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import org.springframework.security.core.userdetails.User;
 import serverCode.DAOs.SQLGameDAO;
 import serverCode.DAOs.SQLUserAuthDAO;
 import serverMessageClasses.ServerMessageError;
 import serverMessageClasses.ServerMessageLoad;
 import serverMessageClasses.ServerMessageNotify;
-import userCommandClasses.JoinObserverCommand;
-import userCommandClasses.JoinPlayerCommand;
 import userCommandClasses.MakeMoveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
 
@@ -160,7 +156,7 @@ public class WSHandler {
             loadGameAll(moveCommand.getGameID());
             //notify
             String username = userAuthToken.getUsername();
-            ServerMessageNotify notify = new ServerMessageNotify(username + " made move " + moveToString(moveCommand.getMove()) + ".\n");
+            ServerMessageNotify notify = new ServerMessageNotify(username + " made move" + moveToString(moveCommand.getMove()) + ".\n");
             connMan.broadcast(moveCommand.getGameID(), userAuthToken.getAuthToken(), new Gson().toJson(notify));
             notifyForWin(chessGame, moveCommand.getGameID());
         } catch (DataAccessException | InvalidMoveException | IOException e) {
@@ -171,10 +167,10 @@ public class WSHandler {
 
     private String moveToString(ChessMove move) {
         char startCol = (char) (move.getStartPosition().getColumn() + 96);
-        char startRow = (char) (move.getStartPosition().getRow());
+        char startRow = (char) (move.getStartPosition().getRow() + '0');
         char endCol = (char) (move.getEndPosition().getColumn() + 96);
-        char endRow = (char) (move.getEndPosition().getRow());
-        return startCol + startRow + " " + endCol + endRow;
+        char endRow = (char) (move.getEndPosition().getRow() + '0');
+        return " " + startCol + startRow + " " + endCol + endRow;
     }
 
 
@@ -236,7 +232,6 @@ public class WSHandler {
     /***
      * this will:
      *  end the game (how?)
-     *  TODO make a win screen! for fun?
      *  notify all clients in game that this player resigned and thus the other player won
      */
     private void handleResign(Session session, UserGameCommand command) throws IOException {
