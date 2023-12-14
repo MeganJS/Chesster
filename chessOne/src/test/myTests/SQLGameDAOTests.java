@@ -2,6 +2,7 @@ package myTests;
 
 import chess.ChessGame;
 import chess.ChessGameImp;
+import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

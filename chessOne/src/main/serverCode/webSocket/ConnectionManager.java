@@ -3,6 +3,7 @@ package serverCode.webSocket;
 import webSocketMessages.serverMessages.ServerMessage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ConnectionManager {
@@ -23,11 +24,19 @@ public class ConnectionManager {
         connections.remove(authToken);
     }
 
-    public void broadcast(int gameID, String userAuthToken, ServerMessage notification) throws IOException {
+    public void broadcast(int gameID, String userAuthToken, String notification) throws IOException {
+        ArrayList<Connection> removeList = new ArrayList<>();
         for (Connection connection : connections.values()) {
+            if (!connection.session.isOpen()) {
+                removeList.add(connection);
+            }
             if (connection.getGameID() == gameID && !connection.getAuthToken().equals(userAuthToken)) {
                 connection.send(notification);
             }
-        }//TODO add clean up for old sessions
+        }
+
+        for (Connection connection : removeList) {
+            removeConnection(connection.authToken);
+        }
     }
 }

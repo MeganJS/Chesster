@@ -3,18 +3,24 @@ package chess;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class RookRuleset implements PieceRuleset{
+public class RookRuleset implements PieceRuleset {
 
     private Collection<ChessMove> validMoves = new HashSet<>();
     private ChessBoard gameBoard;
     private ChessPosition piecePosition;
+    ChessPiece.PieceType type;
+
+    public RookRuleset() {
+        this.type = ChessPiece.PieceType.ROOK;
+    }
+
     @Override
     public Collection<ChessMove> findValidMoves(ChessPosition position, ChessBoard board) {
         validMoves.clear();
         gameBoard = board;
         piecePosition = position;
         ChessPiece piece = gameBoard.getPiece(piecePosition);
-        if(piece.getPieceType() != ChessPiece.PieceType.ROOK){
+        if (piece.getPieceType() != ChessPiece.PieceType.ROOK) {
             //TODO: throw an exception?
             System.out.println("This is not a rook.");
             return null;
@@ -24,16 +30,16 @@ public class RookRuleset implements PieceRuleset{
         return validMoves;
     }
 
-    private void generateMoves(ChessGame.TeamColor color){
+    private void generateMoves(ChessGame.TeamColor color) {
         boolean notBlocked = true;
         int rowInt = piecePosition.getRow();
         int colInt = piecePosition.getColumn();
         ChessPosition newPos = new ChessPositionImp(colInt, rowInt);
         //up moves
-        while(notBlocked){
+        while (notBlocked) {
             rowInt += 1;
             //check if new position will be off board
-            if (rowInt > 8){
+            if (rowInt > 8) {
                 break;
             }
             newPos.setRow(rowInt);
@@ -44,10 +50,10 @@ public class RookRuleset implements PieceRuleset{
         rowInt = piecePosition.getRow();
         colInt = piecePosition.getColumn();
         newPos.setRow(rowInt);
-        while(notBlocked){
+        while (notBlocked) {
             colInt -= 1;
             //check if new position will be off board
-            if (colInt < 1){
+            if (colInt < 1) {
                 break;
             }
             newPos.setColumn(colInt);
@@ -58,10 +64,10 @@ public class RookRuleset implements PieceRuleset{
         rowInt = piecePosition.getRow();
         colInt = piecePosition.getColumn();
         newPos.setColumn(colInt);
-        while(notBlocked){
+        while (notBlocked) {
             rowInt -= 1;
             //check if new position will be off board
-            if (rowInt < 1){
+            if (rowInt < 1) {
                 break;
             }
             newPos.setRow(rowInt);
@@ -72,10 +78,10 @@ public class RookRuleset implements PieceRuleset{
         rowInt = piecePosition.getRow();
         colInt = piecePosition.getColumn();
         newPos.setRow(rowInt);
-        while(notBlocked){
+        while (notBlocked) {
             colInt += 1;
             //check if new position will be off board
-            if (colInt > 8){
+            if (colInt > 8) {
                 break;
             }
             newPos.setColumn(colInt);
@@ -83,17 +89,15 @@ public class RookRuleset implements PieceRuleset{
         }
     }
 
-    private boolean canMove(ChessPosition newPos, ChessGame.TeamColor color){
+    private boolean canMove(ChessPosition newPos, ChessGame.TeamColor color) {
         ChessPosition endPos = gameBoard.findPosOnBoard(newPos);
-        if(gameBoard.getPiece(endPos) == null){
+        if (gameBoard.getPiece(endPos) == null) {
             validMoves.add(new ChessMoveImp(piecePosition, endPos, null));
             return true;
-        }
-        else if(gameBoard.getPiece(endPos).getTeamColor() != color){
+        } else if (gameBoard.getPiece(endPos).getTeamColor() != color) {
             validMoves.add(new ChessMoveImp(piecePosition, endPos, null));
             return false;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -101,5 +105,10 @@ public class RookRuleset implements PieceRuleset{
     @Override
     public Collection<ChessMove> getValidMoves() {
         return validMoves;
+    }
+
+    @Override
+    public ChessPiece.PieceType getType() {
+        return type;
     }
 }

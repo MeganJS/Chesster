@@ -4,7 +4,9 @@ import java.util.Collection;
 
 public interface PieceRuleset {
 
-    public Collection<ChessMove> findValidMoves(ChessPosition position, ChessBoard board);
+    Collection<ChessMove> findValidMoves(ChessPosition position, ChessBoard board);
 
-    public Collection<ChessMove> getValidMoves();
+    Collection<ChessMove> getValidMoves();
+
+    ChessPiece.PieceType getType();
 }

@@ -27,7 +27,7 @@ public class Connection {
         return gameID;
     }
 
-    public void send(ServerMessage message) throws IOException {
-        this.session.getRemote().sendString(new Gson().toJson(message));
+    public void send(String message) throws IOException {
+        this.session.getRemote().sendString(message);
     }
 }

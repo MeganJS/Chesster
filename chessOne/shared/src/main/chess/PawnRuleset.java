@@ -8,6 +8,11 @@ public class PawnRuleset implements PieceRuleset {
     private Collection<ChessMove> validMoves = new HashSet<>();
     private ChessBoard gameBoard;
     private ChessPosition piecePosition;
+    ChessPiece.PieceType type;
+
+    public PawnRuleset() {
+        this.type = ChessPiece.PieceType.PAWN;
+    }
 
     @Override
     public Collection<ChessMove> findValidMoves(ChessPosition position, ChessBoard board) {
@@ -121,5 +126,10 @@ public class PawnRuleset implements PieceRuleset {
     @Override
     public Collection<ChessMove> getValidMoves() {
         return validMoves;
+    }
+
+    @Override
+    public ChessPiece.PieceType getType() {
+        return type;
     }
 }

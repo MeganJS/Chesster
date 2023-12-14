@@ -3,17 +3,24 @@ package chess;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class QueenRuleset implements PieceRuleset{
+public class QueenRuleset implements PieceRuleset {
     private Collection<ChessMove> validMoves = new HashSet<>();
     private ChessBoard gameBoard;
     private ChessPosition piecePosition;
+
+    ChessPiece.PieceType type;
+
+    public QueenRuleset() {
+        this.type = ChessPiece.PieceType.QUEEN;
+    }
+
     @Override
     public Collection<ChessMove> findValidMoves(ChessPosition position, ChessBoard board) {
         validMoves.clear();
         gameBoard = board;
         piecePosition = position;
         ChessPiece piece = gameBoard.getPiece(piecePosition);
-        if(piece.getPieceType() != ChessPiece.PieceType.QUEEN){
+        if (piece.getPieceType() != ChessPiece.PieceType.QUEEN) {
             //TODO: throw an exception?
             System.out.println("This is not a queen.");
             return null;
@@ -23,20 +30,21 @@ public class QueenRuleset implements PieceRuleset{
         return validMoves;
     }
 
-    private void generateMoves(ChessGame.TeamColor color){
+    private void generateMoves(ChessGame.TeamColor color) {
         generateBishopMoves(color);
         generateRookMoves(color);
     }
-    private void generateRookMoves(ChessGame.TeamColor color){
+
+    private void generateRookMoves(ChessGame.TeamColor color) {
         boolean notBlocked = true;
         int rowInt = piecePosition.getRow();
         int colInt = piecePosition.getColumn();
         ChessPosition newPos = new ChessPositionImp(colInt, rowInt);
         //up moves
-        while(notBlocked){
+        while (notBlocked) {
             rowInt += 1;
             //check if new position will be off board
-            if (rowInt > 8){
+            if (rowInt > 8) {
                 break;
             }
             newPos.setRow(rowInt);
@@ -47,10 +55,10 @@ public class QueenRuleset implements PieceRuleset{
         rowInt = piecePosition.getRow();
         colInt = piecePosition.getColumn();
         newPos.setRow(rowInt);
-        while(notBlocked){
+        while (notBlocked) {
             colInt -= 1;
             //check if new position will be off board
-            if (colInt < 1){
+            if (colInt < 1) {
                 break;
             }
             newPos.setColumn(colInt);
@@ -61,10 +69,10 @@ public class QueenRuleset implements PieceRuleset{
         rowInt = piecePosition.getRow();
         colInt = piecePosition.getColumn();
         newPos.setColumn(colInt);
-        while(notBlocked){
+        while (notBlocked) {
             rowInt -= 1;
             //check if new position will be off board
-            if (rowInt < 1){
+            if (rowInt < 1) {
                 break;
             }
             newPos.setRow(rowInt);
@@ -75,27 +83,28 @@ public class QueenRuleset implements PieceRuleset{
         rowInt = piecePosition.getRow();
         colInt = piecePosition.getColumn();
         newPos.setRow(rowInt);
-        while(notBlocked){
+        while (notBlocked) {
             colInt += 1;
             //check if new position will be off board
-            if (colInt > 8){
+            if (colInt > 8) {
                 break;
             }
             newPos.setColumn(colInt);
             notBlocked = canMove(newPos, color);
         }
     }
-    private void generateBishopMoves(ChessGame.TeamColor color){
+
+    private void generateBishopMoves(ChessGame.TeamColor color) {
         boolean notBlocked = true;
         int rowInt = piecePosition.getRow();
         int colInt = piecePosition.getColumn();
         ChessPosition newPos = new ChessPositionImp(colInt, rowInt);
         //up-right moves
-        while(notBlocked){
+        while (notBlocked) {
             rowInt += 1;
             colInt += 1;
             //check if new position will be off board
-            if (rowInt > 8 || colInt > 8){
+            if (rowInt > 8 || colInt > 8) {
                 break;
             }
             newPos.setRow(rowInt);
@@ -106,11 +115,11 @@ public class QueenRuleset implements PieceRuleset{
         notBlocked = true;
         rowInt = piecePosition.getRow();
         colInt = piecePosition.getColumn();
-        while(notBlocked){
+        while (notBlocked) {
             rowInt += 1;
             colInt -= 1;
             //check if new position will be off board
-            if (rowInt > 8 || colInt < 1){
+            if (rowInt > 8 || colInt < 1) {
                 break;
             }
             newPos.setRow(rowInt);
@@ -121,11 +130,11 @@ public class QueenRuleset implements PieceRuleset{
         notBlocked = true;
         rowInt = piecePosition.getRow();
         colInt = piecePosition.getColumn();
-        while(notBlocked){
+        while (notBlocked) {
             rowInt -= 1;
             colInt -= 1;
             //check if new position will be off board
-            if (rowInt < 1 || colInt < 1){
+            if (rowInt < 1 || colInt < 1) {
                 break;
             }
             newPos.setRow(rowInt);
@@ -136,11 +145,11 @@ public class QueenRuleset implements PieceRuleset{
         notBlocked = true;
         rowInt = piecePosition.getRow();
         colInt = piecePosition.getColumn();
-        while(notBlocked){
+        while (notBlocked) {
             rowInt -= 1;
             colInt += 1;
             //check if new position will be off board
-            if (rowInt < 1 || colInt > 8){
+            if (rowInt < 1 || colInt > 8) {
                 break;
             }
             newPos.setRow(rowInt);
@@ -149,17 +158,15 @@ public class QueenRuleset implements PieceRuleset{
         }
     }
 
-    private boolean canMove(ChessPosition newPos, ChessGame.TeamColor color){
+    private boolean canMove(ChessPosition newPos, ChessGame.TeamColor color) {
         ChessPosition endPos = gameBoard.findPosOnBoard(newPos);
-        if(gameBoard.getPiece(endPos) == null){
+        if (gameBoard.getPiece(endPos) == null) {
             validMoves.add(new ChessMoveImp(piecePosition, endPos, null));
             return true;
-        }
-        else if(gameBoard.getPiece(endPos).getTeamColor() != color){
+        } else if (gameBoard.getPiece(endPos).getTeamColor() != color) {
             validMoves.add(new ChessMoveImp(piecePosition, endPos, null));
             return false;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -167,5 +174,10 @@ public class QueenRuleset implements PieceRuleset{
     @Override
     public Collection<ChessMove> getValidMoves() {
         return validMoves;
+    }
+
+    @Override
+    public ChessPiece.PieceType getType() {
+        return type;
     }
 }

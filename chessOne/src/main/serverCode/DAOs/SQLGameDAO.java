@@ -93,22 +93,22 @@ public class SQLGameDAO implements GameDAO {
 
     public void updateGame(int gameID, ChessGame newChessGame) throws DataAccessException {
         try {
+            Gson json = new Gson();
             readGame(gameID);
             var dataConnection = database.getConnection();
             dataConnection.setCatalog("chessdata");
             if (newChessGame == null) {
                 throw new DataAccessException("Error: bad request");
             }
-            String jsonChessGame = new Gson().toJson(newChessGame);
             var updateStatement = "UPDATE games SET game=? WHERE gameID = ?";
             var preparedUpdate = dataConnection.prepareStatement(updateStatement);
-            preparedUpdate.setString(1, jsonChessGame);
+            preparedUpdate.setString(1, json.toJson(newChessGame));
             preparedUpdate.setInt(2, gameID);
             preparedUpdate.executeUpdate();
             database.closeConnection(dataConnection);
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException(e.getMessage());
         }
     }
 
