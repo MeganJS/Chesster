@@ -2,7 +2,7 @@ package chess;
 
 import java.util.Objects;
 
-public class ChessPositionImp implements ChessPosition{
+public class ChessPositionImp implements ChessPosition {
 
     private int column = 0;
     private int row = 0;
@@ -12,6 +12,7 @@ public class ChessPositionImp implements ChessPosition{
         column = colInput;
         row = rowInput;
     }
+
     /**
      * @return which row this position is in
      * 1 codes for the bottom row
@@ -50,33 +51,27 @@ public class ChessPositionImp implements ChessPosition{
 
 
     //hashcode
-    public int hashCode(){
+    public int hashCode() {
         return Objects.hash(row, column);
     }
 
     //equals
-    public boolean equals(Object o){
-        if (o.getClass() != this.getClass()){
+    public boolean equals(Object o) {
+        if (o.getClass() != this.getClass()) {
             return false;
         }
-        if (o == this){
+        if (o == this) {
             return true;
         }
         //and now we typecast and actually check!
         ChessPositionImp oPosition = (ChessPositionImp) o;
-        if (oPosition.column != this.column){
+        if (oPosition.column != this.column) {
             return false;
         }
-        if(oPosition.row != this.row){
+        if (oPosition.row != this.row) {
             return false;
         }
 
-        //We should really keep this but we're leaving it out for now because it breaks the tests
-        /*
-        if(!this.pieceOnSquare.equals(oPosition.pieceOnSquare)){
-            return false;
-        }
-         */
         return true;
     }
 }

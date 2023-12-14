@@ -64,24 +64,5 @@ public class ChessPieceImp implements ChessPiece {
 
         return null;
     }
-
-    /*
-    public boolean equals(Object o){
-        if (o.getClass() != this.getClass()){
-            return false;
-        }
-        if (o == this){
-            return true;
-        }
-        //typecast time
-        ChessPieceImp oPiece = (ChessPieceImp) o;
-        if (oPiece.color != this.color){
-            return false;
-        }
-        if(oPiece.type != this.type){
-            return false;
-        }
-        return true;
-    }
-     */
+    
 }

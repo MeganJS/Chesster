@@ -1,8 +1,6 @@
 package models;
 
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 /**
  * This class models a User object for the database/memory.
  */

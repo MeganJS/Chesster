@@ -98,10 +98,6 @@ public class Game {
         return game;
     }
 
-    public void setChessGame(ChessGame newGame) {
-        game = newGame;
-    }
-
     @Override
     public int hashCode() {
         return gameID + gameName.length();
