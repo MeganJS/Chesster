@@ -1,7 +1,5 @@
 package serverCode.webSocket;
 
-import webSocketMessages.serverMessages.ServerMessage;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;

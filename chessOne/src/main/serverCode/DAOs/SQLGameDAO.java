@@ -6,7 +6,6 @@ import dataAccess.DataAccessException;
 import dataAccess.Database;
 import models.Game;
 
-import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -78,13 +77,7 @@ public class SQLGameDAO implements GameDAO {
             String gameName = result.getString("gameName");
             var jsonChess = result.getString("game");
             Gson chessDeserializer = createChessGson();
-            /*
-            builder.registerTypeAdapter(ChessPiece.class, new ChessPieceAdapter());
-            builder.registerTypeAdapter(ChessBoard.class, new ChessBoardAdapter());
-            builder.registerTypeAdapter(ChessPosition.class, new ChessPositionAdapter());
-            ChessGame chessGame = builder.create().fromJson(jsonChess, ChessGameImp.class);
 
-             */
             ChessGame chessGame = chessDeserializer.fromJson(jsonChess, ChessGameImp.class);
 
             database.closeConnection(dataConnection);
@@ -116,13 +109,13 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
-    //TODO clean this up
     @Override
     public void claimGameSpot(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException {
         try {
             var dataConnection = database.getConnection();
             dataConnection.setCatalog("chessdata");
             Game gameToClaim = readGame(gameID);
+
             if (color == ChessGame.TeamColor.WHITE) {
                 var updateStatement = "UPDATE games SET whiteUsername = ? WHERE gameID = ?";
                 var preparedUpdate = dataConnection.prepareStatement(updateStatement);

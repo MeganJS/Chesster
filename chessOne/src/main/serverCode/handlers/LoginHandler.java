@@ -1,7 +1,6 @@
 package serverCode.handlers;
 
 import com.google.gson.Gson;
-import dataAccess.Database;
 import models.AuthToken;
 import models.User;
 import spark.Request;

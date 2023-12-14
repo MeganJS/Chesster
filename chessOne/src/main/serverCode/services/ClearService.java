@@ -15,10 +15,11 @@ public class ClearService {
     static SQLGameDAO gameDAO = new SQLGameDAO();
 
     //This is just so I can clear the database whenever I need to
-    //TODO remove this later
+    /*
     public static void main(String[] args) {
         clearAllData();
     }
+     */
 
     /**
      * Clears all the data from memory/database.

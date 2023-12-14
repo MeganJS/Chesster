@@ -55,7 +55,6 @@ public class WSHandler {
         } catch (Throwable e) {
             ServerMessageError error = new ServerMessageError("Error: " + e.getMessage());
             System.out.println(new Gson().toJson(error));
-            //session.getRemote().sendString(new Gson().toJson(error));
         }
     }
 
@@ -80,12 +79,11 @@ public class WSHandler {
             gameID = command.getGameID();
             Game chessModel = gameDAO.readGame(gameID);
             if (playerColor == ChessGame.TeamColor.BLACK && !chessModel.getBlackUsername().equals(userAuthToken.getUsername())) {
-                throw new IllegalAccessException("black team is occupied by a different user.");
+                throw new IllegalAccessException("Black team is occupied by a different user.");
             }
             if (playerColor == ChessGame.TeamColor.WHITE && !chessModel.getWhiteUsername().equals(userAuthToken.getUsername())) {
-                throw new IllegalAccessException("white team is occupied by a different user.");
+                throw new IllegalAccessException("White team is occupied by a different user.");
             }
-
 
             connMan.addConnection(authString, new Connection(authString, session, gameID));
             loadGameOnJoin(session, gameID);
