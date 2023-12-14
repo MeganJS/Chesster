@@ -80,6 +80,22 @@ public class GameplayUI {
         return "quit";
     }
 
+    /***
+     *asks the server to send a load game message
+     * @return ???
+     */
+    private String redrawGame() {
+
+    }
+
+    /***
+     * calls the wsServerFacade highlight method which calls the cmHandler highlight method
+     * @return the highlighted chess board
+     */
+    private String highlightGame() {
+
+    }
+
     /**
      * sends LEAVE command to server
      *

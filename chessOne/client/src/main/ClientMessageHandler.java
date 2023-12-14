@@ -13,14 +13,15 @@ import static ui.EscapeSequences.*;
 
 public class ClientMessageHandler {
     ChessGame.TeamColor playerColor;
+    ChessGame game;
 
     public ClientMessageHandler(ChessGame.TeamColor playerColor) {
         this.playerColor = playerColor;
     }
 
     public void loadGameBoard(ServerMessageLoad message) {
-        ChessGame chessGame = createChessGson().fromJson(message.getChessGame(), ChessGameImp.class);
-        System.out.println(makeGameBoardStr(chessGame));
+        this.game = createChessGson().fromJson(message.getChessGame(), ChessGameImp.class);
+        System.out.println(makeGameBoardStr());
     }
 
     public void notifyUser(ServerMessageNotify message) {
@@ -32,13 +33,13 @@ public class ClientMessageHandler {
     }
 
 
-    private String makeGameBoardStr(ChessGame chessGame) {
+    private String makeGameBoardStr() {
         StringBuilder gameBoardStr = new StringBuilder();
         boolean blackTop = true;
-        ArrayList<Character> pieceChars = getPieceCharsBlackTop(chessGame.getBoard());
+        ArrayList<Character> pieceChars = getPieceCharsBlackTop(game.getBoard());
         if (playerColor == ChessGame.TeamColor.BLACK) {
             blackTop = false;
-            pieceChars = getPieceCharsWhiteTop(chessGame.getBoard());
+            pieceChars = getPieceCharsWhiteTop(game.getBoard());
         }
 
         char[] lettersBlackTop = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
