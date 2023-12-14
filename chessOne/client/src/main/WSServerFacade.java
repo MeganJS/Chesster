@@ -103,5 +103,13 @@ public class WSServerFacade extends Endpoint {
         }
     }
 
+    public String redrawBoard() {
+        return cmHandler.redrawBoard();
+    }
+
+    public String highlightBoard(ChessPosition position) {
+        return cmHandler.highlightBoard(position);
+    }
+
 
 }

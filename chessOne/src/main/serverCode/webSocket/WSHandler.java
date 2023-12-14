@@ -159,6 +159,7 @@ public class WSHandler {
             ServerMessageNotify notify = new ServerMessageNotify(username + " made move" + moveToString(moveCommand.getMove()) + ".\n");
             connMan.broadcast(moveCommand.getGameID(), userAuthToken.getAuthToken(), new Gson().toJson(notify));
             notifyForWin(chessGame, moveCommand.getGameID());
+            //TODO: add notify for if player is in check
         } catch (DataAccessException | InvalidMoveException | IOException e) {
             ServerMessageError error = new ServerMessageError(e.getMessage());
             session.getRemote().sendString(new Gson().toJson(error));
@@ -175,6 +176,7 @@ public class WSHandler {
 
 
     private void notifyForWin(ChessGame chessGame, int gameID) throws IOException, DataAccessException {
+        //TODO add player name to notify for checkmate
         if (chessGame.isInCheckmate(ChessGame.TeamColor.BLACK)) {
             chessGame.setWinningTeam(ChessGame.TeamColor.WHITE);
             gameDAO.updateGame(gameID, chessGame);

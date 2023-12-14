@@ -38,9 +38,9 @@ public class GameplayUI {
                 case "move":
                     return makeMove(words);
                 case "highlight":
-                    return null;
+                    return highlightGame(words);
                 case "redraw":
-                    return null;
+                    return redrawGame();
                 case "leave":
                     return leaveGame();
                 case "resign":
@@ -81,19 +81,28 @@ public class GameplayUI {
     }
 
     /***
-     *asks the server to send a load game message
-     * @return ???
+     *
+     * @return the board
      */
     private String redrawGame() {
-        return null;
+        return wsServerFacade.redrawBoard();
     }
 
     /***
+     * checks to see if position is valid
      * calls the wsServerFacade highlight method which calls the cmHandler highlight method
      * @return the highlighted chess board
      */
-    private String highlightGame() {
-        return null;
+    private String highlightGame(String[] words) {
+        if (words.length < 2) {
+            return "Make sure to include the position after the command. Ex: highlight b8";
+        }
+        if (!isValidPosition(words[1])) {
+            return "Make sure to include the position after the command. Ex: highlight b8";
+        }
+        int col = words[1].charAt(0) - 96;
+        int row = words[1].charAt(1) - '0';
+        return wsServerFacade.highlightBoard(new ChessPositionImp(col, row));
     }
 
     /**

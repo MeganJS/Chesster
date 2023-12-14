@@ -7,13 +7,17 @@ import serverMessageClasses.ServerMessageLoad;
 import serverMessageClasses.ServerMessageNotify;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import static java.lang.Math.abs;
 import static ui.EscapeSequences.*;
 
 public class ClientMessageHandler {
     ChessGame.TeamColor playerColor;
     ChessGame game;
+
+    GameBoardDesign gameBoardDesign;
 
     public ClientMessageHandler(ChessGame.TeamColor playerColor) {
         this.playerColor = playerColor;
@@ -21,7 +25,8 @@ public class ClientMessageHandler {
 
     public void loadGameBoard(ServerMessageLoad message) {
         this.game = createChessGson().fromJson(message.getChessGame(), ChessGameImp.class);
-        System.out.println(makeGameBoardStr());
+        this.gameBoardDesign = new GameBoardDesign(playerColor, game);
+        System.out.println(gameBoardDesign.makeGameBoardStr());
     }
 
     public void notifyUser(ServerMessageNotify message) {
@@ -32,7 +37,48 @@ public class ClientMessageHandler {
         System.out.println(message.getMessageText());
     }
 
+    public String redrawBoard() {
+        gameBoardDesign.setHighlightIndexes(null);
+        gameBoardDesign.setPosition(null);
+        return gameBoardDesign.makeGameBoardStr();
+    }
 
+    //highlight the position in yellow
+    //highlight black squares and white squares to move to in two different shades - maybe red?
+    //SET_BG_COLOR_RED and SET_BG_COLOR_MAGENTA
+    public String highlightBoard(ChessPosition position) {
+
+        Collection<ChessMove> moves = game.validMoves(position);
+        if (moves == null) {
+            return "There is no piece at that position.";
+        }
+        ArrayList<ArrayList<Integer>> highlightSquares = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            ArrayList<Integer> row = new ArrayList<>();
+            highlightSquares.add(row);
+        }
+        System.out.println(highlightSquares);
+        if (playerColor == ChessGame.TeamColor.BLACK) {
+            for (ChessMove move : moves) {
+                //1 -> 8, 8 -> 1
+                int reverseIndex = 9 - move.getEndPosition().getColumn();
+                highlightSquares.get(move.getEndPosition().getRow()).add(reverseIndex);
+            }
+            position = new ChessPositionImp(9 - position.getColumn(), position.getRow());
+        } else {
+            for (ChessMove move : moves) {
+                highlightSquares.get(move.getEndPosition().getRow()).add(move.getEndPosition().getColumn());
+            }
+        }
+        System.out.println(highlightSquares);
+
+        gameBoardDesign.setPosition(position);
+        gameBoardDesign.setHighlightIndexes(highlightSquares);
+
+        return gameBoardDesign.makeGameBoardStr();
+    }
+
+    /*
     private String makeGameBoardStr() {
         StringBuilder gameBoardStr = new StringBuilder();
         boolean blackTop = true;
@@ -44,7 +90,6 @@ public class ClientMessageHandler {
 
         char[] lettersBlackTop = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
         char[] lettersWhiteTop = {'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'};
-
 
         //0-8, 8-16, 16-24, 24-32, 32-40, 40-48, 48-56, 56-64
         if (blackTop) {
@@ -197,6 +242,8 @@ public class ClientMessageHandler {
         }
         return rowStrWhite.toString();
     }
+
+     */
 
     public static Gson createChessGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
