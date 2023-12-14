@@ -6,19 +6,23 @@ import serverMessageClasses.ServerMessageError;
 import serverMessageClasses.ServerMessageLoad;
 import serverMessageClasses.ServerMessageNotify;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static ui.EscapeSequences.*;
 
 public class ClientMessageHandler {
     ChessGame.TeamColor playerColor;
 
+    //TODO replace println with printf
     public ClientMessageHandler(ChessGame.TeamColor playerColor) {
         this.playerColor = playerColor;
     }
 
     public void loadGameBoard(ServerMessageLoad message) {
-        System.out.println(message.getChessGame());
+        //System.out.println(message.getChessGame());
         ChessGame chessGame = createChessGson().fromJson(message.getChessGame(), ChessGameImp.class);
-        System.out.println(chessGame.getTeamTurn());
+        System.out.printf(makeGameBoardStr(chessGame));
     }
 
     public void notifyUser(ServerMessageNotify message) {
@@ -33,25 +37,38 @@ public class ClientMessageHandler {
     private String makeGameBoardStr(ChessGame chessGame) {
         StringBuilder gameBoardStr = new StringBuilder();
         boolean blackTop = true;
+        ArrayList<Character> pieceChars = getPieceCharsBlackTop(chessGame.getBoard());
         if (playerColor == ChessGame.TeamColor.BLACK) {
             blackTop = false;
-        }
-        ChessBoard board = chessGame.getBoard();
-        for (int i = 1; i < 9; i++) {
-            for (int j = 1; j < 9; j++) {
-                ChessPiece piece = board.getPiece(new ChessPositionImp(j, i));
-                //TODO: turn this into a method
-            }
+            pieceChars = getPieceCharsWhiteTop(chessGame.getBoard());
         }
 
         char[] lettersBlackTop = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
         char[] lettersWhiteTop = {'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'};
 
+        /*
         char[] piecesBlackTop = {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'};
         char[] piecesWhiteTop = {'R', 'N', 'B', 'K', 'Q', 'B', 'N', 'R'};
         char[] pawns = {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'};
         char[] empty = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
-        gameBoardStr.append(makeLettersStr(lettersWhiteTop));
+
+         */
+
+        //0-8, 8-16, 16-24, 24-32, 32-40, 40-48, 48-56, 56-64
+        if (blackTop) {
+            gameBoardStr.append(makeLettersStr(lettersBlackTop));
+            for (int i = 8; i > 0; i--) {
+                gameBoardStr.append(makeRowStr(i, pieceChars.subList((i - 1) * 8, i * 8), blackTop));
+            }
+            gameBoardStr.append(makeLettersStr(lettersBlackTop));
+        } else {
+            gameBoardStr.append(makeLettersStr(lettersWhiteTop));
+            for (int i = 1; i < 9; i++) {
+                gameBoardStr.append(makeRowStr(i, pieceChars.subList((i - 1) * 8, i * 8), blackTop));
+            }
+            gameBoardStr.append(makeLettersStr(lettersWhiteTop));
+        }
+        /*
         for (int i = 1; i < 9; i++) {
             if (i == 1 || i == 8) {
                 gameBoardStr.append(makeRowStr(i, piecesWhiteTop, blackTop));
@@ -61,22 +78,73 @@ public class ClientMessageHandler {
                 gameBoardStr.append(makeRowStr(i, empty, blackTop));
             }
         }
-        gameBoardStr.append(makeLettersStr(lettersWhiteTop));
-        gameBoardStr.append("Game Board with Black on Top: \n");
-        gameBoardStr.append(makeLettersStr(lettersBlackTop));
-        blackTop = true;
-        for (int i = 8; i > 0; i--) {
-            if (i == 1 || i == 8) {
-                gameBoardStr.append(makeRowStr(i, piecesBlackTop, blackTop));
-            } else if (i == 2 || i == 7) {
-                gameBoardStr.append(makeRowStr(i, pawns, blackTop));
-            } else {
-                gameBoardStr.append(makeRowStr(i, empty, blackTop));
-            }
-        }
-        gameBoardStr.append(makeLettersStr(lettersBlackTop));
+         */
 
         return gameBoardStr.toString();
+    }
+
+
+    private ArrayList<Character> getPieceCharsBlackTop(ChessBoard board) {
+        ArrayList<Character> pieceChars = new ArrayList<>();
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPiece piece = board.getPiece(new ChessPositionImp(j, i));
+                pieceChars.add(pieceToChar(piece));
+            }
+        }
+        return pieceChars;
+    }
+
+    private ArrayList<Character> getPieceCharsWhiteTop(ChessBoard board) {
+        ArrayList<Character> pieceChars = new ArrayList<>();
+        for (int i = 1; i < 9; i++) {
+            for (int j = 8; j > 0; j--) {
+                ChessPiece piece = board.getPiece(new ChessPositionImp(j, i));
+                pieceChars.add(pieceToChar(piece));
+            }
+        }
+        return pieceChars;
+    }
+
+    private char pieceToChar(ChessPiece piece) {
+        if (piece == null) {
+            return ' ';
+        }
+        if (piece.getPieceType() == ChessPiece.PieceType.ROOK) {
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                return 'R';
+            }
+            return 'r';
+        }
+        if (piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                return 'B';
+            }
+            return 'b';
+        }
+        if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                return 'N';
+            }
+            return 'n';
+        }
+        if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                return 'K';
+            }
+            return 'k';
+        }
+        if (piece.getPieceType() == ChessPiece.PieceType.QUEEN) {
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                return 'Q';
+            }
+            return 'q';
+        }
+
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            return 'P';
+        }
+        return 'p';
     }
 
     private String makeLettersStr(char[] letters) {
@@ -91,15 +159,17 @@ public class ClientMessageHandler {
         return letterStr.toString();
     }
 
-    private String makeRowStr(int i, char[] pieces, boolean blackTop) {
+    private String makeRowStr(int i, List<Character> pieces, boolean blackTop) {
         StringBuilder rowStr = new StringBuilder();
         rowStr.append(SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK + SET_BG_COLOR_LIGHT_GREY);
         rowStr.append(" " + i + " ");
+        /*
         if (i == 1 || i == 2) {
             rowStr.append(SET_TEXT_COLOR_GREEN);
         } else if (i == 8 || i == 7) {
             rowStr.append("[38;5;22m");
         }
+         */
         if (blackTop) {
             if (i % 2 == 1) {
                 rowStr.append(makeRowStartBlack(pieces));
@@ -119,28 +189,38 @@ public class ClientMessageHandler {
         return rowStr.toString();
     }
 
-    private String makeRowStartBlack(char[] pieces) {
+    private String makeRowStartBlack(List<Character> pieces) {
         StringBuilder rowStrBlack = new StringBuilder();
-        for (int i = 0; i < pieces.length; i++) {
-            if (i % 2 == 0) {
-                rowStrBlack.append(SET_BG_COLOR_BLACK + " " + pieces[i] + " ");
+        for (int i = 0; i < pieces.size(); i++) {
+            if (pieces.get(i) > 'Z') {
+                rowStrBlack.append("[38;5;22m");
             } else {
-                rowStrBlack.append(SET_BG_COLOR_WHITE + " " + pieces[i] + " ");
+                rowStrBlack.append(SET_TEXT_COLOR_GREEN);
+            }
+            if (i % 2 == 0) {
+                rowStrBlack.append(SET_BG_COLOR_BLACK + " " + pieces.get(i) + " ");
+            } else {
+                rowStrBlack.append(SET_BG_COLOR_WHITE + " " + pieces.get(i) + " ");
             }
         }
         return rowStrBlack.toString();
     }
 
-    private String makeRowStartWhite(char[] pieces) {
-        StringBuilder rowStrBlack = new StringBuilder();
-        for (int i = 0; i < pieces.length; i++) {
-            if (i % 2 == 0) {
-                rowStrBlack.append(SET_BG_COLOR_WHITE + " " + pieces[i] + " ");
+    private String makeRowStartWhite(List<Character> pieces) {
+        StringBuilder rowStrWhite = new StringBuilder();
+        for (int i = 0; i < pieces.size(); i++) {
+            if (pieces.get(i) > 'Z') {
+                rowStrWhite.append("[38;5;22m");
             } else {
-                rowStrBlack.append(SET_BG_COLOR_BLACK + " " + pieces[i] + " ");
+                rowStrWhite.append(SET_TEXT_COLOR_GREEN);
+            }
+            if (i % 2 == 0) {
+                rowStrWhite.append(SET_BG_COLOR_WHITE + " " + pieces.get(i) + " ");
+            } else {
+                rowStrWhite.append(SET_BG_COLOR_BLACK + " " + pieces.get(i) + " ");
             }
         }
-        return rowStrBlack.toString();
+        return rowStrWhite.toString();
     }
 
     public static Gson createChessGson() {
