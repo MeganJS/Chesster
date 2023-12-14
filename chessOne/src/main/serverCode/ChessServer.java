@@ -11,8 +11,6 @@ public class ChessServer {
 
     public static Database database = new Database();
 
-    //private static final WSHandler wsHandler = new WSHandler();
-
     public static void main(String[] args) {
         //new ChessServer().run();
         Spark.port(8080);
@@ -23,7 +21,6 @@ public class ChessServer {
         Spark.init();
     }
     
-
     private static void createRoutes() {
         Spark.post("/session", LoginHandler::handleLogin);
         Spark.post("/user", RegisterHandler::handleRegister);

@@ -1,21 +1,16 @@
 import chess.*;
 import userCommandClasses.*;
-import webSocketMessages.userCommands.UserGameCommand;
-
-import javax.swing.text.TabExpander;
 
 import static java.lang.Integer.parseInt;
 
-public class GameplayUI {
+public class GameplayClient {
 
-    private String serverURL;
     private WSServerFacade wsServerFacade;
     private String authToken;
     private ChessGame.TeamColor teamColor;
     private int gameID;
 
-    public GameplayUI(String serverURL, String userAuthToken, String strGameID, String playerColor) {
-        this.serverURL = serverURL;
+    public GameplayClient(String serverURL, String userAuthToken, String strGameID, String playerColor) {
         this.authToken = userAuthToken;
         this.gameID = parseInt(strGameID);
         if (playerColor.contains("black")) {
@@ -113,7 +108,7 @@ public class GameplayUI {
     private String leaveGame() {
         String retStr = wsServerFacade.leaveGame(new LeaveCommand(authToken, teamColor, gameID));
         if (retStr.equals("success")) {
-            return "You have successfully left game " + gameID + ". \n";
+            return "You have successfully left game " + gameID + ".";
         } else {
             return retStr;
         }
@@ -149,7 +144,7 @@ public class GameplayUI {
     private String resignGame() {
         boolean success = wsServerFacade.sendResign(new ResignCommand(authToken, teamColor, gameID));
         if (success) {
-            return "You resigned.\n";
+            return "Resignation complete.";
         } else {
             return "We encountered an error, and you may not have resigned as expected.\n";
         }

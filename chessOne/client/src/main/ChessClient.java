@@ -5,13 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.Integer.parseInt;
-import static ui.EscapeSequences.*;
 
 public class ChessClient {
     private String serverURL;
     private ChessServerFacade serverFacade = new ChessServerFacade();
     private String userAuthToken = null;
-    private GameplayUI gameplayUI = null;
+    private GameplayClient gameplayClient = null;
 
     public ChessClient(String url) {
         serverURL = url;
@@ -20,15 +19,15 @@ public class ChessClient {
     public String checkInput(String input) {
         String[] words = input.toLowerCase().split(" ");
         String command = words[0];
-        if (gameplayUI != null) {
+        if (gameplayClient != null) {
             if (command.equals("quit") || command.equals("leave")) {
-                String retStr = gameplayUI.gameplayCommand(command, words);
+                String retStr = gameplayClient.gameplayCommand(command, words);
                 if (retStr.contains("quit") || retStr.contains("successfully left")) {
-                    gameplayUI = null;
+                    gameplayClient = null;
                 }
                 return retStr;
             }
-            return gameplayUI.gameplayCommand(command, words);
+            return gameplayClient.gameplayCommand(command, words);
         }
         try {
             switch (command) {
@@ -49,33 +48,6 @@ public class ChessClient {
                 case "join", "observe":
                     return addUserToGame(words);
             }
-            /*
-            if (command.equals("quit")) {
-                return command;
-            }
-            if (command.equals("help")) {
-                return helpUser();
-            }
-            if (command.equals("register")) {
-                return registerUser(words);
-            }
-            if (command.equals("logout")) {
-                return logUserOut();
-            }
-            if (command.equals("login")) {
-                return logUserIn(words);
-            }
-            if (command.equals("new")) {
-                return makeNewGame(words);
-            }
-            if (command.equals("list")) {
-                return listGames();
-            }
-            if (command.equals("join") || command.equals("observe")) {
-                return addUserToGame(words);
-            }
-
-             */
         } catch (Exception ex) {
             return ex.getMessage();
         }
@@ -104,7 +76,7 @@ public class ChessClient {
     private String registerUser(String[] words) {
         String newURL = serverURL + "user";
         if (words.length < 4) {
-            return "Hmm, something wasn't quite right there. Make sure to include a username, password, and email after the register command.\n";
+            return "Hmm, something wasn't quite right there. Make sure to include a username, password, and email after the register command.";
         }
         var body = Map.of("username", words[1], "password", words[2], "email", words[3]);
         var jsonBody = new Gson().toJson(body);
@@ -113,11 +85,11 @@ public class ChessClient {
         if ((int) response.get("statusCode") == 200) {
 
             userAuthToken = response.get("authToken").toString();
-            return words[1] + " successfully registered. Welcome to chess!\n";
+            return words[1] + " successfully registered. Welcome to chess!";
         } else if ((int) response.get("statusCode") == 400) {
-            return "Hmm, something wasn't quite right with the input. Try again!\n";
+            return "Hmm, something wasn't quite right with the input. Try again!";
         } else if ((int) response.get("statusCode") == 403) {
-            return "Sorry, that username belongs to someone else already.\n";
+            return "Sorry, that username belongs to someone else already.";
         } else if ((int) response.get("statusCode") == 500) {
             return "Looks like something went wrong serverside.\n Status Code: 500 \n Status Message: " +
                     response.get("statusMessage").toString() + "\n";
@@ -136,9 +108,9 @@ public class ChessClient {
         if ((int) response.get("statusCode") == 200) {
 
             userAuthToken = null;
-            return "Logout successful. Thanks for playing!\n";
+            return "Logout successful. Thanks for playing!";
         } else if ((int) response.get("statusCode") == 401) {
-            return "Alas, you aren't authorized to make that request. Log in or register to start.\n";
+            return "Alas, you aren't authorized to make that request. Log in or register to start.";
         } else if ((int) response.get("statusCode") == 500) {
             return "Looks like something went wrong serverside.\n Status Code: 500 \n Status Message: " +
                     response.get("statusMessage").toString() + "\n";
@@ -151,7 +123,7 @@ public class ChessClient {
     private String logUserIn(String[] words) {
         String newURL = serverURL + "session";
         if (words.length < 3) {
-            return "Hmm, something wasn't quite right there. Make sure to include the username and password after the login command.\n";
+            return "Hmm, something wasn't quite right there. Make sure to include the username and password after the login command.";
         }
         var body = Map.of("username", words[1], "password", words[2]);
         var jsonBody = new Gson().toJson(body);
@@ -160,9 +132,9 @@ public class ChessClient {
         if ((int) response.get("statusCode") == 200) {
 
             userAuthToken = response.get("authToken").toString();
-            return response.get("username") + " logged in. What would you like to do?\n";
+            return response.get("username") + " logged in. What would you like to do?";
         } else if ((int) response.get("statusCode") == 401) {
-            return "Hmm, something wasn't quite right with the input. Try again!\n";
+            return "Hmm, something wasn't quite right with the input. Try again!";
         } else if ((int) response.get("statusCode") == 500) {
             return "Looks like something went wrong serverside.\n Status Code: 500 \n Status Message: " +
                     response.get("statusMessage").toString() + "\n";
@@ -180,11 +152,11 @@ public class ChessClient {
 
         Map response = serverFacade.talkToServer(newURL, "POST", userAuthToken, jsonBody);
         if ((int) response.get("statusCode") == 200) {
-            return "'" + gameName + "' was successfully created. ID is " + toStrGameID((int) Math.round((Double) response.get("gameID"))) + ".\n";
+            return "'" + gameName + "' was successfully created. ID is " + toStrGameID((int) Math.round((Double) response.get("gameID"))) + ".";
         } else if ((int) response.get("statusCode") == 400) {
-            return "The game needs a name to be created.\n";
+            return "The game needs a name to be created.";
         } else if ((int) response.get("statusCode") == 401) {
-            return "Alas, you aren't authorized to make that request. Log in or register to start.\n";
+            return "Alas, you aren't authorized to make that request. Log in or register to start.";
         } else if ((int) response.get("statusCode") == 500) {
             return "Looks like something went wrong serverside.\n Status Code: 500 \n Status Message: " +
                     response.get("statusMessage").toString() + "\n";
@@ -218,11 +190,9 @@ public class ChessClient {
             StringBuilder games = new StringBuilder();
             games.append("The current games are as follows:\n");
             games.append(printGameList(response.get("games")));
-            games.append("\n");
-            //printGameList(response.get("games"));
             return games.toString();
         } else if ((int) response.get("statusCode") == 401) {
-            return "Alas, you aren't authorized to make that request. Log in or register to start.\n";
+            return "Alas, you aren't authorized to make that request. Log in or register to start.";
         } else if ((int) response.get("statusCode") == 500) {
             return "Looks like something went wrong serverside.\n Status Code: 500 \n Status Message: " +
                     response.get("statusMessage").toString() + "\n";
@@ -236,7 +206,7 @@ public class ChessClient {
         try {
             String newURL = serverURL + "game";
             if (words.length < 2) {
-                return "Hmm, something wasn't quite right. Make sure to include the game ID and color of choice after the command.\n";
+                return "Hmm, something wasn't quite right. Make sure to include the game ID and color of choice after the command.";
             }
             var body = createJoinGameMap(words);
             String gameID = toStrGameID(parseInt(words[1]));
@@ -251,15 +221,15 @@ public class ChessClient {
 
 
             if ((int) response.get("statusCode") == 200) {
-                gameplayUI = new GameplayUI(serverURL, userAuthToken, gameID, playerColor);
-                gameplayUI.joinGameMessage();
-                return "Successfully joined game " + gameID + " as " + playerColor + ".\n";
+                gameplayClient = new GameplayClient(serverURL, userAuthToken, gameID, playerColor);
+                gameplayClient.joinGameMessage();
+                return "Successfully joined game " + gameID + " as " + playerColor + ".";
             } else if ((int) response.get("statusCode") == 400) {
-                return "Hmm, something wasn't quite right with the input. Try again!\n";
+                return "Hmm, something wasn't quite right with the input. Try again!";
             } else if ((int) response.get("statusCode") == 401) {
-                return "Alas, you aren't authorized to make that request. Log in or register to start.\n";
+                return "Alas, you aren't authorized to make that request. Log in or register to start.";
             } else if ((int) response.get("statusCode") == 403) {
-                return "Unfortunately, " + playerColor + " for game " + gameID + " has already been taken.\n";
+                return "Unfortunately, " + playerColor + " for game " + gameID + " has already been taken.";
             } else if ((int) response.get("statusCode") == 500) {
                 return "Looks like something went wrong serverside.\n Status Code: 500 \n Status Message: " +
                         response.get("statusMessage").toString() + "\n";
