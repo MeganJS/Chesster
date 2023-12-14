@@ -11,7 +11,7 @@ public class ChessServer {
 
     public static Database database = new Database();
 
-    private static final WSHandler wsHandler = new WSHandler();
+    //private static final WSHandler wsHandler = new WSHandler();
 
     public static void main(String[] args) {
         //new ChessServer().run();
@@ -22,17 +22,7 @@ public class ChessServer {
         createRoutes();
         Spark.init();
     }
-
-    /*
-    private void run() {
-        Spark.port(8080);
-        Spark.webSocket("/connect", webSocketHandler);
-        Spark.externalStaticFileLocation("web");
-
-        createRoutes();
-        Spark.init();
-    }
-     */
+    
 
     private static void createRoutes() {
         Spark.post("/session", LoginHandler::handleLogin);

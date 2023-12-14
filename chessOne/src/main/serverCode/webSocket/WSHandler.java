@@ -264,7 +264,13 @@ public class WSHandler {
             Game chessModel = gameDAO.readGame(gameID);
             ChessGame chessGame = chessModel.getChessGame();
             String winTeamColor;
-            if (command.getPlayerColor() == ChessGame.TeamColor.BLACK) {
+            if (!chessModel.getWhiteUsername().equals(userAuthToken.getUsername()) && !chessModel.getBlackUsername().equals(userAuthToken.getUsername())) {
+                throw new IllegalAccessException("You can't resign unless you're playing.");
+            }
+            if (chessGame.getWinningTeam() != null) {
+                throw new IllegalAccessException("The game is over. The time for resignation is past.");
+            }
+            if (userAuthToken.getUsername().equals(chessModel.getBlackUsername())) {
                 chessGame.setWinningTeam(ChessGame.TeamColor.WHITE);
                 winTeamColor = "White";
             } else {
