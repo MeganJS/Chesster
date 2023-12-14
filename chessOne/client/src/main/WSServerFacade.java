@@ -6,6 +6,7 @@ import serverMessageClasses.ServerMessageError;
 import serverMessageClasses.ServerMessageLoad;
 import serverMessageClasses.ServerMessageNotify;
 import userCommandClasses.MakeMoveCommand;
+import userCommandClasses.ResignCommand;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.UserGameCommand;
 
@@ -97,6 +98,16 @@ public class WSServerFacade extends Endpoint {
             session.getBasicRemote().sendText(new Gson().toJson(moveCommand));
         } catch (IOException e) {
             System.out.println(e);
+        }
+    }
+
+    public boolean sendResign(ResignCommand resignCmd) {
+        try {
+            session.getBasicRemote().sendText(new Gson().toJson(resignCmd));
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
         }
     }
 

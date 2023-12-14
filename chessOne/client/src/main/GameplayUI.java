@@ -1,8 +1,5 @@
 import chess.*;
-import userCommandClasses.JoinObserverCommand;
-import userCommandClasses.JoinPlayerCommand;
-import userCommandClasses.LeaveCommand;
-import userCommandClasses.MakeMoveCommand;
+import userCommandClasses.*;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.swing.text.TabExpander;
@@ -47,7 +44,7 @@ public class GameplayUI {
                 case "leave":
                     return leaveGame();
                 case "resign":
-                    return null;
+                    return resignGame();
             }
         } catch (Exception ex) {
             return ex.getMessage();
@@ -121,6 +118,15 @@ public class GameplayUI {
             return "";
         } catch (Exception e) {
             return e.getMessage();
+        }
+    }
+
+    private String resignGame() {
+        boolean success = wsServerFacade.sendResign(new ResignCommand(authToken, teamColor, gameID));
+        if (success) {
+            return "You resigned.\n";
+        } else {
+            return "We encountered an error, and you may not have resigned as expected.\n";
         }
     }
 

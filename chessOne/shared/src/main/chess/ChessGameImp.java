@@ -10,7 +10,7 @@ public class ChessGameImp implements ChessGame {
 
     private TeamColor teamTurn = null;
     private ChessBoard gameBoard = new ChessBoardImp();
-    private boolean gameOver = false;
+    private TeamColor winningTeam = null;
 
 
     /**
@@ -29,6 +29,14 @@ public class ChessGameImp implements ChessGame {
     @Override
     public void setTeamTurn(TeamColor team) {
         teamTurn = team;
+    }
+
+    public TeamColor getWinningTeam() {
+        return winningTeam;
+    }
+
+    public void setWinningTeam(TeamColor winningTeam) {
+        this.winningTeam = winningTeam;
     }
 
     /**
