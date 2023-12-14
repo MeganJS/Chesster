@@ -92,12 +92,11 @@ public class WSServerFacade extends Endpoint {
     }
 
 
-    public String sendMakeMove(MakeMoveCommand moveCommand) {
+    public void sendMakeMove(MakeMoveCommand moveCommand) {
         try {
             session.getBasicRemote().sendText(new Gson().toJson(moveCommand));
-            return "success";
-        } catch (Exception e) {
-            return e.getMessage();
+        } catch (IOException e) {
+            System.out.println(e);
         }
     }
 

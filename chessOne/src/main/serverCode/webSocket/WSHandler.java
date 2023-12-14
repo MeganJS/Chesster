@@ -55,9 +55,10 @@ public class WSHandler {
                     //send an error that the user does not have a current connection
                 }
             }
-        } catch (IOException e) {
+        } catch (Throwable e) {
             ServerMessageError error = new ServerMessageError(e.getMessage());
-            session.getRemote().sendString(new Gson().toJson(error));
+            System.out.println(e);
+            //session.getRemote().sendString(new Gson().toJson(error));
         }
     }
 
@@ -69,7 +70,7 @@ public class WSHandler {
      *  send them a LOAD message
      *  find the game they're part of and send the notification to all other connections in that game
      */
-    private void handleJoinGame(Session session, String message) throws IOException {
+    private void handleJoinGame(Session session, String message) {
         Gson json = new Gson();
         int gameID;
         ChessGame.TeamColor playerColor;
@@ -89,8 +90,7 @@ public class WSHandler {
             connMan.broadcast(gameID, userAuthToken.getAuthToken(), json.toJson(notify));
 
         } catch (DataAccessException | IOException | IllegalAccessException e) {
-            ServerMessageError error = new ServerMessageError(e.getMessage());
-            session.getRemote().sendString(json.toJson(error));
+            System.out.println(e.getMessage());
         }
     }
 
@@ -140,12 +140,20 @@ public class WSHandler {
      */
     private void handleMakeMove(Session session, String message) throws IOException {
         try {
-            Gson chessJson = createChessGson();
-            MakeMoveCommand moveCommand = chessJson.fromJson(message, MakeMoveCommand.class);
-            //createMoveCommand(message);
+            MakeMoveCommand moveCommand = createMoveCommand(message);
             AuthToken userAuthToken = userAuthDAO.readAuthToken(moveCommand.getAuthString());
 
             ChessGame chessGame = gameDAO.readGame(moveCommand.getGameID()).getChessGame();
+            if (moveCommand.getPlayerColor() != chessGame.getTeamTurn()) {
+                ServerMessageError error = new ServerMessageError("Error: it's not your turn to move!");
+                session.getRemote().sendString(new Gson().toJson(error));
+                return;
+            }
+            if (checkForGameOver(chessGame)) {
+                ServerMessageError error = new ServerMessageError("Error: the game is over. The time for moves is past.");
+                session.getRemote().sendString(new Gson().toJson(error));
+                return;
+            }
             chessGame.makeMove(moveCommand.getMove());
             gameDAO.updateGame(moveCommand.getGameID(), chessGame);
             //load game
@@ -154,21 +162,40 @@ public class WSHandler {
             String username = userAuthToken.getUsername();
             ServerMessageNotify notify = new ServerMessageNotify(username + " made move " + moveCommand.getMove() + ".\n");
             connMan.broadcast(moveCommand.getGameID(), userAuthToken.getAuthToken(), new Gson().toJson(notify));
-
-        } catch (DataAccessException | InvalidMoveException e) {
+            notifyForWin(chessGame, moveCommand.getGameID());
+        } catch (DataAccessException | InvalidMoveException | IOException e) {
             ServerMessageError error = new ServerMessageError(e.getMessage());
             session.getRemote().sendString(new Gson().toJson(error));
         }
+    }
 
+    private boolean checkForGameOver(ChessGame chessGame) {
+        if (chessGame.isInCheckmate(ChessGame.TeamColor.BLACK) || chessGame.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+            return true;
+        }
+        return chessGame.isInStalemate(ChessGame.TeamColor.BLACK) || chessGame.isInStalemate(ChessGame.TeamColor.WHITE);
+    }
+
+
+    private void notifyForWin(ChessGame chessGame, int gameID) throws IOException {
+        if (chessGame.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+            ServerMessageNotify notifyWin = new ServerMessageNotify("Black is in checkmate. White team wins!\n");
+            connMan.broadcast(gameID, "", new Gson().toJson(notifyWin));
+        } else if (chessGame.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+            ServerMessageNotify notifyWin = new ServerMessageNotify("White is in checkmate. Black team wins!\n");
+            connMan.broadcast(gameID, "", new Gson().toJson(notifyWin));
+        } else if (chessGame.isInStalemate(ChessGame.TeamColor.BLACK)) {
+            ServerMessageNotify notifyDraw = new ServerMessageNotify("Black is in stalemate. It's a draw!\n");
+            connMan.broadcast(gameID, "", new Gson().toJson(notifyDraw));
+        } else if (chessGame.isInStalemate(ChessGame.TeamColor.WHITE)) {
+            ServerMessageNotify notifyDraw = new ServerMessageNotify("White is in stalemate. It's a draw!\n");
+            connMan.broadcast(gameID, "", new Gson().toJson(notifyDraw));
+        }
     }
 
     private MakeMoveCommand createMoveCommand(String message) {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(ChessPiece.class, (JsonDeserializer<ChessPiece>) (el, type, ctx) -> ctx.deserialize(el, ChessPieceImp.class));
-        gsonBuilder.registerTypeAdapter(ChessPosition.class, (JsonDeserializer<ChessPosition>) (el, type, ctx) -> ctx.deserialize(el, ChessPositionImp.class));
-        gsonBuilder.registerTypeAdapter(ChessMove.class, (JsonDeserializer<ChessMove>) (el, type, ctx) -> ctx.deserialize(el, ChessMoveImp.class));
-        Gson json = gsonBuilder.create();
-        return json.fromJson(message, MakeMoveCommand.class);
+        Gson jsonChess = createChessGson();
+        return jsonChess.fromJson(message, MakeMoveCommand.class);
     }
 
     /***

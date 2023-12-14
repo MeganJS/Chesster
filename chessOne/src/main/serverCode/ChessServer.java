@@ -32,7 +32,6 @@ public class ChessServer {
         createRoutes();
         Spark.init();
     }
-
      */
 
     private static void createRoutes() {

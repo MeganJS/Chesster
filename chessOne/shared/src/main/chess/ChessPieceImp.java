@@ -2,14 +2,14 @@ package chess;
 
 import java.util.Collection;
 
-public class ChessPieceImp implements ChessPiece{
+public class ChessPieceImp implements ChessPiece {
 
     private PieceType type = null;
     private ChessGame.TeamColor color = null;
-    private PieceRuleset moveRules;
+    private transient PieceRuleset moveRules;
     //add a position variable?
 
-    public ChessPieceImp(PieceType typeInput, ChessGame.TeamColor colorInput){
+    public ChessPieceImp(PieceType typeInput, ChessGame.TeamColor colorInput) {
         type = typeInput;
         color = colorInput;
     }
@@ -37,31 +37,27 @@ public class ChessPieceImp implements ChessPiece{
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in danger
+     *
      * @return Collection of valid moves
      */
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        if(type == PieceType.PAWN){
+        if (type == PieceType.PAWN) {
             moveRules = new PawnRuleset();
             return moveRules.findValidMoves(myPosition, board);
-        }
-        else if(type == PieceType.KNIGHT){
+        } else if (type == PieceType.KNIGHT) {
             moveRules = new KnightRuleset();
             return moveRules.findValidMoves(myPosition, board);
-        }
-        else if(type == PieceType.BISHOP){
+        } else if (type == PieceType.BISHOP) {
             moveRules = new BishopRuleset();
             return moveRules.findValidMoves(myPosition, board);
-        }
-        else if(type == PieceType.ROOK){
+        } else if (type == PieceType.ROOK) {
             moveRules = new RookRuleset();
             return moveRules.findValidMoves(myPosition, board);
-        }
-        else if(type == PieceType.QUEEN){
+        } else if (type == PieceType.QUEEN) {
             moveRules = new QueenRuleset();
             return moveRules.findValidMoves(myPosition, board);
-        }
-        else if(type == PieceType.KING){
+        } else if (type == PieceType.KING) {
             moveRules = new KingRuleset();
             return moveRules.findValidMoves(myPosition, board);
         }
@@ -87,6 +83,5 @@ public class ChessPieceImp implements ChessPiece{
         }
         return true;
     }
-
      */
 }

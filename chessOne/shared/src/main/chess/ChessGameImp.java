@@ -10,6 +10,7 @@ public class ChessGameImp implements ChessGame {
 
     private TeamColor teamTurn = null;
     private ChessBoard gameBoard = new ChessBoardImp();
+    private boolean gameOver = false;
 
 
     /**

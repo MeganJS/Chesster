@@ -77,11 +77,15 @@ public class SQLGameDAO implements GameDAO {
             }
             String gameName = result.getString("gameName");
             var jsonChess = result.getString("game");
-            var builder = new GsonBuilder();
+            Gson chessDeserializer = createChessGson();
+            /*
             builder.registerTypeAdapter(ChessPiece.class, new ChessPieceAdapter());
             builder.registerTypeAdapter(ChessBoard.class, new ChessBoardAdapter());
             builder.registerTypeAdapter(ChessPosition.class, new ChessPositionAdapter());
             ChessGame chessGame = builder.create().fromJson(jsonChess, ChessGameImp.class);
+
+             */
+            ChessGame chessGame = chessDeserializer.fromJson(jsonChess, ChessGameImp.class);
 
             database.closeConnection(dataConnection);
             return new Game(gameID, whiteUser, blackUser, observers, gameName, chessGame);
@@ -93,16 +97,16 @@ public class SQLGameDAO implements GameDAO {
 
     public void updateGame(int gameID, ChessGame newChessGame) throws DataAccessException {
         try {
-            Gson json = new Gson();
             readGame(gameID);
             var dataConnection = database.getConnection();
             dataConnection.setCatalog("chessdata");
             if (newChessGame == null) {
                 throw new DataAccessException("Error: bad request");
             }
-            var updateStatement = "UPDATE games SET game=? WHERE gameID = ?";
+            var updateStatement = "UPDATE games SET game = ? WHERE gameID = ?";
             var preparedUpdate = dataConnection.prepareStatement(updateStatement);
-            preparedUpdate.setString(1, json.toJson(newChessGame));
+            String jsonChessGame = new Gson().toJson(newChessGame);
+            preparedUpdate.setString(1, jsonChessGame);
             preparedUpdate.setInt(2, gameID);
             preparedUpdate.executeUpdate();
             database.closeConnection(dataConnection);
@@ -149,11 +153,6 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
-/*
-    public void removePlayer(int gameID, String username, ChessGame.TeamColor color) {
-    }
-
- */
 
     @Override
     public Collection<Game> readAllGames() throws DataAccessException {
@@ -200,25 +199,44 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
-    static class ChessPieceAdapter implements JsonDeserializer<ChessPiece> {
-        @Override
-        public ChessPiece deserialize(JsonElement jsonEl, Type type, JsonDeserializationContext jdc) throws JsonParseException {
-            return jdc.deserialize(jsonEl, ChessPieceImp.class);
-        }
-    }
+    public static Gson createChessGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
 
-    static class ChessBoardAdapter implements JsonDeserializer<ChessBoard> {
-        @Override
-        public ChessBoard deserialize(JsonElement jsonEl, Type type, JsonDeserializationContext jdc) throws JsonParseException {
-            return jdc.deserialize(jsonEl, ChessBoardImp.class);
-        }
-    }
+        // This line should only be needed if your board class is using a Map to store chess pieces instead of a 2D array.
+        gsonBuilder.enableComplexMapKeySerialization();
 
-    static class ChessPositionAdapter implements JsonDeserializer<ChessPosition> {
-        @Override
-        public ChessPosition deserialize(JsonElement jsonEl, Type type, JsonDeserializationContext jdc) throws JsonParseException {
-            return jdc.deserialize(jsonEl, ChessPositionImp.class);
-        }
+        gsonBuilder.registerTypeAdapter(ChessGame.class,
+                (JsonDeserializer<ChessGame>) (el, type, ctx) -> ctx.deserialize(el, ChessGameImp.class));
+
+        gsonBuilder.registerTypeAdapter(ChessBoard.class,
+                (JsonDeserializer<ChessBoard>) (el, type, ctx) -> ctx.deserialize(el, ChessBoardImp.class));
+
+        gsonBuilder.registerTypeAdapter(ChessPiece.class,
+                (JsonDeserializer<ChessPiece>) (el, type, ctx) -> ctx.deserialize(el, ChessPieceImp.class));
+
+        gsonBuilder.registerTypeAdapter(ChessMove.class,
+                (JsonDeserializer<ChessMove>) (el, type, ctx) -> ctx.deserialize(el, ChessMoveImp.class));
+
+        gsonBuilder.registerTypeAdapter(ChessPosition.class,
+                (JsonDeserializer<ChessPosition>) (el, type, ctx) -> ctx.deserialize(el, ChessPositionImp.class));
+
+        gsonBuilder.registerTypeAdapter(PieceRuleset.class,
+                (JsonDeserializer<PieceRuleset>) (el, type, ctx) -> {
+                    PieceRuleset ruleset = null;
+                    if (el.isJsonObject()) {
+                        String pieceType = el.getAsJsonObject().get("type").getAsString();
+                        switch (ChessPiece.PieceType.valueOf(pieceType)) {
+                            case PAWN -> ruleset = ctx.deserialize(el, PawnRuleset.class);
+                            case ROOK -> ruleset = ctx.deserialize(el, RookRuleset.class);
+                            case KNIGHT -> ruleset = ctx.deserialize(el, KnightRuleset.class);
+                            case BISHOP -> ruleset = ctx.deserialize(el, BishopRuleset.class);
+                            case QUEEN -> ruleset = ctx.deserialize(el, QueenRuleset.class);
+                            case KING -> ruleset = ctx.deserialize(el, KingRuleset.class);
+                        }
+                    }
+                    return ruleset;
+                });
+        return gsonBuilder.create();
     }
 
 }
