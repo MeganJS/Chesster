@@ -150,7 +150,6 @@ public class WSHandler {
             String username = userAuthToken.getUsername();
             Game chessModel = gameDAO.readGame(moveCommand.getGameID());
             ChessGame chessGame = chessModel.getChessGame();
-
             if (chessGame.getWinningTeam() != null) {
                 ServerMessageError error = new ServerMessageError("Error: the game is over. The time for moves is past.");
                 session.getRemote().sendString(new Gson().toJson(error));
@@ -168,8 +167,9 @@ public class WSHandler {
             //notify
             ServerMessageNotify notify = new ServerMessageNotify(username + " made move" + moveToString(moveCommand.getMove()) + ".\n");
             connMan.broadcast(moveCommand.getGameID(), userAuthToken.getAuthToken(), new Gson().toJson(notify));
-            notifyForWin(chessGame, moveCommand.getGameID());
-            //TODO: add notify for if player is in check
+            if (!notifyForWin(moveCommand.getGameID())) {
+                notifyForCheck(moveCommand.getGameID());
+            }
         } catch (DataAccessException | InvalidMoveException | IOException e) {
             ServerMessageError error = new ServerMessageError("Error: " + e.getMessage());
             session.getRemote().sendString(new Gson().toJson(error));
@@ -192,30 +192,51 @@ public class WSHandler {
         return " " + startCol + startRow + " " + endCol + endRow;
     }
 
+    private void notifyForCheck(int gameID) throws IOException, DataAccessException {
+        Game chessModel = gameDAO.readGame(gameID);
+        ChessGame chessGame = chessModel.getChessGame();
 
-    private void notifyForWin(ChessGame chessGame, int gameID) throws IOException, DataAccessException {
-        //TODO add player name to notify for checkmate
+        if (chessGame.isInCheck(ChessGame.TeamColor.BLACK)) {
+            ServerMessageNotify notifyCheck = new ServerMessageNotify("Black player " + chessModel.getBlackUsername() + " is in check.");
+            connMan.broadcast(gameID, "", new Gson().toJson(notifyCheck));
+        } else if (chessGame.isInCheck(ChessGame.TeamColor.WHITE)) {
+            ServerMessageNotify notifyCheck = new ServerMessageNotify("White player " + chessModel.getWhiteUsername() + " is in check.\n");
+            connMan.broadcast(gameID, "", new Gson().toJson(notifyCheck));
+        }
+    }
+
+    private boolean notifyForWin(int gameID) throws IOException, DataAccessException {
+        Game chessModel = gameDAO.readGame(gameID);
+        ChessGame chessGame = chessModel.getChessGame();
+        String whiteUser = chessModel.getWhiteUsername();
+        String blackUser = chessModel.getBlackUsername();
+
         if (chessGame.isInCheckmate(ChessGame.TeamColor.BLACK)) {
             chessGame.setWinningTeam(ChessGame.TeamColor.WHITE);
             gameDAO.updateGame(gameID, chessGame);
-            ServerMessageNotify notifyWin = new ServerMessageNotify("Black is in checkmate. White team wins!\n");
+            ServerMessageNotify notifyWin = new ServerMessageNotify("Black player " + blackUser + " is in checkmate. White player " + whiteUser + " wins!\n");
             connMan.broadcast(gameID, "", new Gson().toJson(notifyWin));
+            return true;
         } else if (chessGame.isInCheckmate(ChessGame.TeamColor.WHITE)) {
             chessGame.setWinningTeam(ChessGame.TeamColor.BLACK);
             gameDAO.updateGame(gameID, chessGame);
-            ServerMessageNotify notifyWin = new ServerMessageNotify("White is in checkmate. Black team wins!\n");
+            ServerMessageNotify notifyWin = new ServerMessageNotify("White player " + whiteUser + " is in checkmate. Black player " + blackUser + " wins!\n");
             connMan.broadcast(gameID, "", new Gson().toJson(notifyWin));
+            return true;
         } else if (chessGame.isInStalemate(ChessGame.TeamColor.BLACK)) {
-            chessGame.setWinningTeam(ChessGame.TeamColor.BLACK); //TODO fix for stalemate
+            chessGame.setWinningTeam(ChessGame.TeamColor.BLACK);
             gameDAO.updateGame(gameID, chessGame);
-            ServerMessageNotify notifyDraw = new ServerMessageNotify("Black is in stalemate. It's a draw!\n");
+            ServerMessageNotify notifyDraw = new ServerMessageNotify("Black player " + blackUser + " is in stalemate. It's a draw!\n");
             connMan.broadcast(gameID, "", new Gson().toJson(notifyDraw));
+            return true;
         } else if (chessGame.isInStalemate(ChessGame.TeamColor.WHITE)) {
             chessGame.setWinningTeam(ChessGame.TeamColor.WHITE);
             gameDAO.updateGame(gameID, chessGame);
-            ServerMessageNotify notifyDraw = new ServerMessageNotify("White is in stalemate. It's a draw!\n");
+            ServerMessageNotify notifyDraw = new ServerMessageNotify("White player " + whiteUser + " is in stalemate. It's a draw!\n");
             connMan.broadcast(gameID, "", new Gson().toJson(notifyDraw));
+            return true;
         }
+        return false;
     }
 
     private MakeMoveCommand createMoveCommand(String message) {
