@@ -85,7 +85,7 @@ public class GameplayUI {
      * @return ???
      */
     private String redrawGame() {
-
+        return null;
     }
 
     /***
@@ -93,7 +93,7 @@ public class GameplayUI {
      * @return the highlighted chess board
      */
     private String highlightGame() {
-
+        return null;
     }
 
     /**
