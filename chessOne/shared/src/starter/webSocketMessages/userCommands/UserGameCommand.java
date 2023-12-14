@@ -12,8 +12,17 @@ public class UserGameCommand {
     int gameID;
     ChessGame.TeamColor playerColor;
 
+    protected CommandType commandType;
+
+    private final String authToken;
+
     public UserGameCommand(String authToken) {
         this.authToken = authToken;
+    }
+
+    public UserGameCommand(String authToken, int gameID) {
+        this.authToken = authToken;
+        this.gameID = gameID;
     }
 
     public UserGameCommand(String authToken, ChessGame.TeamColor playerColor, int gameID) {
@@ -31,9 +40,6 @@ public class UserGameCommand {
         RESIGN
     }
 
-    protected CommandType commandType;
-
-    private final String authToken;
 
     public String getAuthString() {
         return authToken;

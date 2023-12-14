@@ -139,7 +139,7 @@ public class GameplayUI {
                 promotionPiece = words[3];
             }
             ChessMove move = createChessMove(start, end, promotionPiece);
-            wsServerFacade.sendMakeMove(new MakeMoveCommand(authToken, teamColor, gameID, move));
+            wsServerFacade.sendMakeMove(new MakeMoveCommand(authToken, gameID, move));
             return "";
         } catch (Exception e) {
             return e.getMessage();

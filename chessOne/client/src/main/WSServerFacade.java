@@ -1,7 +1,5 @@
 import chess.*;
 import com.google.gson.*;
-import com.google.gson.internal.bind.JsonTreeReader;
-import com.google.gson.stream.JsonReader;
 import serverMessageClasses.ServerMessageError;
 import serverMessageClasses.ServerMessageLoad;
 import serverMessageClasses.ServerMessageNotify;
@@ -12,7 +10,6 @@ import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 

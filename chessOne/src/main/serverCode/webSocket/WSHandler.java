@@ -49,11 +49,12 @@ public class WSHandler {
                     }
                 } else {
                     //send an error that the user does not have a current connection
+                    session.getRemote().sendString(new Gson().toJson(new ServerMessageError("Error: no current connection")));
                 }
             }
         } catch (Throwable e) {
-            ServerMessageError error = new ServerMessageError(e.getMessage());
-            System.out.println(e);
+            ServerMessageError error = new ServerMessageError("Error: " + e.getMessage());
+            System.out.println(new Gson().toJson(error));
             //session.getRemote().sendString(new Gson().toJson(error));
         }
     }
@@ -66,7 +67,7 @@ public class WSHandler {
      *  send them a LOAD message
      *  find the game they're part of and send the notification to all other connections in that game
      */
-    private void handleJoinGame(Session session, String message) {
+    private void handleJoinGame(Session session, String message) throws IOException {
         Gson json = new Gson();
         int gameID;
         ChessGame.TeamColor playerColor;
@@ -77,16 +78,24 @@ public class WSHandler {
             playerColor = command.getPlayerColor();
             AuthToken userAuthToken = userAuthDAO.readAuthToken(authString);
             gameID = command.getGameID();
+            Game chessModel = gameDAO.readGame(gameID);
+            if (playerColor == ChessGame.TeamColor.BLACK && !chessModel.getBlackUsername().equals(userAuthToken.getUsername())) {
+                throw new IllegalAccessException("black team is occupied by a different user.");
+            }
+            if (playerColor == ChessGame.TeamColor.WHITE && !chessModel.getWhiteUsername().equals(userAuthToken.getUsername())) {
+                throw new IllegalAccessException("white team is occupied by a different user.");
+            }
+
+
             connMan.addConnection(authString, new Connection(authString, session, gameID));
             loadGameOnJoin(session, gameID);
-
-            Game chessModel = gameDAO.readGame(gameID);
             String username = userAuthToken.getUsername();
             ServerMessageNotify notify = new ServerMessageNotify(username + " has joined " + chessModel.getGameName() + " as " + createColorMessage(playerColor) + ".\n");
             connMan.broadcast(gameID, userAuthToken.getAuthToken(), json.toJson(notify));
 
-        } catch (DataAccessException | IOException | IllegalAccessException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
+            session.getRemote().sendString(new Gson().toJson(new ServerMessageError("Error: " + e.getMessage())));
         }
     }
 
@@ -138,14 +147,16 @@ public class WSHandler {
         try {
             MakeMoveCommand moveCommand = createMoveCommand(message);
             AuthToken userAuthToken = userAuthDAO.readAuthToken(moveCommand.getAuthString());
+            String username = userAuthToken.getUsername();
+            Game chessModel = gameDAO.readGame(moveCommand.getGameID());
+            ChessGame chessGame = chessModel.getChessGame();
 
-            ChessGame chessGame = gameDAO.readGame(moveCommand.getGameID()).getChessGame();
             if (chessGame.getWinningTeam() != null) {
                 ServerMessageError error = new ServerMessageError("Error: the game is over. The time for moves is past.");
                 session.getRemote().sendString(new Gson().toJson(error));
                 return;
             }
-            if (moveCommand.getPlayerColor() != chessGame.getTeamTurn()) {
+            if (!username.equals(getCurTeamUsername(chessModel))) {
                 ServerMessageError error = new ServerMessageError("Error: it's not your turn to move!");
                 session.getRemote().sendString(new Gson().toJson(error));
                 return;
@@ -155,15 +166,22 @@ public class WSHandler {
             //load game
             loadGameAll(moveCommand.getGameID());
             //notify
-            String username = userAuthToken.getUsername();
             ServerMessageNotify notify = new ServerMessageNotify(username + " made move" + moveToString(moveCommand.getMove()) + ".\n");
             connMan.broadcast(moveCommand.getGameID(), userAuthToken.getAuthToken(), new Gson().toJson(notify));
             notifyForWin(chessGame, moveCommand.getGameID());
             //TODO: add notify for if player is in check
         } catch (DataAccessException | InvalidMoveException | IOException e) {
-            ServerMessageError error = new ServerMessageError(e.getMessage());
+            ServerMessageError error = new ServerMessageError("Error: " + e.getMessage());
             session.getRemote().sendString(new Gson().toJson(error));
         }
+    }
+
+    private String getCurTeamUsername(Game chessModel) {
+        ChessGame chessGame = chessModel.getChessGame();
+        if (chessGame.getTeamTurn() == ChessGame.TeamColor.BLACK) {
+            return chessModel.getBlackUsername();
+        }
+        return chessModel.getWhiteUsername();
     }
 
     private String moveToString(ChessMove move) {
@@ -225,7 +243,7 @@ public class WSHandler {
             connMan.broadcast(gameID, userAuthToken.getAuthToken(), json.toJson(notify));
             connMan.removeConnection(authString);
         } catch (Exception e) {
-            ServerMessageError error = new ServerMessageError(e.getMessage());
+            ServerMessageError error = new ServerMessageError("Error: " + e.getMessage());
             session.getRemote().sendString(json.toJson(error));
         }
     }
@@ -259,7 +277,7 @@ public class WSHandler {
             ServerMessageNotify notify = new ServerMessageNotify(username + " has resigned. " + winTeamColor + " wins.\n");
             connMan.broadcast(gameID, "", json.toJson(notify));
         } catch (Exception e) {
-            ServerMessageError error = new ServerMessageError(e.getMessage());
+            ServerMessageError error = new ServerMessageError("Error: " + e.getMessage());
             session.getRemote().sendString(json.toJson(error));
         }
     }
