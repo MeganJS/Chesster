@@ -45,7 +45,7 @@ public class ClientMessageHandler {
 
     //highlight the position in yellow
     //highlight black squares and white squares to move to in two different shades - maybe red?
-    //SET_BG_COLOR_RED and SET_BG_COLOR_MAGENTA
+    //SET_BG_COLOR_BLUE and SET_BG_COLOR_MAGENTA
     public String highlightBoard(ChessPosition position) {
 
         Collection<ChessMove> moves = game.validMoves(position);
@@ -57,17 +57,16 @@ public class ClientMessageHandler {
             ArrayList<Integer> row = new ArrayList<>();
             highlightSquares.add(row);
         }
-        System.out.println(highlightSquares);
         if (playerColor == ChessGame.TeamColor.BLACK) {
             for (ChessMove move : moves) {
                 //1 -> 8, 8 -> 1
                 int reverseIndex = 9 - move.getEndPosition().getColumn();
-                highlightSquares.get(move.getEndPosition().getRow()).add(reverseIndex);
+                highlightSquares.get(move.getEndPosition().getRow() - 1).add(reverseIndex);
             }
             position = new ChessPositionImp(9 - position.getColumn(), position.getRow());
         } else {
             for (ChessMove move : moves) {
-                highlightSquares.get(move.getEndPosition().getRow()).add(move.getEndPosition().getColumn());
+                highlightSquares.get(move.getEndPosition().getRow() - 1).add(move.getEndPosition().getColumn());
             }
         }
         System.out.println(highlightSquares);

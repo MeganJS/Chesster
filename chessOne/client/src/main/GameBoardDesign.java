@@ -166,13 +166,13 @@ public class GameBoardDesign {
                 rowStrBlack.append(SET_BG_COLOR_YELLOW);
             } else if (i % 2 == 0) {
                 if (highlightIndexes != null && highlightIndexes.get(row - 1).contains(i + 1)) {
-                    rowStrBlack.append(SET_BG_COLOR_RED);
+                    rowStrBlack.append(SET_BG_COLOR_MAGENTA);
                 } else {
                     rowStrBlack.append(SET_BG_COLOR_BLACK);
                 }
             } else {
                 if (highlightIndexes != null && highlightIndexes.get(row - 1).contains(i + 1)) {
-                    rowStrBlack.append(SET_BG_COLOR_MAGENTA);
+                    rowStrBlack.append(SET_BG_COLOR_BLUE);
                 } else {
                     rowStrBlack.append(SET_BG_COLOR_WHITE);
                 }
@@ -195,13 +195,13 @@ public class GameBoardDesign {
                 rowStrWhite.append(SET_BG_COLOR_YELLOW);
             } else if (i % 2 == 0) {
                 if (highlightIndexes != null && highlightIndexes.get(row - 1).contains(i + 1)) {
-                    rowStrWhite.append(SET_BG_COLOR_MAGENTA);
+                    rowStrWhite.append(SET_BG_COLOR_BLUE);
                 } else {
                     rowStrWhite.append(SET_BG_COLOR_WHITE);
                 }
             } else {
                 if (highlightIndexes != null && highlightIndexes.get(row - 1).contains(i + 1)) {
-                    rowStrWhite.append(SET_BG_COLOR_RED);
+                    rowStrWhite.append(SET_BG_COLOR_MAGENTA);
                 } else {
                     rowStrWhite.append(SET_BG_COLOR_BLACK);
                 }
