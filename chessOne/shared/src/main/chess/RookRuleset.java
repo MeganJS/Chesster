@@ -21,7 +21,6 @@ public class RookRuleset implements PieceRuleset {
         piecePosition = position;
         ChessPiece piece = gameBoard.getPiece(piecePosition);
         if (piece.getPieceType() != ChessPiece.PieceType.ROOK) {
-            //TODO: throw an exception?
             System.out.println("This is not a rook.");
             return null;
         }

@@ -66,8 +66,6 @@ public class ClientMessageHandler {
                 highlightSquares.get(move.getEndPosition().getRow() - 1).add(move.getEndPosition().getColumn());
             }
         }
-        System.out.println(highlightSquares);
-
         gameBoardDesign.setPosition(position);
         gameBoardDesign.setHighlightIndexes(highlightSquares);
 

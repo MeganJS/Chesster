@@ -21,7 +21,6 @@ public class QueenRuleset implements PieceRuleset {
         piecePosition = position;
         ChessPiece piece = gameBoard.getPiece(piecePosition);
         if (piece.getPieceType() != ChessPiece.PieceType.QUEEN) {
-            //TODO: throw an exception?
             System.out.println("This is not a queen.");
             return null;
         }

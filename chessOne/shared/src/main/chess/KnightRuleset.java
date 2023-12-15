@@ -22,7 +22,6 @@ public class KnightRuleset implements PieceRuleset {
         piecePosition = position;
         ChessPiece piece = gameBoard.getPiece(piecePosition);
         if (piece.getPieceType() != ChessPiece.PieceType.KNIGHT) {
-            //TODO: throw an exception?
             System.out.println("This is not a knight.");
             return null;
         }

@@ -21,7 +21,6 @@ public class BishopRuleset implements PieceRuleset {
         piecePosition = position;
         ChessPiece piece = gameBoard.getPiece(piecePosition);
         if (piece.getPieceType() != ChessPiece.PieceType.BISHOP) {
-            //TODO: throw an exception?
             System.out.println("This is not a bishop.");
             return null;
         }

@@ -21,7 +21,6 @@ public class PawnRuleset implements PieceRuleset {
         piecePosition = position;
         ChessPiece piece = gameBoard.getPiece(piecePosition);
         if (piece.getPieceType() != ChessPiece.PieceType.PAWN) {
-            //TODO: throw an exception?
             System.out.println("This is not a pawn.");
             return null;
         }
